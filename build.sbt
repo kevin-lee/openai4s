@@ -46,6 +46,36 @@ lazy val openai4s = (project in file("."))
   )
   .settings(noPublish)
   .settings(mavenCentralPublishSettings)
+  .aggregate(
+    coreJvm,
+    coreJs,
+  )
+
+lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    libraryDependencies ++= List(
+      libs.cats,
+      libs.newtype,
+      libs.kittens,
+    ) ++
+      libs.refined ++ libs.extra ++ libs.circeAll
+  )
+
+lazy val coreJvm = core.jvm
+lazy val coreJs  = core.js
+
+lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    libraryDependencies ++=
+      List(
+        libs.cats,
+        libs.newtype,
+      ) ++ libs.refined ++ libs.circeAll ++ libs.http4s
+  )
+  .dependsOn(core)
+
+lazy val httpJvm = http.jvm
+lazy val httpJs  = http.js
 
 lazy val props =
   new {
@@ -76,7 +106,7 @@ lazy val props =
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
-          m.name == "ammonite" ||
+        m.name == "ammonite" ||
           m.name == "kind-projector" ||
           m.name == "better-monadic-for" ||
           m.name == "mdoc"
@@ -96,6 +126,17 @@ lazy val props =
 
     val ExtrasVersion = "0.38.0"
 
+    val NewtypeVersion = "0.4.4"
+    val RefinedVersion = "0.10.1"
+
+    val KittensVersion = "3.0.0"
+
+    val Http4sVersion = "0.23.18"
+
+    val PureConfigVersion = "0.17.2"
+
+    val CirceVersion = "0.14.3"
+
   }
 
 lazy val libs = new {
@@ -109,6 +150,53 @@ lazy val libs = new {
       hedgehogRunner,
       hedgehogSbt,
     ).map(_ % Test)
+
+  lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
+
+  lazy val refined = List(
+    "eu.timepit" %% "refined"            % props.RefinedVersion,
+    "eu.timepit" %% "refined-cats"       % props.RefinedVersion,
+    //    "eu.timepit" %% "refined-eval"            % props.RefinedVersion,
+    "eu.timepit" %% "refined-pureconfig" % props.RefinedVersion,
+  )
+
+  lazy val kittens = "org.typelevel" %% "kittens" % props.KittensVersion
+
+  lazy val cats = "org.typelevel" %% "cats-core" % props.CatsVersion
+
+  lazy val extra = List(
+    "io.kevinlee" %% "extras-render"                 % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-render-refined"         % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-cats"                   % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-circe"                  % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-scala-io"               % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-hedgehog-ce3"           % props.ExtrasVersion % Test,
+    "io.kevinlee" %% "extras-hedgehog-circe"         % props.ExtrasVersion % Test,
+    "io.kevinlee" %% "extras-refinement"             % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-type-info"              % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-testing-tools-cats"     % props.ExtrasVersion % Test,
+    "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
+  )
+
+  lazy val circeCore    = "io.circe" %% "circe-core"    % props.CirceVersion
+  lazy val circeGeneric = "io.circe" %% "circe-generic" % props.CirceVersion
+  lazy val circeParser  = "io.circe" %% "circe-parser"  % props.CirceVersion
+  lazy val circeLiteral = "io.circe" %% "circe-literal" % props.CirceVersion
+  lazy val circeRefined = "io.circe" %% "circe-refined" % props.CirceVersion
+  lazy val circeAll     = List(
+    circeCore,
+    circeGeneric,
+    circeRefined,
+    circeParser  % Test,
+    circeLiteral % Test,
+  )
+
+  lazy val http4s = List(
+    "org.http4s" %% "http4s-core"         % props.Http4sVersion,
+    "org.http4s" %% "http4s-ember-client" % props.Http4sVersion,
+    "org.http4s" %% "http4s-circe"        % props.Http4sVersion,
+    "org.http4s" %% "http4s-dsl"          % props.Http4sVersion,
+  )
 
 }
 
@@ -134,7 +222,6 @@ def libraryDependenciesPostProcess(
   else
     libraries
 
-
 def module(projectName: String, crossProject: CrossProject.Builder): CrossProject = {
   val prefixedName = prefixedProjectName(projectName)
   crossProject
@@ -150,7 +237,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
       ),
       scalacOptions ++= (if (isScala3(scalaVersion.value)) List.empty else List("-Xsource:3")),
       libraryDependencies ++= libs.hedgehog,
-      wartremoverErrors ++= Warts.allBut(Wart.Any, Wart.Nothing),
+      wartremoverErrors ++= Warts.allBut(Wart.Any, Wart.Nothing, Wart.ImplicitConversion, Wart.ImplicitParameter),
       Compile / console / scalacOptions :=
         (console / scalacOptions)
           .value
