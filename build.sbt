@@ -29,12 +29,28 @@ ThisBuild / licenses := props.licenses
 
 ThisBuild / resolvers += props.SonatypeSnapshots
 
+ThisBuild / scalafixDependencies += "com.github.xuwei-k" %% "scalafix-rules" % "0.2.17"
+
 ThisBuild / scalafixConfig := (
   if (scalaVersion.value.startsWith("3"))
     ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
   else
     ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
 )
+
+ThisBuild / scalafixScalaBinaryVersion := {
+  val log        = sLog.value
+  val newVersion = if (scalaVersion.value.startsWith("3")) {
+    (ThisBuild / scalafixScalaBinaryVersion).value
+  } else {
+    CrossVersion.binaryScalaVersion(scalaVersion.value)
+  }
+
+  log.info(
+    s">> Change ThisBuild / scalafixScalaBinaryVersion from ${(ThisBuild / scalafixScalaBinaryVersion).value} to $newVersion"
+  )
+  newVersion
+}
 
 lazy val openai4s = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
@@ -62,7 +78,7 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
   )
 
 lazy val coreJvm = core.jvm
-lazy val coreJs  = core.js
+lazy val coreJs  = core.js.settings(jsSettingsForFuture)
 
 lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
   .settings(
@@ -75,7 +91,7 @@ lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
   .dependsOn(core)
 
 lazy val httpJvm = http.jvm
-lazy val httpJs  = http.js
+lazy val httpJs  = http.js.settings(jsSettingsForFuture)
 
 lazy val props =
   new {
@@ -229,6 +245,8 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
     .settings(
       name := prefixedName,
       fork := true,
+      semanticdbEnabled := true,
+      semanticdbVersion := scalafixSemanticdb.revision,
       scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
@@ -236,6 +254,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
           ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
       ),
       scalacOptions ++= (if (isScala3(scalaVersion.value)) List.empty else List("-Xsource:3")),
+      scalacOptions ~= (ops => ops.filter(_ != "UTF-8")),
       libraryDependencies ++= libs.hedgehog,
       wartremoverErrors ++= Warts.allBut(Wart.Any, Wart.Nothing, Wart.ImplicitConversion, Wart.ImplicitParameter),
       Compile / console / scalacOptions :=
@@ -262,6 +281,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
 }
 
 lazy val jsSettingsForFuture: SettingsDefinition = List(
+  Test / fork := false,
   Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
                             else List("-P:scalajs:nowarnGlobalExecutionContext")),
   Test / compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
