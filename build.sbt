@@ -194,14 +194,16 @@ lazy val libs = new {
     "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
   )
 
-  lazy val circeCore    = "io.circe" %% "circe-core"    % props.CirceVersion
-  lazy val circeGeneric = "io.circe" %% "circe-generic" % props.CirceVersion
-  lazy val circeParser  = "io.circe" %% "circe-parser"  % props.CirceVersion
-  lazy val circeLiteral = "io.circe" %% "circe-literal" % props.CirceVersion
-  lazy val circeRefined = "io.circe" %% "circe-refined" % props.CirceVersion
-  lazy val circeAll     = List(
+  lazy val circeCore          = "io.circe" %% "circe-core"           % props.CirceVersion
+  lazy val circeGeneric       = "io.circe" %% "circe-generic"        % props.CirceVersion
+  lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras" % props.CirceVersion
+  lazy val circeParser        = "io.circe" %% "circe-parser"         % props.CirceVersion
+  lazy val circeLiteral       = "io.circe" %% "circe-literal"        % props.CirceVersion
+  lazy val circeRefined       = "io.circe" %% "circe-refined"        % props.CirceVersion
+  lazy val circeAll           = List(
     circeCore,
     circeGeneric,
+    circeGenericExtras,
     circeRefined,
     circeParser  % Test,
     circeLiteral % Test,
