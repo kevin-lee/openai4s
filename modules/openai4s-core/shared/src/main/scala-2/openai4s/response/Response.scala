@@ -1,13 +1,15 @@
 package openai4s.response
 
 import cats.{Eq, Show}
-import eu.timepit.refined.cats._
+import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
-import extras.render.refined._
-import io.circe.refined._
+import extras.render.refined.*
+import io.circe.generic.extras.Configuration
+import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
+import openai4s.types
 import openai4s.types.Model
 
 import java.time.Instant
@@ -25,11 +27,13 @@ final case class Response(
 )
 object Response {
 
+  implicit val responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
+
   implicit val responseEq: Eq[Response] = Eq.fromUniversalEquals
 
   implicit val responseShow: Show[Response] = cats.derived.semiauto.show
 
-  implicit val responseCodec: Codec[Response] = io.circe.generic.semiauto.deriveCodec
+  implicit val responseCodec: Codec[Response] = io.circe.generic.extras.semiauto.deriveConfiguredCodec
 
   @newtype case class Id(value: NonEmptyString)
   object Id {
@@ -74,7 +78,7 @@ object Response {
 
     implicit val usageShow: Show[Usage] = cats.derived.semiauto.show
 
-    implicit val usageCodec: Codec[Usage] = io.circe.generic.semiauto.deriveCodec
+    implicit val usageCodec: Codec[Usage] = io.circe.generic.extras.semiauto.deriveConfiguredCodec
 
     @newtype case class PromptTokens(value: Int)
     object PromptTokens {
@@ -117,37 +121,15 @@ object Response {
 
     implicit val choiceShow: Show[Choice] = cats.derived.semiauto.show
 
-    implicit val choiceCodec: Codec[Choice] = io.circe.generic.semiauto.deriveCodec
+    implicit val choiceCodec: Codec[Choice] = io.circe.generic.extras.semiauto.deriveConfiguredCodec
 
-    @newtype case class Role(value: String)
-    object Role {
-      implicit val roleEq: Eq[Role] = deriving
-
-      implicit val roleShow: Show[Role]     = deriving
-      implicit val roleRender: Render[Role] = deriving
-
-      implicit val roleEncoder: Encoder[Role] = deriving
-      implicit val roleDecoder: Decoder[Role] = deriving
-    }
-
-    @newtype case class Content(value: String)
-    object Content {
-      implicit val contentEq: Eq[Content] = deriving
-
-      implicit val contentShow: Show[Content]     = deriving
-      implicit val contentRender: Render[Content] = deriving
-
-      implicit val contentEncoder: Encoder[Content] = deriving
-      implicit val contentDecoder: Decoder[Content] = deriving
-    }
-
-    final case class Message(role: Role, content: Content)
+    @newtype case class Message(value: types.Message)
     object Message {
-      implicit val messageEq: Eq[Message] = Eq.fromUniversalEquals
+      implicit val messageEq: Eq[Message] = deriving
 
-      implicit val messageShow: Show[Message] = cats.derived.semiauto.show[Message]
+      implicit val messageShow: Show[Message] = deriving
 
-      implicit val messageCodec: Codec[Message] = io.circe.generic.semiauto.deriveCodec
+      implicit val messageCodec: Codec[Message] = deriving
     }
 
     @newtype case class FinishReason(value: String)

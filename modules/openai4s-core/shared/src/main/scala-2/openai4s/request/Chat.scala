@@ -1,15 +1,13 @@
 package openai4s.request
 
+import openai4s.types
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
-import eu.timepit.refined.cats._
+import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.numeric.{NonNegDouble, PosInt}
-import eu.timepit.refined.types.string.NonEmptyString
-import extras.render.Render
-import extras.render.refined._
 import io.circe.generic.extras.Configuration
-import io.circe.refined._
-import io.circe.{Codec, Decoder, Encoder}
+import io.circe.refined.*
+import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
 import openai4s.types.Model
 
@@ -22,6 +20,7 @@ final case class Chat(
   temperature: Option[Chat.Temperature],
   maxTokens: Option[Chat.MaxTokens],
 )
+
 object Chat {
   implicit val chatConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
@@ -34,34 +33,20 @@ object Chat {
     io.circe.generic.extras.semiauto.deriveConfiguredEncoder[Chat].mapJson(_.deepDropNullValues)
   implicit val chatDecoder: Decoder[Chat] = io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 
-  final case class Message(role: Message.Role, content: Message.Content)
+  @newtype case class Message(value: types.Message)
+
   object Message {
-    implicit val messageCodec: Codec[Message] = io.circe.generic.extras.semiauto.deriveConfiguredCodec
-    @newtype case class Role(value: NonEmptyString)
-    object Role {
-      implicit val roleEq: Eq[Role] = deriving
+    implicit val messageEq: Eq[Message] = deriving
 
-      implicit val roleRender: Render[Role] = deriving
-      implicit val roleShow: Show[Role]     = deriving
+    implicit val messageShow: Show[Message] = deriving
 
-      implicit val roleEncoder: Encoder[Role] = deriving
-      implicit val roleDecoder: Decoder[Role] = deriving
-    }
-
-    @newtype case class Content(value: NonEmptyString)
-    object Content {
-      implicit val contentEq: Eq[Content] = deriving
-
-      implicit val contentRender: Render[Content] = deriving
-      implicit val contentShow: Show[Content]     = deriving
-
-      implicit val contentEncoder: Encoder[Content] = deriving
-      implicit val contentDecoder: Decoder[Content] = deriving
-    }
+    implicit val messageEncoder: Encoder[Message] = deriving
+    implicit val messageDecoder: Decoder[Message] = deriving
 
   }
 
   @newtype case class Temperature(value: NonNegDouble)
+
   object Temperature {
     implicit val temperatureEq: Eq[Temperature] = deriving
 
@@ -72,6 +57,7 @@ object Chat {
   }
 
   @newtype case class MaxTokens(value: PosInt)
+
   object MaxTokens {
     implicit val maxTokensEq: Eq[MaxTokens] = deriving
 

@@ -1,10 +1,10 @@
 package openai4s.request
 
 import extras.hedgehog.circe.RoundTripTester
-import extras.refinement.syntax.all._
-import extras.render.syntax._
-import hedgehog._
-import hedgehog.runner._
+import extras.refinement.syntax.all.*
+import extras.render.syntax.*
+import hedgehog.*
+import hedgehog.runner.*
 import io.circe.Json
 
 /** @author Kevin Lee
@@ -13,7 +13,7 @@ import io.circe.Json
 object ChatSpec extends Properties {
   override def tests: List[Prop] = List(
     property("round-trip test Chat", roundTripTestChat),
-    property("test decoding Chat", testDecodingChat),
+    property("test encoding Chat", testEncodingChat),
   )
 
   def roundTripTestChat: Property =
@@ -21,22 +21,22 @@ object ChatSpec extends Properties {
       chat <- Gens.genChat.log("chat")
     } yield RoundTripTester(chat).test()
 
-  def testDecodingChat: Property =
+  def testEncodingChat: Property =
     for {
       chat <- Gens.genChat.log("chat")
     } yield {
-      import io.circe.literal._
-      import io.circe.syntax._
+      import io.circe.literal.*
+      import io.circe.syntax.*
 
-      def messages(message: Chat.Message): Json =
+      def toJson(message: Chat.Message): Json =
         json"""{
-          "role": ${message.role.render},
-          "content": ${message.content.render}
+          "role": ${message.value.role.render},
+          "content": ${message.value.content.render}
         }"""
 
       val expected = json"""{
            "model": ${chat.model.render},
-           "messages": ${chat.messages.map(messages)},
+           "messages": ${chat.messages.map(toJson)},
            "temperature": ${chat.temperature.map(_.toValue)},
            "max_tokens": ${chat.maxTokens.map(_.toValue)}
          }""".deepDropNullValues
