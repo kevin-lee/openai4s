@@ -74,7 +74,7 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
       libs.newtype,
       libs.kittens,
     ) ++
-      libs.refined ++ libs.extra ++ libs.circeAll
+      libs.refined ++ libs.extra ++ libs.circeAll ++ libs.hedgehogExtra
   )
 
 lazy val coreJvm = core.jvm
@@ -134,6 +134,8 @@ lazy val props =
 
     val HedgehogVersion = "0.10.1"
 
+    val HedgehogExtraVersion = "0.3.0"
+
     val CatsVersion = "2.7.0"
 
     val CatsEffect2Version       = "2.4.1"
@@ -166,6 +168,11 @@ lazy val libs = new {
       hedgehogRunner,
       hedgehogSbt,
     ).map(_ % Test)
+
+
+  lazy val hedgehogExtraCore    = "io.kevinlee" %% "hedgehog-extra-core"    % props.HedgehogExtraVersion
+  lazy val hedgehogExtraRefined = "io.kevinlee" %% "hedgehog-extra-refined" % props.HedgehogExtraVersion
+  lazy val hedgehogExtra = List(hedgehogExtraCore, hedgehogExtraRefined).map(_ % Test)
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
 
