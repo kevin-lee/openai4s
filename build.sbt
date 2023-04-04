@@ -65,6 +65,8 @@ lazy val openai4s = (project in file("."))
   .aggregate(
     coreJvm,
     coreJs,
+    httpJvm,
+    httpJs,
   )
 
 lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
