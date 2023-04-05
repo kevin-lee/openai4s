@@ -65,6 +65,8 @@ lazy val openai4s = (project in file("."))
   .aggregate(
     coreJvm,
     coreJs,
+    configJvm,
+    configJs,
     httpJvm,
     httpJs,
   )
@@ -82,6 +84,21 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js.settings(jsSettingsForFuture)
 
+lazy val config    = module("config", crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    libraryDependencies ++= List(
+      libs.cats,
+      libs.newtype,
+      libs.kittens,
+    ) ++
+      libs.refined ++
+      libs.extra ++
+      libs.pureConfig ++
+      libs.hedgehogExtra
+  )
+lazy val configJvm = config.jvm
+lazy val configJs  = config.js.settings(jsSettingsForFuture)
+
 lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
   .settings(
     libraryDependencies ++=
@@ -90,7 +107,7 @@ lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
         libs.newtype,
       ) ++ libs.refined ++ libs.circeAll ++ libs.http4s
   )
-  .dependsOn(core)
+  .dependsOn(core, config)
 
 lazy val httpJvm = http.jvm
 lazy val httpJs  = http.js.settings(jsSettingsForFuture)
@@ -147,6 +164,7 @@ lazy val props =
     val ExtrasVersion = "0.38.0"
 
     val NewtypeVersion = "0.4.4"
+
     val RefinedVersion = "0.10.1"
 
     val KittensVersion = "3.0.0"
@@ -171,10 +189,9 @@ lazy val libs = new {
       hedgehogSbt,
     ).map(_ % Test)
 
-
   lazy val hedgehogExtraCore    = "io.kevinlee" %% "hedgehog-extra-core"    % props.HedgehogExtraVersion
   lazy val hedgehogExtraRefined = "io.kevinlee" %% "hedgehog-extra-refined" % props.HedgehogExtraVersion
-  lazy val hedgehogExtra = List(hedgehogExtraCore, hedgehogExtraRefined).map(_ % Test)
+  lazy val hedgehogExtra        = List(hedgehogExtraCore, hedgehogExtraRefined).map(_ % Test)
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
 
@@ -223,6 +240,13 @@ lazy val libs = new {
     "org.http4s" %% "http4s-ember-client" % props.Http4sVersion,
     "org.http4s" %% "http4s-circe"        % props.Http4sVersion,
     "org.http4s" %% "http4s-dsl"          % props.Http4sVersion,
+  )
+
+  lazy val pureConfig = List(
+    "com.github.pureconfig" %% "pureconfig"        % props.PureConfigVersion,
+    "com.github.pureconfig" %% "pureconfig-core"   % props.PureConfigVersion,
+    "com.github.pureconfig" %% "pureconfig-http4s" % props.PureConfigVersion,
+    "com.github.pureconfig" %% "pureconfig-ip4s"   % props.PureConfigVersion,
   )
 
 }
