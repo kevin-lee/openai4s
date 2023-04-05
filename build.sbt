@@ -84,18 +84,22 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
 lazy val coreJvm = core.jvm
 lazy val coreJs  = core.js.settings(jsSettingsForFuture)
 
-lazy val config    = module("config", crossProject(JVMPlatform, JSPlatform))
+lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
   .settings(
     libraryDependencies ++= List(
       libs.cats,
       libs.newtype,
       libs.kittens,
+      libs.typeLevelCaseInsensitive,
+      libs.http4sCore,
     ) ++
       libs.refined ++
       libs.extra ++
       libs.pureConfig ++
       libs.hedgehogExtra
   )
+  .dependsOn(core)
+
 lazy val configJvm = config.jvm
 lazy val configJs  = config.js.settings(jsSettingsForFuture)
 
@@ -165,6 +169,8 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
+    val TypeLevelCaseInsensitiveVersion = "1.3.0"
+
     val RefinedVersion = "0.10.1"
 
     val KittensVersion = "3.0.0"
@@ -220,6 +226,8 @@ lazy val libs = new {
     "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
   )
 
+  lazy val typeLevelCaseInsensitive = "org.typelevel" %% "case-insensitive" % props.TypeLevelCaseInsensitiveVersion
+
   lazy val circeCore          = "io.circe" %% "circe-core"           % props.CirceVersion
   lazy val circeGeneric       = "io.circe" %% "circe-generic"        % props.CirceVersion
   lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras" % props.CirceVersion
@@ -235,8 +243,9 @@ lazy val libs = new {
     circeLiteral % Test,
   )
 
-  lazy val http4s = List(
-    "org.http4s" %% "http4s-core"         % props.Http4sVersion,
+  lazy val http4sCore = "org.http4s" %% "http4s-core" % props.Http4sVersion
+  lazy val http4s     = List(
+    http4sCore,
     "org.http4s" %% "http4s-ember-client" % props.Http4sVersion,
     "org.http4s" %% "http4s-circe"        % props.Http4sVersion,
     "org.http4s" %% "http4s-dsl"          % props.Http4sVersion,
