@@ -42,6 +42,7 @@ object ChatSpec extends Properties {
          }""".deepDropNullValues
 
       val actual = chat.asJson
+      println(actual)
       actual ==== expected
     }
 }

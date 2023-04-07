@@ -1,14 +1,16 @@
 package openai4s.request
 
-import openai4s.types
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
+import eu.timepit.refined.api.{Refined, RefinedTypeOps}
 import eu.timepit.refined.cats.*
-import eu.timepit.refined.types.numeric.{NonNegDouble, PosInt}
+import eu.timepit.refined.numeric.*
+import eu.timepit.refined.types.numeric.*
 import io.circe.generic.extras.Configuration
 import io.circe.refined.*
 import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
+import openai4s.types
 import openai4s.types.Model
 
 /** @author Kevin Lee
@@ -45,9 +47,12 @@ object Chat {
 
   }
 
-  @newtype case class Temperature(value: NonNegDouble)
+  @newtype case class Temperature(value: Temperature.Value)
 
   object Temperature {
+    type Value = Float Refined Interval.Closed[0, 2]
+    object Value extends RefinedTypeOps.Numeric[Value, Float]
+
     implicit val temperatureEq: Eq[Temperature] = deriving
 
     implicit val temperatureShow: Show[Temperature] = deriving
