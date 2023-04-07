@@ -1,6 +1,7 @@
 package openai4s.config
 
 import eu.timepit.refined.types.numeric.PosInt
+import extras.render.syntax.*
 import hedgehog.*
 import hedgehog.extra.refined.StringGens
 import hedgehog.runner.*
@@ -16,14 +17,25 @@ object OpenAiConfigSpec extends Properties {
 
   def testOpenAiConfig: Property =
     for {
-      apiKeyString <- StringGens.genNonWhitespaceString(PosInt(20)).log("apiKey")
+      apiBaseUri   <- Gen
+                        .string(Gen.alphaNum, Range.linear(3, 10))
+                        .list(Range.linear(1, 4))
+                        .map(_.mkString("."))
+                        .map(apiBaseUri => ApiUri(ApiUri.BaseUri(ApiUri.BaseUri.Value.unsafeFrom(apiBaseUri))))
+                        .log("apiBaseUri")
+      apiKeyString <- StringGens
+                        .genNonWhitespaceString(PosInt(20))
+                        .log("apiKey")
     } yield {
       val apiKey   = ApiKey(apiKeyString)
-      val expected = OpenAiConfig(apiKey)
+      val expected = OpenAiConfig(apiBaseUri, apiKey)
 
       val configString =
-        s"""api-key = ${apiKeyString.value}
-           |""".stripMargin
+        raw"""api-uri {
+             |  base-uri: "${apiBaseUri.baseUri.render}"
+             |}
+             |api-key = "${apiKeyString.value}"
+             |""".stripMargin
 
       ConfigSource.string(configString).load[OpenAiConfig] match {
         case Right(actual) =>

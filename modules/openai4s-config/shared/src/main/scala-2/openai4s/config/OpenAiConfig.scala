@@ -9,7 +9,7 @@ import pureconfig.generic.semiauto.*
 /** @author Kevin Lee
   * @since 2023-04-04
   */
-final case class OpenAiConfig(apiKey: ApiKey)
+final case class OpenAiConfig(apiUri: ApiUri, apiKey: ApiKey)
 object OpenAiConfig {
   implicit val openAiConfigEq: Eq[OpenAiConfig] = Eq.fromUniversalEquals
 

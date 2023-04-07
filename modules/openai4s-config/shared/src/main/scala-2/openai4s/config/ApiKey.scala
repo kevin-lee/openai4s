@@ -4,8 +4,8 @@ import cats.syntax.all.*
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
-import org.http4s.headers.Authorization
-import org.http4s.{AuthScheme, Credentials, Request}
+import extras.render.Render
+import extras.render.refined.*
 
 /** @author Kevin Lee
   * @since 2023-04-04
@@ -27,13 +27,8 @@ object ApiKey {
 
   implicit val apiKeyEq: Eq[ApiKey] = Eq.by(_.value)
 
+  implicit val apiKeyRender: Render[ApiKey] = Render[NonEmptyString].contramap(_.value)
+
   implicit val apiKeyShow: Show[ApiKey] = _ => "***PROTECTED***"
 
-  implicit class ApiKeyOps(private val apiKey: ApiKey) extends AnyVal {
-
-    def setApiKeyHeader[F[*]](request: Request[F]): Request[F] =
-      request.putHeaders(
-        Authorization(Credentials.Token(AuthScheme.Bearer, apiKey.value.value))
-      )
-  }
 }
