@@ -1,7 +1,7 @@
 package openai4s.request
 
 import cats.data.NonEmptyList
-import eu.timepit.refined.types.numeric.{NonNegDouble, PosInt}
+import eu.timepit.refined.types.numeric.PosInt
 import hedgehog.*
 import openai4s.types
 
@@ -11,7 +11,7 @@ import openai4s.types
 object Gens {
 
   def genTemperature: Gen[Chat.Temperature] =
-    Gen.double(Range.linearFrac(0d, 200d)).map(d => Chat.Temperature(NonNegDouble.unsafeFrom(d)))
+    Gen.double(Range.linearFrac(0d, 2d)).map(d => Chat.Temperature(Chat.Temperature.Value.unsafeFrom(d.toFloat)))
 
   def genMaxTokens: Gen[Chat.MaxTokens] =
     Gen.int(Range.linear(1, 10000)).map(n => Chat.MaxTokens(PosInt.unsafeFrom(n)))
