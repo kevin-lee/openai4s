@@ -126,7 +126,6 @@ lazy val props =
 
     val Scala2Versions = List(
       "2.13.10",
-      "2.12.17",
     )
     val Scala2Version  = Scala2Versions.head
 
