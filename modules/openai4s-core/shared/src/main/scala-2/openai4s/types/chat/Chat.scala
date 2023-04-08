@@ -1,4 +1,4 @@
-package openai4s.chat
+package openai4s.types.chat
 
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
@@ -11,7 +11,6 @@ import io.circe.refined.*
 import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
 import openai4s.types
-import openai4s.types.Model
 
 /** @author Kevin Lee
   * @since 2023-03-24
@@ -50,7 +49,7 @@ object Chat {
   @newtype case class Temperature(value: Temperature.Value)
 
   object Temperature {
-    type Value = Float Refined Interval.Closed[0, 2]
+    type Value = Float Refined Interval.Closed[0f, 2f]
     object Value extends RefinedTypeOps.Numeric[Value, Float]
 
     implicit val temperatureEq: Eq[Temperature] = deriving

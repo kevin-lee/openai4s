@@ -1,4 +1,4 @@
-package openai4s.chat
+package openai4s.types.chat
 
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
@@ -10,7 +10,6 @@ import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
 import openai4s.types
-import openai4s.types.Model
 
 import java.time.Instant
 
