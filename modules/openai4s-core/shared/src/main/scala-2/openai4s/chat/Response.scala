@@ -1,4 +1,4 @@
-package openai4s.response
+package openai4s.chat
 
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*

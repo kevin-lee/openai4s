@@ -1,4 +1,4 @@
-package openai4s.request
+package openai4s.chat
 
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
