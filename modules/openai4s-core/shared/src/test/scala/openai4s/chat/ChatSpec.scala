@@ -1,4 +1,4 @@
-package openai4s.request
+package openai4s.chat
 
 import extras.hedgehog.circe.RoundTripTester
 import extras.refinement.syntax.all.*
@@ -18,12 +18,12 @@ object ChatSpec extends Properties {
 
   def roundTripTestChat: Property =
     for {
-      chat <- Gens.genChat.log("chat")
+      chat <- Gens.chat.genChat.log("chat")
     } yield RoundTripTester(chat).test()
 
   def testEncodingChat: Property =
     for {
-      chat <- Gens.genChat.log("chat")
+      chat <- Gens.chat.genChat.log("chat")
     } yield {
       import io.circe.literal.*
       import io.circe.syntax.*
@@ -42,7 +42,6 @@ object ChatSpec extends Properties {
          }""".deepDropNullValues
 
       val actual = chat.asJson
-      println(actual)
       actual ==== expected
     }
 }

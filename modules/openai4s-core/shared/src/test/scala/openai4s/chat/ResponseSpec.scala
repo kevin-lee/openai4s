@@ -1,4 +1,4 @@
-package openai4s.response
+package openai4s.chat
 
 import extras.hedgehog.circe.RoundTripTester
 import extras.render.syntax.*
@@ -17,13 +17,13 @@ object ResponseSpec extends Properties {
 
   def roundTripTestResponse: Property =
     for {
-      response <- Gens.genResponse.log("response")
+      response <- Gens.response.genResponse.log("response")
     } yield {
       RoundTripTester(response).test()
     }
 
   def testEncodingResponse: Property = for {
-    response <- Gens.genResponse.log("response")
+    response <- Gens.response.genResponse.log("response")
   } yield {
     import io.circe.literal.*
     import io.circe.syntax.*
