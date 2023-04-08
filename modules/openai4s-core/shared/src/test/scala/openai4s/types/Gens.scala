@@ -2,6 +2,7 @@ package openai4s.types
 
 import eu.timepit.refined.types.string.NonEmptyString
 import hedgehog.{Gen, Range}
+import openai4s.types.chat.Model
 
 /** @author Kevin Lee
   * @since 2023-04-02
@@ -16,9 +17,6 @@ object Gens {
       Model.gpt_4_32k_0314,
       Model.gpt_3_5_Turbo,
       Model.gpt_3_5_Turbo_0301,
-      Model.text_Davinci_003,
-      Model.text_Davinci_002,
-      Model.code_Davinci_002,
     )
 
   def genRole: Gen[Message.Role] =

@@ -6,6 +6,7 @@ import extras.render.syntax.*
 import hedgehog.*
 import hedgehog.runner.*
 import io.circe.Json
+import openai4s.types.chat.Chat
 
 /** @author Kevin Lee
   * @since 2023-04-02

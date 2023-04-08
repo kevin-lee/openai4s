@@ -7,6 +7,7 @@ import extras.refinement.syntax.all.*
 import hedgehog.*
 import hedgehog.extra.{NumGens, refined}
 import openai4s.types
+import openai4s.types.chat.{Chat, Response}
 
 import java.time.Instant
 
