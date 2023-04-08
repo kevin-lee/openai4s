@@ -67,8 +67,8 @@ lazy val openai4s = (project in file("."))
     coreJs,
     configJvm,
     configJs,
-    httpJvm,
-    httpJs,
+    http4sJvm,
+    http4sJs,
   )
 
 lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
@@ -103,7 +103,7 @@ lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
 lazy val configJvm = config.jvm
 lazy val configJs  = config.js.settings(jsSettingsForFuture)
 
-lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
+lazy val http4s = module("http4s", crossProject(JVMPlatform, JSPlatform))
   .settings(
     libraryDependencies ++=
       List(
@@ -113,8 +113,8 @@ lazy val http = module("http", crossProject(JVMPlatform, JSPlatform))
   )
   .dependsOn(core, config)
 
-lazy val httpJvm = http.jvm
-lazy val httpJs  = http.js.settings(jsSettingsForFuture)
+lazy val http4sJvm = http4s.jvm
+lazy val http4sJs  = http4s.js.settings(jsSettingsForFuture)
 
 lazy val props =
   new {
