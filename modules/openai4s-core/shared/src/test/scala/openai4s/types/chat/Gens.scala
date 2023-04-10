@@ -1,4 +1,4 @@
-package openai4s.chat
+package openai4s.types.chat
 
 import cats.data.NonEmptyList
 import eu.timepit.refined.types.numeric.PosInt
@@ -45,7 +45,7 @@ object Gens {
     def genId: Gen[Response.Id] = {
       refined
         .StringGens
-        .genNonWhitespaceString(PosInt(20))
+        .genNonEmptyString(Gen.alphaNum, PosInt(20))
         .list(Range.singleton(2))
         .map(_.reduce(_ ++ NonEmptyString("-") ++ _))
         .map(Response.Id(_))
@@ -54,7 +54,7 @@ object Gens {
     def genObject: Gen[Response.Object] =
       refined
         .StringGens
-        .genNonWhitespaceString(PosInt(10))
+        .genNonEmptyString(Gen.choice1(Gen.alphaNum, Gen.constant('.')), PosInt(10))
         .map(Response.Object(_))
 
     def genCreated: Gen[Response.Created] =

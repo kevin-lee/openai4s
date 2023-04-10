@@ -2,6 +2,7 @@ package openai4s.types.chat
 
 import cats.syntax.all.*
 import cats.{Eq, Show}
+import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
 import io.circe.{Codec, Decoder, Encoder}
@@ -46,7 +47,7 @@ object Model {
     case _ => s"Unknown model: $model".asLeft
   }
 
-  implicit val modelEq: Eq[Model] = Eq.fromUniversalEquals
+  implicit val modelEq: Eq[Model] = Eq[NonEmptyString].contramap(_.value)
 
   implicit val modelRender: Render[Model] = Render.render(_.value.value)
 
