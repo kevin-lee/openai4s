@@ -1,4 +1,4 @@
-package openai4s.chat
+package openai4s.types.chat
 
 import extras.hedgehog.circe.RoundTripTester
 import extras.render.syntax.*

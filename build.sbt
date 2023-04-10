@@ -69,6 +69,8 @@ lazy val openai4s = (project in file("."))
     configJs,
     http4sJvm,
     http4sJs,
+    apiJvm,
+    apiJs,
   )
 
 lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
@@ -78,7 +80,7 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
       libs.newtype,
       libs.kittens,
     ) ++
-      libs.refined ++ libs.extra ++ libs.circeAll ++ libs.hedgehogExtra
+      libs.refined ++ libs.extras ++ libs.circeAll ++ libs.hedgehogExtra
   )
 
 lazy val coreJvm = core.jvm
@@ -94,7 +96,7 @@ lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
       libs.http4sCore,
     ) ++
       libs.refined ++
-      libs.extra ++
+      libs.extras ++
       libs.pureConfig ++
       libs.hedgehogExtra
   )
@@ -109,12 +111,29 @@ lazy val http4s = module("http4s", crossProject(JVMPlatform, JSPlatform))
       List(
         libs.cats,
         libs.newtype,
-      ) ++ libs.refined ++ libs.circeAll ++ libs.http4s
+        libs.logback,
+        libs.pureconfigCatsEffect3 % Test,
+      ) ++ libs.refined ++ libs.circeAll ++ libs.http4s ++ libs.extras
   )
   .dependsOn(core, config)
 
 lazy val http4sJvm = http4s.jvm
 lazy val http4sJs  = http4s.js.settings(jsSettingsForFuture)
+
+lazy val api = module("api", crossProject(JVMPlatform, JSPlatform))
+  .settings(
+    libraryDependencies ++=
+      List(
+        libs.cats,
+        libs.newtype,
+        libs.logback,
+        libs.pureconfigCatsEffect3 % Test,
+      ) ++ libs.refined ++ libs.circeAll ++ libs.hedgehogExtra
+  )
+  .dependsOn(core % props.IncludeTest, config, http4s % props.IncludeTest)
+
+lazy val apiJvm = api.jvm
+lazy val apiJs  = api.js.settings(jsSettingsForFuture)
 
 lazy val props =
   new {
@@ -125,7 +144,7 @@ lazy val props =
     val RepoName       = "openai4s"
 
     val Scala2Versions = List(
-      "2.13.10",
+      "2.13.10"
     )
     val Scala2Version  = Scala2Versions.head
 
@@ -180,6 +199,8 @@ lazy val props =
 
     val CirceVersion = "0.14.3"
 
+    val LogbackVersion = "1.4.6"
+
   }
 
 lazy val libs = new {
@@ -211,7 +232,7 @@ lazy val libs = new {
 
   lazy val cats = "org.typelevel" %% "cats-core" % props.CatsVersion
 
-  lazy val extra = List(
+  lazy val extras = List(
     "io.kevinlee" %% "extras-render"                 % props.ExtrasVersion,
     "io.kevinlee" %% "extras-render-refined"         % props.ExtrasVersion,
     "io.kevinlee" %% "extras-cats"                   % props.ExtrasVersion,
@@ -221,6 +242,7 @@ lazy val libs = new {
     "io.kevinlee" %% "extras-hedgehog-circe"         % props.ExtrasVersion % Test,
     "io.kevinlee" %% "extras-refinement"             % props.ExtrasVersion,
     "io.kevinlee" %% "extras-type-info"              % props.ExtrasVersion,
+    "io.kevinlee" %% "extras-fs2-v3-text"            % props.ExtrasVersion,
     "io.kevinlee" %% "extras-testing-tools-cats"     % props.ExtrasVersion % Test,
     "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
   )
@@ -256,6 +278,11 @@ lazy val libs = new {
     "com.github.pureconfig" %% "pureconfig-http4s" % props.PureConfigVersion,
     "com.github.pureconfig" %% "pureconfig-ip4s"   % props.PureConfigVersion,
   )
+
+  lazy val pureconfigCatsEffect3 =
+    "com.github.pureconfig" %% "pureconfig-cats-effect" % props.PureConfigVersion
+
+  lazy val logback = "ch.qos.logback" % "logback-classic" % props.LogbackVersion
 
 }
 

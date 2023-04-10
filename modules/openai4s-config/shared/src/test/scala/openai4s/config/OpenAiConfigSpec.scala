@@ -24,8 +24,11 @@ object OpenAiConfigSpec extends Properties {
                         .map(apiBaseUri => ApiUri(ApiUri.BaseUri(ApiUri.BaseUri.Value.unsafeFrom(apiBaseUri))))
                         .log("apiBaseUri")
       apiKeyString <- StringGens
-                        .genNonWhitespaceString(PosInt(20))
-                        .log("apiKey")
+                        .genNonEmptyString(
+                          Gen.choice1(Gen.alphaNum, Gen.elementUnsafe("~!@#$%^&*()_+-=;:,.<>/?[]{}|".toList)),
+                          PosInt(20),
+                        )
+                        .log("apiKeyString")
     } yield {
       val apiKey   = ApiKey(apiKeyString)
       val expected = OpenAiConfig(apiBaseUri, apiKey)
