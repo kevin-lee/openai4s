@@ -1,13 +1,13 @@
 package openai4s.types
 
-import eu.timepit.refined.types.string.NonEmptyString
 import hedgehog.{Gen, Range}
+import openai4s.compat.TypesCompat
 import openai4s.types.chat.Model
 
 /** @author Kevin Lee
   * @since 2023-04-02
   */
-object Gens {
+object Gens extends TypesCompat {
 
   def genModel: Gen[Model] =
     Gen.element1(

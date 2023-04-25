@@ -1,25 +1,22 @@
 package openai4s.types.chat
 
 import cats.data.NonEmptyList
-import eu.timepit.refined.types.numeric.PosInt
-import eu.timepit.refined.types.string.NonEmptyString
-import extras.refinement.syntax.all.*
 import hedgehog.*
-import hedgehog.extra.{NumGens, refined}
+import hedgehog.extra.NumGens
+import openai4s.compat.TypesCompat
 import openai4s.types
-import openai4s.types.chat.{Chat, Response}
 
 import java.time.Instant
 
 /** @author Kevin Lee
   * @since 2023-04-02
   */
-object Gens {
+object Gens extends TypesCompat {
 
   object chat {
 
     def genTemperature: Gen[Chat.Temperature] =
-      Gen.double(Range.linearFrac(0d, 2d)).map(d => Chat.Temperature(Chat.Temperature.Value.unsafeFrom(d.toFloat)))
+      Gen.double(Range.linearFrac(0d, 2d)).map(d => Chat.Temperature.unsafeFrom(d.toFloat))
 
     def genMaxTokens: Gen[Chat.MaxTokens] =
       Gen.int(Range.linear(1, 10000)).map(n => Chat.MaxTokens(PosInt.unsafeFrom(n)))
@@ -43,18 +40,18 @@ object Gens {
 
     @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
     def genId: Gen[Response.Id] = {
-      refined
-        .StringGens
-        .genNonEmptyString(Gen.alphaNum, PosInt(20))
+      Gen
+        .string(Gen.alphaNum, Range.linear(1, 20))
+        .map(NonEmptyString.unsafeFrom)
         .list(Range.singleton(2))
         .map(_.reduce(_ ++ NonEmptyString("-") ++ _))
         .map(Response.Id(_))
     }
 
     def genObject: Gen[Response.Object] =
-      refined
-        .StringGens
-        .genNonEmptyString(Gen.choice1(Gen.alphaNum, Gen.constant('.')), PosInt(10))
+      Gen
+        .string(Gen.choice1(Gen.alphaNum, Gen.constant('.')), Range.linear(1, 10))
+        .map(NonEmptyString.unsafeFrom)
         .map(Response.Object(_))
 
     def genCreated: Gen[Response.Created] =

@@ -77,10 +77,12 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
   .settings(
     libraryDependencies ++= List(
       libs.cats,
-      libs.newtype,
-      libs.kittens,
+      libs.kittens(scalaVersion.value),
     ) ++
-      libs.refined ++ libs.extras ++ libs.circeAll ++ libs.hedgehogExtra
+      (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+      libs.refined(scalaVersion.value) ++ libs.extras(scalaVersion.value) ++ libs.circeAll(
+        scalaVersion.value
+      ) ++ libs.hedgehogExtra
   )
 
 lazy val coreJvm = core.jvm
@@ -88,19 +90,20 @@ lazy val coreJs  = core.js.settings(jsSettingsForFuture)
 
 lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
   .settings(
-    libraryDependencies ++= List(
-      libs.cats,
-      libs.newtype,
-      libs.kittens,
-      libs.typeLevelCaseInsensitive,
-      libs.http4sCore,
-    ) ++
-      libs.refined ++
-      libs.extras ++
-      libs.pureConfig ++
-      libs.hedgehogExtra
+    libraryDependencies ++=
+      List(
+        libs.cats,
+        libs.kittens(scalaVersion.value),
+        libs.typeLevelCaseInsensitive,
+        libs.http4sCore,
+      ) ++
+        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype, libs.pureconfig)) ++
+        libs.refined(scalaVersion.value) ++
+        libs.extras(scalaVersion.value) ++
+        libs.pureConfigAll ++
+        libs.hedgehogExtra
   )
-  .dependsOn(core)
+  .dependsOn(core % props.IncludeTest)
 
 lazy val configJvm = config.jvm
 lazy val configJs  = config.js.settings(jsSettingsForFuture)
@@ -110,10 +113,14 @@ lazy val http4s = module("http4s", crossProject(JVMPlatform, JSPlatform))
     libraryDependencies ++=
       List(
         libs.cats,
-        libs.newtype,
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
-      ) ++ libs.refined ++ libs.circeAll ++ libs.http4s ++ libs.extras
+      ) ++
+        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+        libs.refined(scalaVersion.value) ++
+        libs.circeAll(scalaVersion.value) ++
+        libs.http4s ++
+        libs.extras(scalaVersion.value)
   )
   .dependsOn(core, config)
 
@@ -125,10 +132,11 @@ lazy val api = module("api", crossProject(JVMPlatform, JSPlatform))
     libraryDependencies ++=
       List(
         libs.cats,
-        libs.newtype,
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
-      ) ++ libs.refined ++ libs.circeAll ++ libs.hedgehogExtra
+      ) ++
+        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+        libs.refined(scalaVersion.value) ++ libs.circeAll(scalaVersion.value) ++ libs.hedgehogExtra
   )
   .dependsOn(core % props.IncludeTest, config, http4s % props.IncludeTest)
 
@@ -148,11 +156,11 @@ lazy val props =
     )
     val Scala2Version  = Scala2Versions.head
 
-    val Scala3Version = "3.1.3"
+    val Scala3Version = "3.2.2"
 
 //    val ProjectScalaVersion = "2.13.10"
-    val ProjectScalaVersion = Scala2Version
-//    val ProjectScalaVersion = Scala3Version
+//    val ProjectScalaVersion = Scala2Version
+    val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 
@@ -175,9 +183,9 @@ lazy val props =
 
     val HedgehogVersion = "0.10.1"
 
-    val HedgehogExtraVersion = "0.3.0"
+    val HedgehogExtraVersion = "0.4.0"
 
-    val CatsVersion = "2.7.0"
+    val CatsVersion = "2.8.0"
 
     val CatsEffect2Version       = "2.4.1"
     val CatsEffect2LatestVersion = "2.5.4"
@@ -191,13 +199,16 @@ lazy val props =
 
     val RefinedVersion = "0.10.1"
 
-    val KittensVersion = "3.0.0"
+    val KittensVersion             = "3.0.0"
+    val KittensForScala3_1_Version = "3.0.0-M4"
 
     val Http4sVersion = "0.23.18"
 
-    val PureConfigVersion = "0.17.2"
+    val PureConfigVersion = "0.17.3"
 
     val CirceVersion = "0.14.3"
+
+    val CirceLatestVersion = "0.14.5"
 
     val LogbackVersion = "1.4.6"
 
@@ -221,48 +232,72 @@ lazy val libs = new {
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
 
-  lazy val refined = List(
-    "eu.timepit" %% "refined"            % props.RefinedVersion,
-    "eu.timepit" %% "refined-cats"       % props.RefinedVersion,
-    //    "eu.timepit" %% "refined-eval"            % props.RefinedVersion,
-    "eu.timepit" %% "refined-pureconfig" % props.RefinedVersion,
-  )
+  def refined(scalaVersion: String): List[ModuleID] =
+    (
+      if (isScala3(scalaVersion)) List.empty
+      else
+        List(
+          "eu.timepit" %% "refined"            % props.RefinedVersion,
+          "eu.timepit" %% "refined-cats"       % props.RefinedVersion,
+          //    "eu.timepit" %% "refined-eval"            % props.RefinedVersion,
+          "eu.timepit" %% "refined-pureconfig" % props.RefinedVersion,
+        )
+    )
 
-  lazy val kittens = "org.typelevel" %% "kittens" % props.KittensVersion
+  def kittens(scalaVersion: String) = {
+    val version =
+      if (scalaVersion.startsWith("3.1")) props.KittensForScala3_1_Version
+      else
+        props.KittensVersion
+
+    "org.typelevel" %% "kittens" % version
+  }
 
   lazy val cats = "org.typelevel" %% "cats-core" % props.CatsVersion
 
-  lazy val extras = List(
-    "io.kevinlee" %% "extras-render"                 % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-render-refined"         % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-cats"                   % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-circe"                  % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-scala-io"               % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-hedgehog-ce3"           % props.ExtrasVersion % Test,
-    "io.kevinlee" %% "extras-hedgehog-circe"         % props.ExtrasVersion % Test,
-    "io.kevinlee" %% "extras-refinement"             % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-type-info"              % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-fs2-v3-text"            % props.ExtrasVersion,
-    "io.kevinlee" %% "extras-testing-tools-cats"     % props.ExtrasVersion % Test,
-    "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
-  )
-
+  def extras(scalaVersion: String): List[ModuleID] = {
+    List(
+      "io.kevinlee" %% "extras-render"                 % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-cats"                   % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-circe"                  % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-scala-io"               % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-hedgehog-ce3"           % props.ExtrasVersion % Test,
+      "io.kevinlee" %% "extras-hedgehog-circe"         % props.ExtrasVersion % Test,
+      "io.kevinlee" %% "extras-type-info"              % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-fs2-v3-text"            % props.ExtrasVersion,
+      "io.kevinlee" %% "extras-testing-tools-cats"     % props.ExtrasVersion % Test,
+      "io.kevinlee" %% "extras-testing-tools-effectie" % props.ExtrasVersion % Test,
+    ) ++ (if (isScala3(scalaVersion)) List.empty
+          else
+            List(
+              "io.kevinlee" %% "extras-refinement"     % props.ExtrasVersion,
+              "io.kevinlee" %% "extras-render-refined" % props.ExtrasVersion,
+            ))
+  }
   lazy val typeLevelCaseInsensitive = "org.typelevel" %% "case-insensitive" % props.TypeLevelCaseInsensitiveVersion
 
-  lazy val circeCore          = "io.circe" %% "circe-core"           % props.CirceVersion
-  lazy val circeGeneric       = "io.circe" %% "circe-generic"        % props.CirceVersion
-  lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras" % props.CirceVersion
-  lazy val circeParser        = "io.circe" %% "circe-parser"         % props.CirceVersion
-  lazy val circeLiteral       = "io.circe" %% "circe-literal"        % props.CirceVersion
-  lazy val circeRefined       = "io.circe" %% "circe-refined"        % props.CirceVersion
-  lazy val circeAll           = List(
-    circeCore,
-    circeGeneric,
-    circeGenericExtras,
-    circeRefined,
-    circeParser  % Test,
-    circeLiteral % Test,
-  )
+  lazy val circeCore          = "io.circe" %% "circe-core"
+  lazy val circeGeneric       = "io.circe" %% "circe-generic"
+  lazy val circeGenericExtras = "io.circe" %% "circe-generic-extras"
+  lazy val circeParser        = "io.circe" %% "circe-parser"
+  lazy val circeLiteral       = "io.circe" %% "circe-literal"
+  lazy val circeRefined       = "io.circe" %% "circe-refined"
+
+  def circeAll(scalaVersion: String): List[ModuleID] = {
+    val circeVersion = if (isScala3(scalaVersion)) props.CirceLatestVersion else props.CirceVersion
+
+    List(
+      circeCore    % circeVersion,
+      circeGeneric % circeVersion,
+      circeParser  % circeVersion % Test,
+      circeLiteral % circeVersion % Test,
+    ) ++ (if (isScala3(scalaVersion)) List.empty
+          else
+            List(
+              circeGenericExtras % circeVersion,
+              circeRefined       % circeVersion,
+            ))
+  }
 
   lazy val http4sCore = "org.http4s" %% "http4s-core" % props.Http4sVersion
   lazy val http4s     = List(
@@ -272,12 +307,13 @@ lazy val libs = new {
     "org.http4s" %% "http4s-dsl"          % props.Http4sVersion,
   )
 
-  lazy val pureConfig = List(
-    "com.github.pureconfig" %% "pureconfig"        % props.PureConfigVersion,
+  lazy val pureConfigAll = List(
     "com.github.pureconfig" %% "pureconfig-core"   % props.PureConfigVersion,
     "com.github.pureconfig" %% "pureconfig-http4s" % props.PureConfigVersion,
     "com.github.pureconfig" %% "pureconfig-ip4s"   % props.PureConfigVersion,
   )
+
+  lazy val pureconfig = "com.github.pureconfig" %% "pureconfig" % props.PureConfigVersion
 
   lazy val pureconfigCatsEffect3 =
     "com.github.pureconfig" %% "pureconfig-cats-effect" % props.PureConfigVersion
@@ -346,6 +382,16 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
           true
       }),
       /* } coverage */
+
+      scalacOptions ~= (_.filterNot(_.startsWith("-language"))),
+      scalacOptions ++= List(
+        "-language:dynamics",
+        "-language:existentials",
+        "-language:higherKinds",
+        "-language:reflectiveCalls",
+        "-language:experimental.macros",
+        "-language:implicitConversions",
+      ),
     )
     .settings(mavenCentralPublishSettings)
 }

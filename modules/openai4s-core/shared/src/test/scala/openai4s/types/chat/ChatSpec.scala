@@ -1,17 +1,17 @@
 package openai4s.types.chat
 
 import extras.hedgehog.circe.RoundTripTester
-import extras.refinement.syntax.all.*
 import extras.render.syntax.*
 import hedgehog.*
 import hedgehog.runner.*
 import io.circe.Json
+import openai4s.compat.TypesCompat
 import openai4s.types.chat.Chat
 
 /** @author Kevin Lee
   * @since 2023-04-02
   */
-object ChatSpec extends Properties {
+object ChatSpec extends Properties with TypesCompat {
   override def tests: List[Prop] = List(
     property("round-trip test Chat", roundTripTestChat),
     property("test encoding Chat", testEncodingChat),
@@ -38,7 +38,7 @@ object ChatSpec extends Properties {
       val expected = json"""{
            "model": ${chat.model.render},
            "messages": ${chat.messages.map(toJson)},
-           "temperature": ${chat.temperature.map(_.toValue)},
+           "temperature": ${chat.temperature.map(_.value)},
            "max_tokens": ${chat.maxTokens.map(_.toValue)}
          }""".deepDropNullValues
 

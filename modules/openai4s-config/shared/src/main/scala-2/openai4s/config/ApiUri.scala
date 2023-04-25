@@ -1,16 +1,15 @@
 package openai4s.config
 
 import cats.{Eq, Show}
-import eu.timepit.refined.api.{Refined, RefinedTypeOps}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.pureconfig.*
-import eu.timepit.refined.string.Uri
 import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
 import extras.render.refined.*
 import extras.render.syntax.*
 import io.estatico.newtype.macros.newtype
 import pureconfig.ConfigReader
+import refined4s.strings.Uri
 
 /** @author Kevin Lee
   * @since 2023-04-07
@@ -28,10 +27,8 @@ object ApiUri {
       NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/chat/completions")
   }
 
-  @newtype case class BaseUri(value: BaseUri.Value)
+  @newtype case class BaseUri(value: Uri)
   object BaseUri {
-    type Value = String Refined Uri
-    object Value extends RefinedTypeOps[Value, String]
 
     implicit val baseUriEq: Eq[BaseUri] = deriving
 
