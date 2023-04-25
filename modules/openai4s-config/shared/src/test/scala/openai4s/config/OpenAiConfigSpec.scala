@@ -1,16 +1,15 @@
 package openai4s.config
 
-import eu.timepit.refined.types.numeric.PosInt
 import extras.render.syntax.*
 import hedgehog.*
-import hedgehog.extra.refined.StringGens
 import hedgehog.runner.*
+import openai4s.compat.TypesCompat
 import pureconfig.ConfigSource
 
 /** @author Kevin Lee
   * @since 2023-04-04
   */
-object OpenAiConfigSpec extends Properties {
+object OpenAiConfigSpec extends Properties with TypesCompat {
   override def tests: List[Test] = List(
     property("test loading OpenAiConfig", testOpenAiConfig)
   )
@@ -21,13 +20,14 @@ object OpenAiConfigSpec extends Properties {
                         .string(Gen.alphaNum, Range.linear(3, 10))
                         .list(Range.linear(1, 4))
                         .map(_.mkString("."))
-                        .map(apiBaseUri => ApiUri(ApiUri.BaseUri(ApiUri.BaseUri.Value.unsafeFrom(apiBaseUri))))
+                        .map(apiBaseUri => ApiUri(ApiUri.BaseUri(Uri.unsafeFrom(apiBaseUri))))
                         .log("apiBaseUri")
-      apiKeyString <- StringGens
-                        .genNonEmptyString(
+      apiKeyString <- Gen
+                        .string(
                           Gen.choice1(Gen.alphaNum, Gen.elementUnsafe("~!@#$%^&*()_+-=;:,.<>/?[]{}|".toList)),
-                          PosInt(20),
+                          Range.linear(1, 20),
                         )
+                        .map(NonEmptyString.unsafeFrom)
                         .log("apiKeyString")
     } yield {
       val apiKey   = ApiKey(apiKeyString)

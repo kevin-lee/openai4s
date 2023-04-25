@@ -9,24 +9,22 @@ import org.http4s.*
 import scala.annotation.tailrec
 
 @SuppressWarnings(Array("org.wartremover.warts.Null"))
-sealed abstract class HttpError[F[*]](request: Request[F], cause: Option[Exception])
+enum HttpError[F[*]](request: Request[F], cause: Option[Exception])
     extends Exception(
       s"Error when sending request - ${request.method.name} ${request.uri.renderString}",
       cause.orNull,
-    )
+    ) {
+  case ConnectionError(request: Request[F], cause: Exception) extends HttpError[F](request, cause.some)
+
+  case ResponseError(request: Request[F], cause: Exception) extends HttpError[F](request, cause.some)
+
+  case DecodingError(request: Request[F], cause: DecodeFailure) extends HttpError[F](request, cause.some)
+
+  case UnexpectedStatus(request: Request[F], status: Status, body: Option[String]) extends HttpError[F](request, none)
+
+}
 
 object HttpError {
-
-  final case class ConnectionError[F[*]](request: Request[F], cause: Exception)
-      extends HttpError[F](request, cause.some)
-
-  final case class ResponseError[F[*]](request: Request[F], cause: Exception) extends HttpError[F](request, cause.some)
-
-  final case class DecodingError[F[*]](request: Request[F], cause: DecodeFailure)
-      extends HttpError[F](request, cause.some)
-
-  final case class UnexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String])
-      extends HttpError[F](request, none)
 
   def connectionError[F[*]](request: Request[F], cause: Exception): HttpError[F] = ConnectionError(request, cause)
 

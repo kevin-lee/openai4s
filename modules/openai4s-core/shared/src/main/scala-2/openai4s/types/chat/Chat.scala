@@ -2,6 +2,7 @@ package openai4s.types.chat
 
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
+import cats.syntax.all.*
 import eu.timepit.refined.api.{Refined, RefinedTypeOps}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.numeric.*
@@ -46,18 +47,16 @@ object Chat {
 
   }
 
-  @newtype case class Temperature(value: Temperature.Value)
+  type Temperature = Float Refined Interval.Closed[0f, 2f]
 
-  object Temperature {
-    type Value = Float Refined Interval.Closed[0f, 2f]
-    object Value extends RefinedTypeOps.Numeric[Value, Float]
+  object Temperature extends RefinedTypeOps.Numeric[Temperature, Float] {
 
-    implicit val temperatureEq: Eq[Temperature] = deriving
+    implicit val temperatureEq: Eq[Temperature] = Eq.fromUniversalEquals
 
-    implicit val temperatureShow: Show[Temperature] = deriving
+    implicit val temperatureShow: Show[Temperature] = Show.catsShowForFloat.contramap(_.value)
 
-    implicit val temperatureEncoder: Encoder[Temperature] = deriving
-    implicit val temperatureDecoder: Decoder[Temperature] = deriving
+    implicit val temperatureEncoder: Encoder[Temperature] = Encoder.encodeFloat.contramap(_.value)
+    implicit val temperatureDecoder: Decoder[Temperature] = Decoder.decodeFloat.emap(from)
   }
 
   @newtype case class MaxTokens(value: PosInt)
