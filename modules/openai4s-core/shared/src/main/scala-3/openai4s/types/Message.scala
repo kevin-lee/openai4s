@@ -6,6 +6,7 @@ import io.circe.derivation.Configuration
 import io.circe.derivation.*
 import io.circe.*
 import io.circe.{Codec, Decoder, Encoder}
+import newtype4s.Newtype
 import refined4s.strings.NonEmptyString
 
 /** @author Kevin Lee
@@ -21,16 +22,8 @@ object Message {
 
   given messageCodec: Codec[Message] = ConfiguredCodec.derived
 
-  type Role = Role.Role
-  object Role {
-    opaque type Role = NonEmptyString
-    def apply(role: NonEmptyString): Role = role
-
-    given roleCanEqual: CanEqual[Role, Role] = CanEqual.derived
-
-    extension (role: Role) {
-      def value: NonEmptyString = role
-    }
+  type Role = Role.Type
+  object Role extends Newtype[NonEmptyString] {
 
     given roleEq: Eq[Role] = Eq.fromUniversalEquals
 
@@ -41,16 +34,8 @@ object Message {
     given roleDecoder: Decoder[Role] = Decoder[String].emap(NonEmptyString.from).map(Role(_))
   }
 
-  type Content = Content.Content
-  object Content {
-    opaque type Content = NonEmptyString
-    def apply(content: NonEmptyString): Content = content
-
-    given contentCanEqual: CanEqual[Content, Content] = CanEqual.derived
-
-    extension (content: Content) {
-      def value: NonEmptyString = content
-    }
+  type Content = Content.Type
+  object Content extends Newtype[NonEmptyString] {
 
     given contentEq: Eq[Content] = Eq.fromUniversalEquals
 
