@@ -6,6 +6,7 @@ import cats.syntax.all.*
 import io.circe.derivation.*
 import io.circe.*
 import io.circe.{Decoder, Encoder}
+import newtype4s.Newtype
 import openai4s.types
 import refined4s.Refined
 import refined4s.numeric.PosInt
@@ -33,17 +34,8 @@ object Chat {
 
   given chatDecoder: Decoder[Chat] = ConfiguredDecoder.derived
 
-  type Message = Message.Message
-  object Message {
-    opaque type Message = types.Message
-    def apply(message: types.Message): Message = message
-
-    given messageCanEqual: CanEqual[Message, Message] = CanEqual.derived
-
-    extension (message: Message) {
-      def value: types.Message = message
-    }
-
+  type Message = Message.Type
+  object Message extends Newtype[types.Message] {
     given messageEq: Eq[Message] = Eq.fromUniversalEquals
 
     given messageShow: Show[Message] = Show.show(_.value.show)
@@ -69,23 +61,17 @@ object Chat {
     given temperatureDecoder: Decoder[Temperature] = Decoder[Float].emap(from)
   }
 
-  type MaxTokens = MaxTokens.MaxTokens
-  object MaxTokens {
-    opaque type MaxTokens = PosInt
-    def apply(maxTokens: PosInt): MaxTokens = maxTokens
-
-    given maxTokensCanEqual: CanEqual[MaxTokens, MaxTokens] = CanEqual.derived
-
+  type MaxTokens = MaxTokens.Type
+  object MaxTokens extends Newtype[PosInt] {
     extension (maxTokens: MaxTokens) {
-      def value: PosInt = maxTokens
-      def toValue: Int  = value
+      def toValue: Int  = maxTokens.value.value
     }
 
     given maxTokensEq: Eq[MaxTokens] = Eq.fromUniversalEquals
 
-    given maxTokensShow: Show[MaxTokens] = Show[Int].contramap(_.value)
+    given maxTokensShow: Show[MaxTokens] = Show[Int].contramap(_.toValue)
 
-    given maxTokensEncoder: Encoder[MaxTokens] = Encoder[Int].contramap(_.value)
+    given maxTokensEncoder: Encoder[MaxTokens] = Encoder[Int].contramap(_.toValue)
     given maxTokensDecoder: Decoder[MaxTokens] = Decoder[Int].emap(PosInt.from).map(MaxTokens(_))
   }
 

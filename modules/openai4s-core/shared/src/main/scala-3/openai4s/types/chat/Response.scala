@@ -1,13 +1,13 @@
 package openai4s.types.chat
 
-import cats.{Eq, Show}
 import cats.syntax.all.*
-import refined4s.strings.NonEmptyString
+import cats.{Eq, Show}
 import extras.render.Render
 import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, ConfiguredEncoder}
 import io.circe.*
-import io.circe.{Codec, Decoder, Encoder}
+import newtype4s.Newtype
 import openai4s.types
+import refined4s.strings.NonEmptyString
 
 import java.time.Instant
 
@@ -30,54 +30,37 @@ object Response {
 
   implicit val responseShow: Show[Response] = cats.derived.semiauto.show
 
-  type Id = Id.Id
-  object Id {
-    opaque type Id = NonEmptyString
-    def apply(id: NonEmptyString): Id = id
-
-    given idCanEqual: CanEqual[Id, Id] = CanEqual.derived
-
+  type Id = Id.Type
+  object Id extends Newtype[NonEmptyString] {
     extension (id: Id) {
-      def value: NonEmptyString = id
+      def toValue: String = id.value.value
     }
+
     implicit val idEq: Eq[Id] = Eq.fromUniversalEquals
 
-    implicit val idRender: Render[Id] = Render[String].contramap(_.value)
-    implicit val idShow: Show[Id]     = Show[String].contramap(_.value)
+    implicit val idRender: Render[Id] = Render[String].contramap(_.toValue)
+    implicit val idShow: Show[Id]     = Show[String].contramap(_.toValue)
 
-    implicit val idEncoder: Encoder[Id] = Encoder[String].contramap(_.value)
-    implicit val idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from)
+    implicit val idEncoder: Encoder[Id] = Encoder[String].contramap(_.toValue)
+    implicit val idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from).map(Id(_))
   }
 
-  type Object = Object.Object
-  object Object {
-    opaque type Object = NonEmptyString
-    def apply(obj: NonEmptyString): Object = obj
-
-    given objectCanEqual: CanEqual[Object, Object] = CanEqual.derived
-
+  type Object = Object.Type
+  object Object extends Newtype[NonEmptyString] {
     extension (obj: Object) {
-      def value: NonEmptyString = obj
+      def toValue: String = obj.value.value
     }
     given objectEq: Eq[Object] = Eq.fromUniversalEquals
 
-    given objectRender: Render[Object] = Render[String].contramap(_.value)
-    given objectShow: Show[Object]     = Show[String].contramap(_.value)
+    given objectRender: Render[Object] = Render[String].contramap(_.toValue)
+    given objectShow: Show[Object]     = Show[String].contramap(_.toValue)
 
-    given objectEncoder: Encoder[Object] = Encoder[String].contramap(_.value)
-    given objectDecoder: Decoder[Object] = Decoder[String].emap(NonEmptyString.from)
+    given objectEncoder: Encoder[Object] = Encoder[String].contramap(_.toValue)
+    given objectDecoder: Decoder[Object] = Decoder[String].emap(NonEmptyString.from).map(Object(_))
   }
 
-  type Created = Created.Created
-  object Created {
-    opaque type Created = Instant
-    def apply(created: Instant): Created = created
-
-    given createdCanEqual: CanEqual[Created, Created] = CanEqual.derived
-
-    extension (created: Created) {
-      def value: Instant = created
-    }
+  type Created = Created.Type
+  object Created extends Newtype[Instant] {
 
     given createdEq: Eq[Created] = Eq.fromUniversalEquals
 
@@ -100,16 +83,8 @@ object Response {
 
     given usageCodec: Codec[Usage] = ConfiguredCodec.derived
 
-    type PromptTokens = PromptTokens.PromptTokens
-    object PromptTokens {
-      opaque type PromptTokens = Int
-      def apply(promptTokens: Int): PromptTokens = promptTokens
-
-      given promptTokensCanEqual: CanEqual[PromptTokens, PromptTokens] = CanEqual.derived
-
-      extension (promptTokens: PromptTokens) {
-        def value: Int = promptTokens
-      }
+    type PromptTokens = PromptTokens.Type
+    object PromptTokens extends Newtype[Int] {
 
       given promptTokensEq: Eq[PromptTokens] = Eq.fromUniversalEquals
 
@@ -120,16 +95,8 @@ object Response {
       given promptTokensDecoder: Decoder[PromptTokens] = Decoder.decodeInt.map(PromptTokens(_))
     }
 
-    type CompletionTokens = CompletionTokens.CompletionTokens
-    object CompletionTokens {
-      opaque type CompletionTokens = Int
-      def apply(completionTokens: Int): CompletionTokens = completionTokens
-
-      given completionTokensCanEqual: CanEqual[CompletionTokens, CompletionTokens] = CanEqual.derived
-
-      extension (completionTokens: CompletionTokens) {
-        def value: Int = completionTokens
-      }
+    type CompletionTokens = CompletionTokens.Type
+    object CompletionTokens extends Newtype[Int] {
 
       given completionTokensEq: Eq[CompletionTokens] = Eq.fromUniversalEquals
 
@@ -140,16 +107,8 @@ object Response {
       given completionTokensDecoder: Decoder[CompletionTokens] = Decoder.decodeInt.map(CompletionTokens(_))
     }
 
-    type TotalTokens = TotalTokens.TotalTokens
-    object TotalTokens {
-      opaque type TotalTokens = Int
-      def apply(totalTokens: Int): TotalTokens = totalTokens
-
-      given totalTokensCanEqual: CanEqual[TotalTokens, TotalTokens] = CanEqual.derived
-
-      extension (totalTokens: TotalTokens) {
-        def value: Int = totalTokens
-      }
+    type TotalTokens = TotalTokens.Type
+    object TotalTokens extends Newtype[Int] {
       given totalTokensEq: Eq[TotalTokens] = Eq.fromUniversalEquals
 
       given totalTokensShow: Show[TotalTokens]     = Show.catsShowForInt.contramap(_.value)
@@ -169,61 +128,37 @@ object Response {
 
     given choiceCodec: Codec[Choice] = ConfiguredCodec.derived
 
-    type Message = Message.Message
-    object Message {
-      opaque type Message = types.Message
-      def apply(message: types.Message): Message = message
+    type Message = Message.Type
+    object Message extends Newtype[types.Message] {
+      given messageEq: Eq[Message] = Eq.by(_.value)
 
-      given messageCanEqual: CanEqual[Message, Message] = CanEqual.derived
+      given messageShow: Show[Message] = types.Message.messageShow.contramap(_.value)
 
-      extension (message: Message) {
-        def value: types.Message = message
-      }
-
-      given messageEq: Eq[Message] = types.Message.messageEq
-
-      given messageShow: Show[Message] = types.Message.messageShow
-
-      given messageCodec: Codec[Message] = types.Message.messageCodec
+      given messageCodec: Codec[Message] =
+        types.Message.messageCodec.iemap[Message](Message(_).asRight)(_.value)
 
     }
 
-    type FinishReason = FinishReason.FinishReason
-    object FinishReason {
-      opaque type FinishReason = String
-      def apply(finishReason: String): FinishReason = finishReason
-
-      given finishReasonCanEqual: CanEqual[FinishReason, FinishReason] = CanEqual.derived
-
-      extension (finishReason: FinishReason) {
-        def value: String = finishReason
-      }
+    type FinishReason = FinishReason.Type
+    object FinishReason extends Newtype[String] {
       given finishReasonEq: Eq[FinishReason] = Eq.fromUniversalEquals
 
-      given finishReasonShow: Show[FinishReason]     = Show.catsShowForString
-      given finishReasonRender: Render[FinishReason] = Render.stringRender
+      given finishReasonShow: Show[FinishReason]     = Show.catsShowForString.contramap(_.value)
+      given finishReasonRender: Render[FinishReason] = Render.stringRender.contramap(_.value)
 
-      given finishReasonEncoder: Encoder[FinishReason] = Encoder.encodeString
-      given finishReasonDecoder: Decoder[FinishReason] = Decoder.decodeString
+      given finishReasonEncoder: Encoder[FinishReason] = Encoder.encodeString.contramap(_.value)
+      given finishReasonDecoder: Decoder[FinishReason] = Decoder.decodeString.map(FinishReason(_))
     }
 
-    type Index = Index.Index
-    object Index {
-      opaque type Index = Int
-      def apply(index: Int): Index = index
-
-      given indexCanEqual: CanEqual[Index, Index] = CanEqual.derived
-
-      extension (index: Index) {
-        def value: Int = index
-      }
+    type Index = Index.Type
+    object Index extends Newtype[Int] {
       given indexEq: Eq[Index] = Eq.fromUniversalEquals
 
-      given indexShow: Show[Index]     = Show.catsShowForInt
-      given indexRender: Render[Index] = Render.intRender
+      given indexShow: Show[Index]     = Show.catsShowForInt.contramap(_.value)
+      given indexRender: Render[Index] = Render.intRender.contramap(_.value)
 
-      given indexEncoder: Encoder[Index] = Encoder.encodeInt
-      given indexDecoder: Decoder[Index] = Decoder.decodeInt
+      given indexEncoder: Encoder[Index] = Encoder.encodeInt.contramap(_.value)
+      given indexDecoder: Decoder[Index] = Decoder.decodeInt.map(Index(_))
     }
 
   }
