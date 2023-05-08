@@ -159,8 +159,8 @@ lazy val props =
     val Scala3Version = "3.2.2"
 
 //    val ProjectScalaVersion = "2.13.10"
-//    val ProjectScalaVersion = Scala2Version
-    val ProjectScalaVersion = Scala3Version
+    val ProjectScalaVersion = Scala2Version
+//    val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
 

@@ -6,13 +6,12 @@ import hedgehog.*
 import hedgehog.runner.*
 import io.circe.Json
 import openai4s.compat.TypesCompat
-import openai4s.types.chat.Chat
 
 /** @author Kevin Lee
   * @since 2023-04-02
   */
 object ChatSpec extends Properties with TypesCompat {
-  override def tests: List[Prop] = List(
+  override def tests: List[Test] = List(
     property("round-trip test Chat", roundTripTestChat),
     property("test encoding Chat", testEncodingChat),
   )

@@ -10,6 +10,9 @@ trait TypesCompat extends extras.refinement.syntax.all {
   type PosInt = eu.timepit.refined.types.numeric.PosInt
   val PosInt = eu.timepit.refined.types.numeric.PosInt
 
+  type NonNegFloat = eu.timepit.refined.types.numeric.NonNegFloat
+  val NonNegFloat = eu.timepit.refined.types.numeric.NonNegFloat
+
   type NonEmptyString = eu.timepit.refined.types.string.NonEmptyString
   val NonEmptyString = eu.timepit.refined.types.string.NonEmptyString
 

@@ -13,6 +13,16 @@ import java.time.Instant
   */
 object Gens extends TypesCompat {
 
+  def genModel: Gen[Model] =
+    Gen.element1(
+      Model.gpt_4,
+      Model.gpt_4_0314,
+      Model.gpt_4_32k,
+      Model.gpt_4_32k_0314,
+      Model.gpt_3_5_Turbo,
+      Model.gpt_3_5_Turbo_0301,
+    )
+
   object chat {
 
     def genTemperature: Gen[Chat.Temperature] =
@@ -23,9 +33,13 @@ object Gens extends TypesCompat {
 
     def genChat: Gen[Chat] =
       for {
-        model       <- types.Gens.genModel
-        messages    <-
-          types.Gens.genMessage.map(Chat.Message(_)).list(Range.linear(1, 10)).map(NonEmptyList.fromListUnsafe)
+        model       <- Gens.genModel
+        messages    <- types
+                         .Gens
+                         .genMessage
+                         .map(Chat.Message(_))
+                         .list(Range.linear(1, 10))
+                         .map(NonEmptyList.fromListUnsafe)
         temperature <- genTemperature.option
         maxTokens   <- genMaxTokens.option
       } yield Chat(
@@ -94,7 +108,7 @@ object Gens extends TypesCompat {
         id      <- genId
         obj     <- genObject
         created <- genCreated
-        model   <- types.Gens.genModel
+        model   <- Gens.genModel
         usage   <- genUsage
         choices <- genMessageAndFinishReason
                      .list(Range.linear(1, 10))
