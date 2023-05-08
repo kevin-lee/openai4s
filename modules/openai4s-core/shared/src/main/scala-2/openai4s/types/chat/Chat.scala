@@ -48,7 +48,6 @@ object Chat {
   }
 
   type Temperature = Float Refined Interval.Closed[0f, 2f]
-
   object Temperature extends RefinedTypeOps.Numeric[Temperature, Float] {
 
     implicit val temperatureEq: Eq[Temperature] = Eq.fromUniversalEquals
@@ -60,7 +59,6 @@ object Chat {
   }
 
   @newtype case class MaxTokens(value: PosInt)
-
   object MaxTokens {
     implicit val maxTokensEq: Eq[MaxTokens] = deriving
 

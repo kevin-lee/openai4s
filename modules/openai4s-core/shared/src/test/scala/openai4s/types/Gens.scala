@@ -2,22 +2,11 @@ package openai4s.types
 
 import hedgehog.{Gen, Range}
 import openai4s.compat.TypesCompat
-import openai4s.types.chat.Model
 
 /** @author Kevin Lee
   * @since 2023-04-02
   */
 object Gens extends TypesCompat {
-
-  def genModel: Gen[Model] =
-    Gen.element1(
-      Model.gpt_4,
-      Model.gpt_4_0314,
-      Model.gpt_4_32k,
-      Model.gpt_4_32k_0314,
-      Model.gpt_3_5_Turbo,
-      Model.gpt_3_5_Turbo_0301,
-    )
 
   def genRole: Gen[Message.Role] =
     Gen
