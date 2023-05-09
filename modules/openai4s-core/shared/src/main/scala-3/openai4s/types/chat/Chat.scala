@@ -64,7 +64,7 @@ object Chat {
   type MaxTokens = MaxTokens.Type
   object MaxTokens extends Newtype[PosInt] {
     extension (maxTokens: MaxTokens) {
-      def toValue: Int  = maxTokens.value.value
+      def toValue: Int = maxTokens.value.value
     }
 
     given maxTokensEq: Eq[MaxTokens] = Eq.fromUniversalEquals
