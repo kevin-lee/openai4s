@@ -29,7 +29,6 @@ object Chat {
   @SuppressWarnings(Array("org.wartremover.warts.Equals", "org.wartremover.warts.FinalVal"))
   given chatShow: Show[Chat] = cats.derived.semiauto.show
 
-  Codec.AsObject
   given chatEncoder: Encoder[Chat] = ConfiguredEncoder.derived[Chat].mapJson(_.deepDropNullValues)
 
   given chatDecoder: Decoder[Chat] = ConfiguredDecoder.derived

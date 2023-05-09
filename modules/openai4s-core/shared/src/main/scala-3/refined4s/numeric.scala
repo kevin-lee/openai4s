@@ -12,4 +12,12 @@ object numeric {
 
     inline override def predicate(a: Int): Boolean = a > 0
   }
+
+  type NonNegFloat = NonNegFloat.Type
+  object NonNegFloat extends Refined[Float] {
+    override def invalidReason(a: Float): String =
+      "It should be a non-negative Float but got [" + a + "]"
+
+    override def predicate(a: Float): Boolean = a >= 0f
+  }
 }
