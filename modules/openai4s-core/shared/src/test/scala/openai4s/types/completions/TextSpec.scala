@@ -1,12 +1,11 @@
 package openai4s.types.completions
 
+import cats.syntax.all.*
 import extras.hedgehog.circe.RoundTripTester
+import extras.render.syntax.*
 import hedgehog.*
 import hedgehog.runner.*
 import openai4s.compat.TypesCompat
-import cats.syntax.all.*
-
-import extras.render.syntax.*
 
 /** @author Kevin Lee
   * @since 2023-05-08
