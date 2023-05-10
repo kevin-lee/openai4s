@@ -24,11 +24,11 @@ final case class Response(
 ) derives Codec.AsObject
 object Response {
 
-  implicit val responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
+  given responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val responseEq: Eq[Response] = Eq.fromUniversalEquals
+  given responseEq: Eq[Response] = Eq.fromUniversalEquals
 
-  implicit val responseShow: Show[Response] = cats.derived.semiauto.show
+  given responseShow: Show[Response] = cats.derived.semiauto.show
 
   type Id = Id.Type
   object Id extends Newtype[NonEmptyString] {
@@ -36,13 +36,13 @@ object Response {
       def toValue: String = id.value.value
     }
 
-    implicit val idEq: Eq[Id] = Eq.fromUniversalEquals
+    given idEq: Eq[Id] = Eq.fromUniversalEquals
 
-    implicit val idRender: Render[Id] = Render[String].contramap(_.toValue)
-    implicit val idShow: Show[Id]     = Show[String].contramap(_.toValue)
+    given idRender: Render[Id] = Render[String].contramap(_.toValue)
+    given idShow: Show[Id]     = Show[String].contramap(_.toValue)
 
-    implicit val idEncoder: Encoder[Id] = Encoder[String].contramap(_.toValue)
-    implicit val idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from).map(Id(_))
+    given idEncoder: Encoder[Id] = Encoder[String].contramap(_.toValue)
+    given idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from).map(Id(_))
   }
 
   type Object = Object.Type
