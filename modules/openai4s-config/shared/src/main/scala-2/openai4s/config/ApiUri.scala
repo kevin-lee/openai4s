@@ -25,6 +25,9 @@ object ApiUri {
   implicit class ApiUriOps(private val apiUri: ApiUri) extends AnyVal {
     def chatCompletions: NonEmptyString =
       NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/chat/completions")
+
+    def completions: NonEmptyString =
+      NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/completions")
   }
 
   @newtype case class BaseUri(value: Uri)
