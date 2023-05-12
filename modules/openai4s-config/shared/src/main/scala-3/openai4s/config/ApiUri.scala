@@ -21,6 +21,9 @@ object ApiUri {
   extension (apiUri: ApiUri) {
     def chatCompletions: NonEmptyString =
       NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/chat/completions")
+
+    def completions: NonEmptyString =
+      NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/completions")
   }
 
   type BaseUri = BaseUri.BaseUri
