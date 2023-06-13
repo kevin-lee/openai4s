@@ -148,7 +148,7 @@ lazy val props =
 
     val Org = "io.kevinlee"
 
-    val GitHubUsername = "Kevin-Lee"
+    val GitHubUsername = "kevin-lee"
     val RepoName       = "openai4s"
 
     val Scala2Versions = List(

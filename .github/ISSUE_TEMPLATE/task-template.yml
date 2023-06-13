@@ -2,7 +2,7 @@ name: Task
 description: For any non-bug task ticket
 labels: ["task"]
 assignees:
-  - Kevin-Lee
+  - kevin-lee
 body:
   - type: markdown
     attributes:
