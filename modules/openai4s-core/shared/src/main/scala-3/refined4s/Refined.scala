@@ -1,6 +1,6 @@
 package refined4s
 
-/** Copied from https://gist.github.com/Kevin-Lee/158d3d5c3e036560f8962087a34c95c5 and modified.
+/** Copied from https://gist.github.com/kevin-lee/158d3d5c3e036560f8962087a34c95c5 and modified.
   * @author Kevin Lee
   * @since 2022-03-23
   */
