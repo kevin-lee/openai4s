@@ -162,7 +162,7 @@ lazy val props =
     val ProjectScalaVersion = Scala2Version
 //    val ProjectScalaVersion = Scala3Version
 
-    lazy val licenses = List("MIT" -> url("http://opensource.org/licenses/MIT"))
+    lazy val licenses = List(License.MIT)
 
     val SonatypeCredentialHost = "s01.oss.sonatype.org"
     val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
