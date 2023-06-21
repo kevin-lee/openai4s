@@ -199,6 +199,8 @@ lazy val props =
 
     val RefinedVersion = "0.10.1"
 
+    val RefinedLatestVersion = "0.11.0"
+
     val KittensVersion             = "3.0.0"
     val KittensForScala3_1_Version = "3.0.0-M4"
 
@@ -234,7 +236,13 @@ lazy val libs = new {
 
   def refined(scalaVersion: String): List[ModuleID] =
     (
-      if (isScala3(scalaVersion)) List.empty
+      if (isScala3(scalaVersion))
+        List.empty
+//        List(
+//          "eu.timepit" %% "refined"            % props.RefinedLatestVersion,
+//          "eu.timepit" %% "refined-cats"       % props.RefinedLatestVersion,
+//          "eu.timepit" %% "refined-pureconfig" % props.RefinedLatestVersion,
+//        )
       else
         List(
           "eu.timepit" %% "refined"            % props.RefinedVersion,
