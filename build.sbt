@@ -5,9 +5,6 @@ ThisBuild / organization := props.Org
 ThisBuild / organizationName := "Kevin's Code"
 ThisBuild / crossScalaVersions := props.CrossScalaVersions
 
-ThisBuild / testFrameworks ~=
-  (frameworks => (TestFramework("hedgehog.sbt.Framework") +: frameworks).distinct)
-
 ThisBuild / developers := List(
   Developer(
     props.GitHubUsername,
@@ -380,7 +377,6 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
           .value
           .filterNot(option => option.contains("wartremover") || option.contains("import")),
       /* } WartRemover and scalacOptions */
-      testFrameworks ++= (testFrameworks.value ++ Seq(TestFramework("hedgehog.sbt.Framework"))).distinct,
       licenses := props.licenses,
       /* coverage { */
       coverageHighlighting := (CrossVersion.partialVersion(scalaVersion.value) match {
