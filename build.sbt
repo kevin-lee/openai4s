@@ -182,17 +182,17 @@ lazy val props =
 
     val HedgehogExtraVersion = "0.4.0"
 
-    val CatsVersion = "2.8.0"
+    val CatsVersion = "2.9.0"
 
     val CatsEffect2Version       = "2.4.1"
-    val CatsEffect2LatestVersion = "2.5.4"
-    val CatsEffect3Version       = "3.3.14"
+    val CatsEffect2LatestVersion = "2.5.5"
+    val CatsEffect3Version       = "3.5.1"
 
-    val ExtrasVersion = "0.38.0"
+    val ExtrasVersion = "0.39.0"
 
     val NewtypeVersion = "0.4.4"
 
-    val TypeLevelCaseInsensitiveVersion = "1.3.0"
+    val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
     val RefinedVersion = "0.10.1"
 
@@ -201,15 +201,16 @@ lazy val props =
     val KittensVersion             = "3.0.0"
     val KittensForScala3_1_Version = "3.0.0-M4"
 
-    val Http4sVersion = "0.23.18"
+    val Http4sVersion       = "0.22.15"
+    val Http4sLatestVersion = "0.23.21"
 
-    val PureConfigVersion = "0.17.3"
+    val PureConfigVersion = "0.17.4"
 
     val CirceVersion = "0.14.3"
 
     val CirceLatestVersion = "0.14.5"
 
-    val LogbackVersion = "1.4.6"
+    val LogbackVersion = "1.4.7"
 
   }
 
@@ -304,12 +305,12 @@ lazy val libs = new {
             ))
   }
 
-  lazy val http4sCore = "org.http4s" %% "http4s-core" % props.Http4sVersion
+  lazy val http4sCore = "org.http4s" %% "http4s-core" % props.Http4sLatestVersion
   lazy val http4s     = List(
     http4sCore,
-    "org.http4s" %% "http4s-ember-client" % props.Http4sVersion,
-    "org.http4s" %% "http4s-circe"        % props.Http4sVersion,
-    "org.http4s" %% "http4s-dsl"          % props.Http4sVersion,
+    "org.http4s" %% "http4s-ember-client" % props.Http4sLatestVersion,
+    "org.http4s" %% "http4s-circe"        % props.Http4sLatestVersion,
+    "org.http4s" %% "http4s-dsl"          % props.Http4sLatestVersion,
   )
 
   lazy val pureConfigAll = List(
