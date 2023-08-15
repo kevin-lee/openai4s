@@ -14,9 +14,16 @@ import refined4s.strings.*
   */
 final case class ApiUri(baseUri: ApiUri.BaseUri) derives ConfigReader
 object ApiUri {
+
+  val default: ApiUri = ApiUri.fromUri(CommonConstants.DefaultOpenAiUri)
+
+  def fromUri(uri: Uri): ApiUri = ApiUri(BaseUri(uri))
+
   given apiUriEq: Eq[ApiUri] = Eq.fromUniversalEquals
 
   given apiUriShow: Show[ApiUri] = Show.fromToString
+
+  given apiUriRender: Render[ApiUri] = Render[BaseUri].contramap(_.baseUri)
 
   extension (apiUri: ApiUri) {
     def chatCompletions: NonEmptyString =
@@ -44,7 +51,7 @@ object ApiUri {
 
     given baseUriConfigReader: ConfigReader[BaseUri] = ConfigReader
       .stringConfigReader
-      .emap(s => Uri.from(s).leftMap(err => CannotConvert(s, "refined4s.strings.Uri$", err)))
+      .emap(s => Uri.from(s).leftMap(err => CannotConvert(s, "refined4s.strings.Uri", err)))
 
   }
 

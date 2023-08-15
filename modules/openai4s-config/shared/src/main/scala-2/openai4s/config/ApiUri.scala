@@ -16,13 +16,23 @@ import refined4s.strings.Uri
   */
 final case class ApiUri(baseUri: ApiUri.BaseUri)
 object ApiUri {
+
+  def default: ApiUri = ApiUri.fromUri(CommonConstants.DefaultOpenAiUri)
+
+  def fromUri(uri: Uri): ApiUri = ApiUri(BaseUri(uri))
+
   implicit val apiUriEq: Eq[ApiUri] = Eq.fromUniversalEquals
 
   implicit val apiUriShow: Show[ApiUri] = Show.fromToString
 
+  implicit val apiUriRender: Render[ApiUri] = Render[BaseUri].contramap(_.baseUri)
+
   implicit val apiUriConfigReader: ConfigReader[ApiUri] = pureconfig.generic.semiauto.deriveReader
 
   implicit class ApiUriOps(private val apiUri: ApiUri) extends AnyVal {
+
+    def toUri: Uri = apiUri.baseUri.value
+
     def chatCompletions: NonEmptyString =
       NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/chat/completions")
 

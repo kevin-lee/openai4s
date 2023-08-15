@@ -11,6 +11,8 @@ import pureconfig.generic.semiauto.*
   */
 final case class OpenAiConfig(apiUri: ApiUri, apiKey: ApiKey)
 object OpenAiConfig {
+  val defaultOpenAiApiUri: ApiUri = ApiUri.default
+
   implicit val openAiConfigEq: Eq[OpenAiConfig] = Eq.fromUniversalEquals
 
   implicit val openAiConfigShow: Show[OpenAiConfig] = cats.derived.semiauto.show
