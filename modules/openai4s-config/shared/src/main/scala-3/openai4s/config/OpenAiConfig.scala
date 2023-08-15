@@ -10,6 +10,8 @@ import refined4s.strings.NonEmptyString
   */
 final case class OpenAiConfig(apiUri: ApiUri, apiKey: ApiKey) derives ConfigReader
 object OpenAiConfig {
+  val defaultOpenAiApiUri: ApiUri = ApiUri.default
+
   implicit val openAiConfigEq: Eq[OpenAiConfig] = Eq.fromUniversalEquals
 
   implicit val openAiConfigShow: Show[OpenAiConfig] = cats.derived.semiauto.show
