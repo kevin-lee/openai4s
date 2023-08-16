@@ -36,7 +36,6 @@ object Chat {
   implicit val chatDecoder: Decoder[Chat] = io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 
   @newtype case class Message(value: types.Message)
-
   object Message {
     implicit val messageEq: Eq[Message] = deriving
 

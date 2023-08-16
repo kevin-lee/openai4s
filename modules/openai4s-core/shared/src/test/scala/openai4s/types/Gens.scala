@@ -11,12 +11,12 @@ object Gens extends TypesCompat {
   def genRole: Gen[Message.Role] =
     Gen
       .string(Gen.unicode, Range.linear(1, 10))
-      .map(role => Message.Role(NonEmptyString.unsafeFrom(role)))
+      .map(role => Message.Role(role))
 
   def genContent: Gen[Message.Content] =
     Gen
       .string(Gen.unicode, Range.linear(1, 800))
-      .map(content => Message.Content(NonEmptyString.unsafeFrom(content)))
+      .map(content => Message.Content(content))
 
   def genMessage: Gen[Message] =
     for {

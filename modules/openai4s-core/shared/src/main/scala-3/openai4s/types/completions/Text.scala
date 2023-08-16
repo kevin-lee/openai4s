@@ -41,14 +41,14 @@ object Text {
   given textDecoder: Decoder[Text] = ConfiguredDecoder.derived
 
   type Prompt = Prompt.Type
-  object Prompt extends Newtype[NonEmptyString] {
+  object Prompt extends Newtype[String] {
     given promptEq: Eq[Prompt] = Eq.fromUniversalEquals
 
-    given promptShow: Show[Prompt]     = Show.show(_.value.value)
-    given promptRender: Render[Prompt] = Render.render(_.value.value)
+    given promptShow: Show[Prompt]     = Show.show(_.value)
+    given promptRender: Render[Prompt] = Render.render(_.value)
 
-    given promptEncoder: Encoder[Prompt] = Encoder[String].contramap(_.value.value)
-    given promptDecoder: Decoder[Prompt] = Decoder[String].emap(NonEmptyString.from).map(Prompt(_))
+    given promptEncoder: Encoder[Prompt] = Encoder[String].contramap(_.value)
+    given promptDecoder: Decoder[Prompt] = Decoder[String].map(Prompt(_))
   }
 
   type MaxTokens = MaxTokens.Type
