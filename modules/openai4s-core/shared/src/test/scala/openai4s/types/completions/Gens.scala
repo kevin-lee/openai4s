@@ -26,7 +26,7 @@ object Gens extends TypesCompat {
     def genPrompt: Gen[Text.Prompt] =
       Gen
         .string(Gen.unicode, Range.linear(1, 800))
-        .map(prompt => Text.Prompt(NonEmptyString.unsafeFrom(prompt)))
+        .map(prompt => Text.Prompt(prompt))
 
     def genMaxTokens: Gen[Text.MaxTokens] =
       Gen

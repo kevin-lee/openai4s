@@ -23,27 +23,27 @@ object Message {
   given messageCodec: Codec[Message] = ConfiguredCodec.derived
 
   type Role = Role.Type
-  object Role extends Newtype[NonEmptyString] {
+  object Role extends Newtype[String] {
 
     given roleEq: Eq[Role] = Eq.fromUniversalEquals
 
-    given roleRender: Render[Role] = Render.render(_.value.value)
-    given roleShow: Show[Role]     = Show.show(_.value.value)
+    given roleRender: Render[Role] = Render.render(_.value)
+    given roleShow: Show[Role]     = Show.show(_.value)
 
-    given roleEncoder: Encoder[Role] = Encoder[String].contramap(_.value.value)
-    given roleDecoder: Decoder[Role] = Decoder[String].emap(NonEmptyString.from).map(Role(_))
+    given roleEncoder: Encoder[Role] = Encoder[String].contramap(_.value)
+    given roleDecoder: Decoder[Role] = Decoder[String].map(Role(_))
   }
 
   type Content = Content.Type
-  object Content extends Newtype[NonEmptyString] {
+  object Content extends Newtype[String] {
 
     given contentEq: Eq[Content] = Eq.fromUniversalEquals
 
-    given contentRender: Render[Content] = Render.render(_.value.value)
-    given contentShow: Show[Content]     = Show.show(_.value.value)
+    given contentRender: Render[Content] = Render.render(_.value)
+    given contentShow: Show[Content]     = Show.show(_.value)
 
-    given contentEncoder: Encoder[Content] = Encoder[String].contramap(_.value.value)
-    given contentDecoder: Decoder[Content] = Decoder[String].emap(NonEmptyString.from).map(Content(_))
+    given contentEncoder: Encoder[Content] = Encoder[String].contramap(_.value)
+    given contentDecoder: Decoder[Content] = Decoder[String].map(Content(_))
   }
 
 }

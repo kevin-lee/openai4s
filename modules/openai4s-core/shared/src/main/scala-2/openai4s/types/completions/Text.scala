@@ -8,7 +8,6 @@ import eu.timepit.refined.numeric.Interval
 import eu.timepit.refined.types.numeric.{NonNegFloat, PosInt}
 import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
-import extras.render.refined.*
 import io.circe.generic.extras.Configuration
 import io.circe.refined.*
 import io.circe.{Decoder, Encoder}
@@ -42,7 +41,7 @@ object Text {
     io.circe.generic.extras.semiauto.deriveConfiguredEncoder[Text].mapJson(_.deepDropNullValues)
   implicit val textDecoder: Decoder[Text] = io.circe.generic.extras.semiauto.deriveConfiguredDecoder
 
-  @newtype case class Prompt(value: NonEmptyString)
+  @newtype case class Prompt(value: String)
   object Prompt {
     implicit val promptEq: Eq[Prompt] = deriving
 
