@@ -6,13 +6,14 @@ import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.extra.Gens
 import hedgehog.runner.*
+import openai4s.api.ApiCore
 import openai4s.compat.TypesCompat
 import openai4s.config.ApiKey
 import openai4s.http.HttpClient.HttpResponse
 import openai4s.http.HttpClientStub
 import openai4s.types.chat
 import openai4s.types.chat.Chat
-import org.http4s.{Uri as H4sUri, Response as Http4sResponse}
+import org.http4s.{Response as Http4sResponse, Uri as H4sUri}
 
 /** @author Kevin Lee
   * @since 2023-04-09
@@ -61,7 +62,9 @@ object ChatApiSpec extends Properties with TypesCompat {
 
       val expected = response
 
-      val chatApi = ChatApi(chatCompletionsUri, apiKey, httpClient)
+      val apiCore = ApiCore(apiKey, httpClient)
+
+      val chatApi = ChatApi(chatCompletionsUri, apiCore)
       chatApi
         .completion(chatReq)
         .map { actual =>

@@ -6,6 +6,7 @@ import extras.hedgehog.ce3.syntax.runner.*
 import hedgehog.*
 import hedgehog.extra.Gens
 import hedgehog.runner.*
+import openai4s.api.ApiCore
 import openai4s.compat.TypesCompat
 import openai4s.config.ApiKey
 import openai4s.http.HttpClient.HttpResponse
@@ -61,7 +62,9 @@ object CompletionsApiSpec extends Properties with TypesCompat {
 
       val expected = response
 
-      val chatApi = CompletionsApi(completionsUri, apiKey, httpClient)
+      val apiCore = ApiCore(apiKey, httpClient)
+
+      val chatApi = CompletionsApi(completionsUri, apiCore)
       chatApi
         .completions(textReq)
         .map { actual =>

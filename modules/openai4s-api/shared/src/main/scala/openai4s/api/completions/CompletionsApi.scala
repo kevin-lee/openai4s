@@ -1,8 +1,6 @@
 package openai4s.api.completions
 
-import openai4s.api.syntax.*
-import openai4s.config.ApiKey
-import openai4s.http.HttpClient
+import openai4s.api.ApiCore
 import openai4s.types.completions.{Response, Text}
 import org.http4s.*
 import org.http4s.client.dsl.Http4sClientDsl
@@ -18,10 +16,10 @@ trait CompletionsApi[F[*]] {
 }
 object CompletionsApi {
   @SuppressWarnings(Array("org.wartremover.warts.TripleQuestionMark"))
-  def apply[F[*]](completionsUri: Uri, apiKey: ApiKey, httpClient: HttpClient[F]): CompletionsApi[F] =
-    new CompletionsApiF(completionsUri, apiKey, httpClient)
+  def apply[F[*]](completionsUri: Uri, apiCore: ApiCore[F]): CompletionsApi[F] =
+    new CompletionsApiF(completionsUri, apiCore)
 
-  private final class CompletionsApiF[F[*]](completionsUri: Uri, apiKey: ApiKey, httpClient: HttpClient[F])
+  private final class CompletionsApiF[F[*]](completionsUri: Uri, apiCore: ApiCore[F])
       extends CompletionsApi[F]
       with Http4sClientDsl[F] {
     import org.http4s.circe.CirceEntityCodec.*
@@ -29,8 +27,8 @@ object CompletionsApi {
     override def completions(text: Text): F[Response] = {
       val request = Request[F](method = Method.POST, uri = completionsUri).withEntity(text)
 
-      val authedRequest = request.setApiKeyHeader(apiKey)
-      httpClient.send[Response](authedRequest)
+      val authedRequest = apiCore.preprocess(request)
+      apiCore.httpClient.send[Response](authedRequest)
     }
   }
 }
