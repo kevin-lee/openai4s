@@ -1,15 +1,17 @@
 package openai4s.types.chat
 
 import cats.data.NonEmptyList
-import cats.{Eq, Show}
 import cats.syntax.all.*
+import cats.{Eq, Show}
 import io.circe.derivation.*
 import io.circe.*
-import io.circe.{Decoder, Encoder}
 import newtype4s.Newtype
 import openai4s.types
-import refined4s.Refined
+import refined4s.*
 import refined4s.numeric.PosInt
+
+import scala.annotation.targetName
+import scala.compiletime.*
 
 /** @author Kevin Lee
   * @since 2023-03-24
@@ -48,7 +50,12 @@ object Chat {
   }
 
   type Temperature = Temperature.Type
-  object Temperature extends Refined[Float] {
+  object Temperature extends InlinedRefined[Float] {
+
+    override inline def inlinedInvalidReason(inline a: Float): String =
+      "The temperature must be a Float between 0f and 2f (inclusive) but got [" + codeOf(a) + "]"
+
+    override inline def inlinedPredicate(inline a: Float): Boolean = a >= 0f && a <= 2f
 
     override def invalidReason(a: Float): String =
       "The temperature must be a Float between 0f and 2f (inclusive) but got [" + a + "]"
@@ -65,6 +72,10 @@ object Chat {
 
   type MaxTokens = MaxTokens.Type
   object MaxTokens extends Newtype[PosInt] {
+
+    @targetName("fromInt")
+    inline def apply(inline token: Int): MaxTokens = toType(PosInt(token))
+
     extension (maxTokens: MaxTokens) {
       def toValue: Int = maxTokens.value.value
     }

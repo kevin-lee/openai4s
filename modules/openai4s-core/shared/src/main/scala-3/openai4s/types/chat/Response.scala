@@ -7,9 +7,11 @@ import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, C
 import io.circe.*
 import newtype4s.Newtype
 import openai4s.types
-import refined4s.strings.NonEmptyString
+import refined4s.strings.*
+import refined4s.numeric.*
 
 import java.time.Instant
+import scala.annotation.targetName
 
 /** @author Kevin Lee
   * @since 2023-03-28
@@ -151,14 +153,20 @@ object Response {
     }
 
     type Index = Index.Type
-    object Index extends Newtype[Int] {
+    object Index extends Newtype[NonNegInt] {
+
+      @targetName("fromInt")
+      inline def apply(inline index: Int): Index = toType(NonNegInt(index))
+
+      def unsafeFrom(index: Int): Index = apply(NonNegInt.unsafeFrom(index))
+
       given indexEq: Eq[Index] = Eq.fromUniversalEquals
 
-      given indexShow: Show[Index]     = Show.catsShowForInt.contramap(_.value)
-      given indexRender: Render[Index] = Render.intRender.contramap(_.value)
+      given indexShow: Show[Index]     = Show.catsShowForInt.contramap(_.value.value)
+      given indexRender: Render[Index] = Render.intRender.contramap(_.value.value)
 
-      given indexEncoder: Encoder[Index] = Encoder.encodeInt.contramap(_.value)
-      given indexDecoder: Decoder[Index] = Decoder.decodeInt.map(Index(_))
+      given indexEncoder: Encoder[Index] = Encoder.encodeInt.contramap(_.value.value)
+      given indexDecoder: Decoder[Index] = Decoder.decodeInt.emap(NonNegInt.from).map(Index(_))
     }
 
   }

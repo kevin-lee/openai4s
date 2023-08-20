@@ -3,14 +3,16 @@ package openai4s.types.completions
 import cats.syntax.all.*
 import cats.{Eq, Show}
 import extras.render.Render
-import extras.render.syntax.*
-import io.circe.derivation.*
 import io.circe.*
+import io.circe.derivation.*
 import newtype4s.Newtype
 import openai4s.types
-import refined4s.Refined
+import refined4s.*
 import refined4s.numeric.*
 import refined4s.strings.NonEmptyString
+
+import scala.annotation.targetName
+import scala.compiletime.*
 
 /** https://platform.openai.com/docs/api-reference/completions#:~:text=prompt%20and%20parameters.-,Request%20body,-model
   * @author Kevin Lee
@@ -53,6 +55,10 @@ object Text {
 
   type MaxTokens = MaxTokens.Type
   object MaxTokens extends Newtype[PosInt] {
+
+    @targetName("fromInt")
+    inline def apply(inline a: Int): Type = toType(PosInt(a))
+
     extension (maxTokens: MaxTokens) {
       def toValue: Int = maxTokens.value.value
     }
@@ -67,7 +73,12 @@ object Text {
   }
 
   type Temperature = Temperature.Type
-  object Temperature extends Refined[Float] {
+  object Temperature extends InlinedRefined[Float] {
+
+    override inline def inlinedInvalidReason(inline a: Float): String =
+      "The temperature must be a Float between 0f and 2f (inclusive) but got [" + codeOf(a) + "]"
+
+    override inline def inlinedPredicate(inline a: Float): Boolean = a >= 0f && a <= 2f
 
     override def invalidReason(a: Float): String =
       "The temperature must be a Float between 0f and 2f (inclusive) but got [" + a + "]"
@@ -84,6 +95,9 @@ object Text {
 
   type TopP = TopP.Type
   object TopP extends Newtype[NonNegFloat] {
+
+    @targetName("fromFloat")
+    inline def apply(inline a: Float): Type = toType(NonNegFloat(a))
 
     extension (topP: TopP) {
       def toValue: Float = topP.value.value
@@ -144,6 +158,9 @@ object Text {
 
   type Stop = Stop.Type
   object Stop extends Newtype[NonEmptyString] {
+
+    @targetName("fromString")
+    inline def apply(inline a: String): Type = toType(NonEmptyString(a))
 
     extension (stop: Stop) {
       def toValue: String = stop.value.value

@@ -116,7 +116,7 @@ object Gens extends TypesCompat {
                        _.zipWithIndex
                          .map {
                            case ((message, finishReason), index) =>
-                             Response.Choice(message, finishReason, Response.Choice.Index(index))
+                             Response.Choice(message, finishReason, Response.Choice.Index.unsafeFrom(index))
                          }
                      )
       } yield Response(id = id, `object` = obj, created = created, model = model, usage = usage, choices = choices)

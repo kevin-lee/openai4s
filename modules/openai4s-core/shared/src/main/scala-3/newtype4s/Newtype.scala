@@ -8,6 +8,8 @@ import refined4s.*
 trait Newtype[A] {
   opaque type Type = A
 
+  inline protected def toType(a: A): Type = a
+
   inline def apply(a: A): Type = a
 
   given newtypeCanEqual: CanEqual[Type, Type] = CanEqual.derived
