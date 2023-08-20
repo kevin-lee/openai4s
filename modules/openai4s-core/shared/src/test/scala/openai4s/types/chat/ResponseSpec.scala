@@ -37,7 +37,7 @@ object ResponseSpec extends Properties {
           "content": ${choice.message.value.content.render}
         },
         "finish_reason": ${choice.finishReason.render},
-        "index": ${choice.index.value}
+        "index": ${choice.index.value.value}
       }
       """
 

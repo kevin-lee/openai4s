@@ -3,6 +3,7 @@ package openai4s.types.chat
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
+import eu.timepit.refined.types.numeric.*
 import extras.render.Render
 import extras.render.refined.*
 import io.circe.generic.extras.Configuration
@@ -142,8 +143,10 @@ object Response {
       implicit val finishReasonDecoder: Decoder[FinishReason] = deriving
     }
 
-    @newtype case class Index(value: Int)
+    @newtype case class Index(value: NonNegInt)
     object Index {
+      def unsafeFrom(index: Int): Index = Index(NonNegInt.unsafeFrom(index))
+
       implicit val indexEq: Eq[Index] = deriving
 
       implicit val indexShow: Show[Index]     = deriving

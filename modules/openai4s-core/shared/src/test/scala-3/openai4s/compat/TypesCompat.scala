@@ -7,6 +7,9 @@ trait TypesCompat {
   type PosInt = refined4s.numeric.PosInt
   val PosInt = refined4s.numeric.PosInt
 
+  type NonNegInt = refined4s.numeric.NonNegInt
+  val NonNegInt = refined4s.numeric.NonNegInt
+
   type NonNegFloat = refined4s.numeric.NonNegFloat
   val NonNegFloat = refined4s.numeric.NonNegFloat
 
