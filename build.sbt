@@ -182,7 +182,7 @@ lazy val props =
 
     val HedgehogExtraVersion = "0.4.0"
 
-    val CatsVersion = "2.9.0"
+    val CatsVersion = "2.10.0"
 
     val CatsEffect2Version       = "2.4.1"
     val CatsEffect2LatestVersion = "2.5.5"
@@ -202,7 +202,7 @@ lazy val props =
     val KittensForScala3_1_Version = "3.0.0-M4"
 
     val Http4sVersion       = "0.22.15"
-    val Http4sLatestVersion = "0.23.21"
+    val Http4sLatestVersion = "0.23.23"
 
     val PureConfigVersion = "0.17.4"
 
