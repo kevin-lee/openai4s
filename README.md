@@ -9,9 +9,10 @@ Here is an example Scala script with `scala-cli` in Scala 2.
 
 First of all you need to set the following environment variables
 ```bash
-export OPENAI_API_ORG_ID=YOUR_API_ORG_ID_FROM_OPENAI
 export OPENAI_API_KEY=YOUR_API_KEY_FROM_OPENAI
 ```
+If you don't have the API key yet, you should generate it first.
+Visit [OpenAI's account page](https://platform.openai.com/account/api-keys) to do it.
 
 `openai4s-app.scala`
 ```scala 3
