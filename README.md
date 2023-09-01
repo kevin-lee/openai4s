@@ -28,21 +28,20 @@ import cats.data.NonEmptyList
 import cats.effect.*
 import cats.syntax.all.*
 import fs2.io.net.Network
-import org.http4s.Uri
-
-as H4sUri
+import org.http4s.Uri as H4sUri
 
 import org.http4s.ember.client.EmberClientBuilder
 
 import scala.concurrent.duration.*
 
-import eu.timepit.refined.types.*
 import openai4s.api.ApiCore
 import openai4s.api.chat.ChatApi
 import openai4s.config.OpenAiConfig
 import openai4s.http.HttpClient
 import openai4s.types.Message
 import openai4s.types.chat.*
+
+import eu.timepit.refined.types.*
 import eu.timepit.refined.auto.*
 
 object MyAiApp extends IOApp.Simple {
