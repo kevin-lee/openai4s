@@ -2,10 +2,11 @@ package openai4s.http
 
 import cats.effect.*
 import cats.syntax.all.*
+import extras.fs2.text.syntax.*
 import io.circe.Decoder
 import org.http4s.*
 import org.http4s.Status.Successful as H4sSuccessful
-import org.http4s.client.{Client, UnexpectedStatus}
+import org.http4s.client.Client
 
 /** @author Kevin Lee
   * @since 2023-04-01
@@ -31,7 +32,7 @@ object HttpClient {
         val mediaRanges = entityDecoder.consumes.toList
         mediaRanges match {
           case head :: tail =>
-            request.addHeader(Accept(MediaRangeAndQValue(head), tail.map(MediaRangeAndQValue(_)): _*))
+            request.addHeader(Accept(MediaRangeAndQValue(head), tail.map(MediaRangeAndQValue(_))*))
           case Nil =>
             request
         }
@@ -42,8 +43,11 @@ object HttpClient {
             .decode(res, strict = false)
             .leftMap(HttpError.decodingError[F](theRequest, _))
             .rethrowT
+
         case HttpResponse.Failed(res) =>
-          Sync[F].raiseError(UnexpectedStatus(res.status, request.method, request.uri))
+          res.body.utf8String.flatMap { body =>
+            Sync[F].raiseError(HttpError.unexpectedStatus(request, res.status, body.some))
+          }
       }
     }
 
