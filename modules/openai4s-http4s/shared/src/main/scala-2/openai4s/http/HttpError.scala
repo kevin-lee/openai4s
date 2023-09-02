@@ -3,6 +3,7 @@ package openai4s.http
 /** @author Kevin Lee
   * @since 2023-04-01
   */
+import cats.Show
 import cats.syntax.all.*
 import org.http4s.*
 
@@ -36,6 +37,20 @@ object HttpError {
 
   def unexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String]): HttpError[F] =
     UnexpectedStatus(request, status, body)
+
+  implicit def httpErrorShow[F[*]]: Show[HttpError[F]] = {
+    case ConnectionError(req, cause) =>
+      show"ConnectionError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+    case ResponseError(req, cause) =>
+      show"ResponseError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+    case DecodingError(req, cause) =>
+      show"DecodingError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+    case UnexpectedStatus(req, status, body) =>
+      show"UnexpectedStatus(request=${req.method} ${req.uri}, status=$status, body=$body)"
+  }
 
   @tailrec
   def otherHttpException[F[*]](request: Request[F], ex: Exception): Option[HttpError[F]] = ex match {
