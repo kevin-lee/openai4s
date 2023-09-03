@@ -1,13 +1,14 @@
 package openai4s.http
 
-/** @author Kevin Lee
-  * @since 2023-04-01
-  */
+import cats.Show
 import cats.syntax.all.*
 import org.http4s.*
 
 import scala.annotation.tailrec
 
+/** @author Kevin Lee
+  * @since 2023-04-01
+  */
 @SuppressWarnings(Array("org.wartremover.warts.Null"))
 enum HttpError[F[*]](request: Request[F], cause: Option[Exception])
     extends Exception(
@@ -34,6 +35,22 @@ object HttpError {
 
   def unexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String]): HttpError[F] =
     UnexpectedStatus(request, status, body)
+
+  given httpErrorShow[F[*]]: Show[HttpError[F]] with {
+    def show(httpError: HttpError[F]): String = httpError match {
+      case HttpError.ConnectionError(req, cause) =>
+        show"ConnectionError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+      case HttpError.ResponseError(req, cause) =>
+        show"ResponseError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+      case HttpError.DecodingError(req, cause) =>
+        show"DecodingError(request=${req.method} ${req.uri}, cause=${cause.getMessage})"
+
+      case HttpError.UnexpectedStatus(req, status, body) =>
+        show"UnexpectedStatus(request=${req.method} ${req.uri}, status=$status, body=$body)"
+    }
+  }
 
   @tailrec
   def otherHttpException[F[*]](request: Request[F], ex: Exception): Option[HttpError[F]] = ex match {
