@@ -45,9 +45,20 @@ object HttpClient {
             .rethrowT
 
         case HttpResponse.Failed(res) =>
-          res.body.utf8String.flatMap { body =>
-            Sync[F].raiseError(HttpError.unexpectedStatus(request, res.status, body.some))
-          }
+          val err = res
+            .as[io.circe.Json]
+            .map { jsonBody =>
+              HttpError.unexpectedStatus(request, res.status, HttpError.UnexpectedStatus.Body.jsonBody(jsonBody))
+            }
+            .handleErrorWith { _ =>
+              res.body.utf8String.map { body =>
+                HttpError.unexpectedStatus(request, res.status, HttpError.UnexpectedStatus.Body.stringBody(body))
+              }
+            }
+            .handleError { err =>
+              HttpError.unexpectedStatus(request, res.status, HttpError.UnexpectedStatus.Body.withCause(err))
+            }
+          err.flatMap(Sync[F].raiseError[A](_))
       }
     }
 
