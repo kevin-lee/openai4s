@@ -3,8 +3,9 @@ package openai4s.http
 /** @author Kevin Lee
   * @since 2023-04-01
   */
-import cats.Show
+import cats.{Eq, Show}
 import cats.syntax.all.*
+import io.circe.Json
 import org.http4s.*
 
 import scala.annotation.tailrec
@@ -26,8 +27,31 @@ object HttpError {
   final case class DecodingError[F[*]](request: Request[F], cause: DecodeFailure)
       extends HttpError[F](request, cause.some)
 
-  final case class UnexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String])
+  final case class UnexpectedStatus[F[*]](request: Request[F], status: Status, body: UnexpectedStatus.Body)
       extends HttpError[F](request, none)
+  object UnexpectedStatus {
+    sealed trait Body
+    object Body {
+      final case class JsonBody(json: Json) extends Body
+      final case class StringBody(text: String) extends Body
+      final case class WithCause(cause: Throwable) extends Body
+
+      def jsonBody(json: Json): Body = JsonBody(json)
+
+      def stringBody(text: String): Body = StringBody(text)
+
+      def withCause(cause: Throwable): Body = WithCause(cause)
+
+      implicit val bodyEq: Eq[Body] = Eq.fromUniversalEquals
+
+      implicit val bodyShow: Show[Body] = {
+        case JsonBody(json) => json.noSpaces
+        case StringBody(string) => string
+        case WithCause(cause) => cause.getMessage
+      }
+    }
+
+  }
 
   def connectionError[F[*]](request: Request[F], cause: Exception): HttpError[F] = ConnectionError(request, cause)
 
@@ -35,7 +59,7 @@ object HttpError {
 
   def decodingError[F[*]](request: Request[F], cause: DecodeFailure): HttpError[F] = DecodingError(request, cause)
 
-  def unexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String]): HttpError[F] =
+  def unexpectedStatus[F[*]](request: Request[F], status: Status, body: UnexpectedStatus.Body): HttpError[F] =
     UnexpectedStatus(request, status, body)
 
   implicit def httpErrorShow[F[*]]: Show[HttpError[F]] = {

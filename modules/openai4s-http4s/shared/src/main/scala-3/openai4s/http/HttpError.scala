@@ -1,7 +1,8 @@
 package openai4s.http
 
-import cats.Show
+import cats.{Eq, Show}
 import cats.syntax.all.*
+import io.circe.Json
 import org.http4s.*
 
 import scala.annotation.tailrec
@@ -21,7 +22,8 @@ enum HttpError[F[*]](request: Request[F], cause: Option[Exception])
 
   case DecodingError(request: Request[F], cause: DecodeFailure) extends HttpError[F](request, cause.some)
 
-  case UnexpectedStatus(request: Request[F], status: Status, body: Option[String]) extends HttpError[F](request, none)
+  case UnexpectedStatus(request: Request[F], status: Status, body: UnexpectedStatus.Body)
+      extends HttpError[F](request, none)
 
 }
 
@@ -33,8 +35,34 @@ object HttpError {
 
   def decodingError[F[*]](request: Request[F], cause: DecodeFailure): HttpError[F] = DecodingError(request, cause)
 
-  def unexpectedStatus[F[*]](request: Request[F], status: Status, body: Option[String]): HttpError[F] =
+  def unexpectedStatus[F[*]](request: Request[F], status: Status, body: UnexpectedStatus.Body): HttpError[F] =
     UnexpectedStatus(request, status, body)
+
+  object UnexpectedStatus {
+    enum Body {
+      case JsonBody(json: Json)
+      case StringBody(text: String)
+      case WithCause(cause: Throwable)
+    }
+    object Body {
+      def jsonBody(json: Json): Body = JsonBody(json)
+
+      def stringBody(text: String): Body = StringBody(text)
+
+      def withCause(cause: Throwable): Body = WithCause(cause)
+
+      given bodyEq: Eq[Body] = Eq.fromUniversalEquals
+
+      given bodyShow: Show[Body] with {
+        def show(body: Body): String = body match {
+          case JsonBody(json) => json.noSpaces
+          case StringBody(string) => string
+          case WithCause(cause) => cause.getMessage
+        }
+      }
+    }
+
+  }
 
   given httpErrorShow[F[*]]: Show[HttpError[F]] with {
     def show(httpError: HttpError[F]): String = httpError match {
