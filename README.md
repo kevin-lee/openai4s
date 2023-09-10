@@ -19,10 +19,10 @@ Visit [OpenAI's account page](https://platform.openai.com/account/api-keys) to d
 //> using scala "2.13.11"
 //> using options -Xsource:3
 //> using dep "org.typelevel::cats-core:2.10.0"
-//> using dep "io.kevinlee::openai4s-core:0.1.0-alpha2"
-//> using dep "io.kevinlee::openai4s-config:0.1.0-alpha2"
-//> using dep "io.kevinlee::openai4s-api:0.1.0-alpha2"
-//> using dep "io.kevinlee::openai4s-http4s:0.1.0-alpha2"
+//> using dep "io.kevinlee::openai4s-core:0.1.0-alpha5"
+//> using dep "io.kevinlee::openai4s-config:0.1.0-alpha5"
+//> using dep "io.kevinlee::openai4s-api:0.1.0-alpha5"
+//> using dep "io.kevinlee::openai4s-http4s:0.1.0-alpha5"
 //> using dep "com.github.pureconfig::pureconfig-cats-effect:0.17.4"
 
 import cats.data.NonEmptyList
