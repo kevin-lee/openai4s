@@ -188,7 +188,7 @@ lazy val props =
     val CatsEffect2LatestVersion = "2.5.5"
     val CatsEffect3Version       = "3.5.1"
 
-    val ExtrasVersion = "0.39.0"
+    val ExtrasVersion = "0.42.0"
 
     val NewtypeVersion = "0.4.4"
 
@@ -210,7 +210,7 @@ lazy val props =
 
     val CirceLatestVersion = "0.14.5"
 
-    val LogbackVersion = "1.4.7"
+    val LogbackVersion = "1.4.11"
 
   }
 
