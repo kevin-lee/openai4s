@@ -132,6 +132,10 @@ object Response {
 
     type Message = Message.Type
     object Message extends Newtype[types.Message] {
+
+      def apply(role: types.Message.Role, content: types.Message.Content): Message =
+        Message(types.Message(role, content))
+
       given messageEq: Eq[Message] = Eq.by(_.value)
 
       given messageShow: Show[Message] = types.Message.messageShow.contramap(_.value)
