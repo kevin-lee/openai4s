@@ -125,6 +125,11 @@ object Response {
 
     @newtype case class Message(value: types.Message)
     object Message {
+
+      @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
+      def apply(role: types.Message.Role, content: types.Message.Content): Message =
+        Message(types.Message(role, content))
+
       implicit val messageEq: Eq[Message] = deriving
 
       implicit val messageShow: Show[Message] = deriving
