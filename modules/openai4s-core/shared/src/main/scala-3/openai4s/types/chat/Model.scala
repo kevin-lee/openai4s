@@ -13,6 +13,9 @@ import io.circe.{Codec, Decoder, Encoder}
   * @since 2023-03-24
   */
 enum Model(val value: NonEmptyString) derives CanEqual {
+  case Gpt_4_1106_Preview extends Model(NonEmptyString("gpt-4-1106-preview"))
+  case Gpt_4_Vision_Preview extends Model(NonEmptyString("gpt-4-vision-preview"))
+
   case Gpt_4 extends Model(NonEmptyString("gpt-4"))
   case Gpt_4_32k extends Model(NonEmptyString("gpt-4-32k"))
 
@@ -33,6 +36,9 @@ enum Model(val value: NonEmptyString) derives CanEqual {
   case Unsupported(override val value: NonEmptyString) extends Model(value)
 }
 object Model {
+
+  def gpt_4_1106_Preview: Model   = Gpt_4_1106_Preview
+  def gpt_4_Vision_Preview: Model = Gpt_4_Vision_Preview
 
   def gpt_4: Model     = Gpt_4
   def gpt_4_32k: Model = Gpt_4_32k
@@ -55,6 +61,9 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.gpt_4_1106_Preview,
+      Model.gpt_4_Vision_Preview,
+      //
       Model.gpt_4,
       Model.gpt_4_32k,
       //

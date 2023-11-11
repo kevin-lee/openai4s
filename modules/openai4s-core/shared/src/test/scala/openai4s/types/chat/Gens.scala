@@ -15,6 +15,8 @@ object Gens extends TypesCompat {
 
   def genModel: Gen[Model] =
     Gen.element1(
+      Model.gpt_4_1106_Preview,
+      Model.gpt_4_Vision_Preview,
       Model.gpt_4,
       Model.gpt_4_32k,
       Model.gpt_4_0613,
