@@ -7,7 +7,6 @@ import io.circe.derivation.*
 import io.circe.*
 import io.circe.{Codec, Decoder, Encoder}
 import newtype4s.Newtype
-import refined4s.strings.NonEmptyString
 
 /** @author Kevin Lee
   * @since 2023-03-24

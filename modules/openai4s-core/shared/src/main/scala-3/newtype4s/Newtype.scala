@@ -1,7 +1,5 @@
 package newtype4s
 
-import refined4s.*
-
 /** @author Kevin Lee
   * @since 2023-04-23
   */

@@ -7,7 +7,6 @@ import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, C
 import io.circe.{Codec, Decoder, Encoder}
 import newtype4s.Newtype
 import openai4s.types
-import openai4s.types.completions.{Model, Response}
 import refined4s.strings.NonEmptyString
 
 import java.time.Instant

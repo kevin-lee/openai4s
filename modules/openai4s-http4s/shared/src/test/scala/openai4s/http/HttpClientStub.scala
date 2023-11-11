@@ -21,7 +21,7 @@ object HttpClientStub {
   def withSendAndHandle[F[*]: Concurrent](requestToResponse: => Request[F] => F[HttpResponse[F]]): HttpClient[F] =
     apply(requestToResponse.some)
 
-  private def apply[F[*]: Concurrent, B](
+  private def apply[F[*]: Concurrent](
     requestToResponse: => Option[Request[F] => F[HttpResponse[F]]]
   ): HttpClient[F] = new HttpClient[F] with Http4sDsl[F] {
 

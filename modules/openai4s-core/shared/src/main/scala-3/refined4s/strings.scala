@@ -3,7 +3,6 @@ package refined4s
 import scala.annotation.targetName
 import scala.quoted.{Expr, Quotes}
 import scala.util.control.NonFatal
-import scala.compiletime.*
 import scala.quoted.*
 
 /** @author Kevin Lee
