@@ -8,6 +8,8 @@ import org.http4s.*
 import org.http4s.Status.Successful as H4sSuccessful
 import org.http4s.client.Client
 
+import scala.annotation.nowarn
+
 /** @author Kevin Lee
   * @since 2023-04-01
   */
@@ -82,15 +84,21 @@ object HttpClient {
   sealed abstract class HttpResponse[F[*]](val response: Response[F])
   object HttpResponse {
 
-    final case class Successful[F[*]] private[HttpResponse] (override val response: Response[F])
-        extends HttpResponse[F](response)
+    @nowarn("msg=constructor modifiers are assumed by synthetic `(apply|copy)` method")
+    final case class Successful[F[*]] private (override val response: Response[F]) extends HttpResponse[F](response)
+    object Successful {
+      private[HttpResponse] def create[F[*]](response: Response[F]): HttpResponse[F] = new Successful[F](response)
+    }
 
-    final case class Failed[F[*]] private[HttpResponse] (override val response: Response[F])
-        extends HttpResponse[F](response)
+    @nowarn("msg=constructor modifiers are assumed by synthetic `(apply|copy)` method")
+    final case class Failed[F[*]] private (override val response: Response[F]) extends HttpResponse[F](response)
+    object Failed {
+      private[HttpResponse] def create[F[*]](response: Response[F]): HttpResponse[F] = new Failed[F](response)
+    }
 
-    def successful[F[*]](response: Response[F]): HttpResponse[F] = Successful[F](response)
+    def successful[F[*]](response: Response[F]): HttpResponse[F] = Successful.create[F](response)
 
-    def failed[F[*]](response: Response[F]): HttpResponse[F] = Failed[F](response)
+    def failed[F[*]](response: Response[F]): HttpResponse[F] = Failed.create[F](response)
 
     def fromHttp4s[F[*]](response: Response[F]): HttpResponse[F] =
       H4sSuccessful.unapply(response).fold(failed(response))(successful)

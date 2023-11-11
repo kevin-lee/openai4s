@@ -149,11 +149,11 @@ lazy val props =
     val RepoName       = "openai4s"
 
     val Scala2Versions = List(
-      "2.13.10"
+      "2.13.12"
     )
     val Scala2Version  = Scala2Versions.head
 
-    val Scala3Version = "3.3.0"
+    val Scala3Version = "3.3.1"
 
 //    val ProjectScalaVersion = "2.13.10"
     val ProjectScalaVersion = Scala2Version
@@ -366,7 +366,10 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
           ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
       ),
       scalacOptions ++= (if (isScala3(scalaVersion.value)) List.empty else List("-Xsource:3")),
-      scalacOptions ~= (ops => ops.filter(_ != "UTF-8")),
+      scalacOptions ~= (_.map {
+        case "UTF-8" => "utf8"
+        case s => s
+      }),
       libraryDependencies ++= libs.hedgehog,
       wartremoverErrors ++= Warts.allBut(Wart.Any, Wart.Nothing, Wart.ImplicitConversion, Wart.ImplicitParameter),
       Compile / console / scalacOptions :=
