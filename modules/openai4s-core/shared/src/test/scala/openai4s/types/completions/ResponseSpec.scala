@@ -35,7 +35,7 @@ object ResponseSpec extends Properties with TypesCompat {
           {
             "text": ${choice.text.render},
             "logprobs": ${choice.logprobs.map(_.value)},
-            "index": ${choice.index.value},
+            "index": ${choice.index},
             "finish_reason": ${choice.finishReason.render}
           }
         """

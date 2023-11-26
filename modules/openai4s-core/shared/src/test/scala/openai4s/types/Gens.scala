@@ -2,6 +2,7 @@ package openai4s.types
 
 import hedgehog.{Gen, Range}
 import openai4s.compat.TypesCompat
+import openai4s.types.chat.*
 
 /** @author Kevin Lee
   * @since 2023-04-02

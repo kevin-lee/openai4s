@@ -7,6 +7,7 @@ import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, C
 import io.circe.{Codec, Decoder, Encoder}
 import newtype4s.Newtype
 import openai4s.types
+import openai4s.types.common.*
 import refined4s.strings.NonEmptyString
 
 import java.time.Instant
@@ -77,9 +78,9 @@ object Response {
 
   final case class Choice(
     text: Choice.Text,
-    index: Choice.Index,
+    index: Index,
     logprobs: Option[Choice.Logprobs],
-    finishReason: Choice.FinishReason,
+    finishReason: FinishReason,
   )
   object Choice {
     given choiceEq: Eq[Choice] = Eq.fromUniversalEquals
@@ -99,16 +100,6 @@ object Response {
       given textDecoder: Decoder[Text] = Decoder[String].emap(NonEmptyString.from).map(Text(_))
     }
 
-    type Index = Index.Type
-    object Index extends Newtype[Int] {
-      given indexEq: Eq[Index] = Eq.fromUniversalEquals
-
-      given indexShow: Show[Index] = Show.catsShowForInt.contramap(_.value)
-
-      given indexEncoder: Encoder[Index] = Encoder.encodeInt.contramap(_.value)
-      given indexDecoder: Decoder[Index] = Decoder.decodeInt.map(Index(_))
-    }
-
     type Logprobs = Logprobs.Type
     object Logprobs extends Newtype[Int] {
       given logprobsEq: Eq[Logprobs] = Eq.fromUniversalEquals
@@ -117,18 +108,6 @@ object Response {
 
       given logprobsEncoder: Encoder[Logprobs] = Encoder.encodeInt.contramap(_.value)
       given logprobsDecoder: Decoder[Logprobs] = Decoder.decodeInt.map(Logprobs(_))
-    }
-
-    type FinishReason = FinishReason.Type
-    object FinishReason extends Newtype[String] {
-      given finishReasonEq: Eq[FinishReason] = Eq.fromUniversalEquals
-
-      given finishReasonShow: Show[FinishReason] = Show.catsShowForString.contramap(_.value)
-
-      given finishReasonRender: Render[FinishReason] = Render.stringRender.contramap(_.value)
-
-      given finishReasonEncoder: Encoder[FinishReason] = Encoder.encodeString.contramap(_.value)
-      given finishReasonDecoder: Decoder[FinishReason] = Decoder.decodeString.map(FinishReason(_))
     }
 
   }

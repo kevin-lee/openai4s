@@ -9,6 +9,7 @@ import io.circe.generic.extras.Configuration
 import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
+import openai4s.types.common.*
 
 import java.time.Instant
 
@@ -71,9 +72,9 @@ object Response {
 
   final case class Choice(
     text: Choice.Text,
-    index: Choice.Index,
+    index: Index,
     logprobs: Option[Choice.Logprobs],
-    finishReason: Choice.FinishReason,
+    finishReason: FinishReason,
   )
   object Choice {
     implicit val choiceEq: Eq[Choice] = Eq.fromUniversalEquals
@@ -93,17 +94,6 @@ object Response {
       implicit val textDecoder: Decoder[Text] = deriving
     }
 
-    @newtype case class Index(value: Int)
-    object Index {
-      implicit val indexEq: Eq[Index] = deriving
-
-      implicit val indexShow: Show[Index]     = deriving
-      implicit val indexRender: Render[Index] = deriving
-
-      implicit val indexEncoder: Encoder[Index] = deriving
-      implicit val indexDecoder: Decoder[Index] = deriving
-    }
-
     @newtype case class Logprobs(value: Int)
     object Logprobs {
       implicit val logprobsEq: Eq[Logprobs] = deriving
@@ -112,17 +102,6 @@ object Response {
 
       implicit val logprobsEncoder: Encoder[Logprobs] = deriving
       implicit val logprobsDecoder: Decoder[Logprobs] = deriving
-    }
-
-    @newtype case class FinishReason(value: String)
-    object FinishReason {
-      implicit val finishReasonEq: Eq[FinishReason] = deriving
-
-      implicit val finishReasonShow: Show[FinishReason]     = deriving
-      implicit val finishReasonRender: Render[FinishReason] = deriving
-
-      implicit val finishReasonEncoder: Encoder[FinishReason] = deriving
-      implicit val finishReasonDecoder: Decoder[FinishReason] = deriving
     }
 
   }

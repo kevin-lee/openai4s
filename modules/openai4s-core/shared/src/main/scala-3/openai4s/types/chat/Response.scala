@@ -8,10 +8,10 @@ import io.circe.*
 import newtype4s.Newtype
 import openai4s.types
 import refined4s.strings.*
-import refined4s.numeric.*
+
+import openai4s.types.common.*
 
 import java.time.Instant
-import scala.annotation.targetName
 
 /** @author Kevin Lee
   * @since 2023-03-28
@@ -122,56 +122,13 @@ object Response {
 
   }
 
-  final case class Choice(message: Choice.Message, finishReason: Choice.FinishReason, index: Choice.Index)
+  final case class Choice(message: Message, finishReason: FinishReason, index: Index)
   object Choice {
     given choiceEq: Eq[Choice] = Eq.fromUniversalEquals
 
     given choiceShow: Show[Choice] = cats.derived.semiauto.show
 
     given choiceCodec: Codec[Choice] = ConfiguredCodec.derived
-
-    type Message = Message.Type
-    object Message extends Newtype[types.Message] {
-
-      def apply(role: types.Message.Role, content: types.Message.Content): Message =
-        Message(types.Message(role, content))
-
-      given messageEq: Eq[Message] = Eq.by(_.value)
-
-      given messageShow: Show[Message] = types.Message.messageShow.contramap(_.value)
-
-      given messageCodec: Codec[Message] =
-        types.Message.messageCodec.iemap[Message](Message(_).asRight)(_.value)
-
-    }
-
-    type FinishReason = FinishReason.Type
-    object FinishReason extends Newtype[String] {
-      given finishReasonEq: Eq[FinishReason] = Eq.fromUniversalEquals
-
-      given finishReasonShow: Show[FinishReason]     = Show.catsShowForString.contramap(_.value)
-      given finishReasonRender: Render[FinishReason] = Render.stringRender.contramap(_.value)
-
-      given finishReasonEncoder: Encoder[FinishReason] = Encoder.encodeString.contramap(_.value)
-      given finishReasonDecoder: Decoder[FinishReason] = Decoder.decodeString.map(FinishReason(_))
-    }
-
-    type Index = Index.Type
-    object Index extends Newtype[NonNegInt] {
-
-      @targetName("fromInt")
-      inline def apply(inline index: Int): Index = toType(NonNegInt(index))
-
-      def unsafeFrom(index: Int): Index = apply(NonNegInt.unsafeFrom(index))
-
-      given indexEq: Eq[Index] = Eq.fromUniversalEquals
-
-      given indexShow: Show[Index]     = Show.catsShowForInt.contramap(_.value.value)
-      given indexRender: Render[Index] = Render.intRender.contramap(_.value.value)
-
-      given indexEncoder: Encoder[Index] = Encoder.encodeInt.contramap(_.value.value)
-      given indexDecoder: Decoder[Index] = Decoder.decodeInt.emap(NonNegInt.from).map(Index(_))
-    }
 
   }
 

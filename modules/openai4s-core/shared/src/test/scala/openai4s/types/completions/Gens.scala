@@ -5,6 +5,7 @@ import hedgehog.*
 import hedgehog.extra.NumGens
 import openai4s.compat.TypesCompat
 import hedgehog.cats.instances.*
+import openai4s.types.common.*
 
 import java.time.Instant
 
@@ -28,13 +29,13 @@ object Gens extends TypesCompat {
         .string(Gen.unicode, Range.linear(1, 800))
         .map(prompt => Text.Prompt(prompt))
 
-    def genMaxTokens: Gen[Text.MaxTokens] =
+    def genMaxTokens: Gen[MaxTokens] =
       Gen
         .int(Range.linear(1, Int.MaxValue))
-        .map(maxTokens => Text.MaxTokens(PosInt.unsafeFrom(maxTokens)))
+        .map(maxTokens => MaxTokens(PosInt.unsafeFrom(maxTokens)))
 
-    def genTemperature: Gen[Text.Temperature] =
-      Gen.double(Range.linearFrac(0d, 2d)).map(d => Text.Temperature.unsafeFrom(d.toFloat))
+    def genTemperature: Gen[Temperature] =
+      Gen.double(Range.linearFrac(0d, 2d)).map(d => Temperature.unsafeFrom(d.toFloat))
 
     def genTopP: Gen[Text.TopP] =
       Gen.double(Range.linearFrac(0d, 2d)).map(d => Text.TopP(NonNegFloat.unsafeFrom(d.toFloat)))
@@ -116,13 +117,13 @@ object Gens extends TypesCompat {
         .string(Gen.unicode, Range.linear(1, 800))
         .map(content => Response.Choice.Text(NonEmptyString.unsafeFrom(content)))
 
-    def genFinishReason: Gen[Response.Choice.FinishReason] =
-      Gen.string(Gen.alphaNum, Range.linear(3, 10)).map(Response.Choice.FinishReason(_))
+    def genFinishReason: Gen[FinishReason] =
+      Gen.string(Gen.alphaNum, Range.linear(3, 10)).map(FinishReason(_))
 
     def genLogprobs: Gen[Response.Choice.Logprobs] =
       Gen.int(Range.linear(1, Int.MaxValue)).map(Response.Choice.Logprobs(_))
 
-    def genChoice(index: Response.Choice.Index): Gen[Response.Choice] =
+    def genChoice(index: Index): Gen[Response.Choice] =
       for {
         text         <- genText
         logprobs     <- genLogprobs.option
@@ -137,12 +138,12 @@ object Gens extends TypesCompat {
         model   <- Gens.genModel
         usage   <- genUsage
         choices <- Gen
-                     .int(Range.linear(1, 10))
+                     .int(Range.linear(0, 10))
                      .flatMap(upto =>
-                       (1 to upto)
+                       (0 to upto)
                          .toList
                          .traverse { index =>
-                           genChoice(Response.Choice.Index(index))
+                           genChoice(Index.unsafeFrom(index))
                          }
                      )
       } yield Response(id = id, `object` = obj, created = created, model = model, usage = usage, choices = choices)

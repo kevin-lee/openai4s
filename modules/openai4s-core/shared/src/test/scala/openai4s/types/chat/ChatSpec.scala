@@ -6,7 +6,6 @@ import hedgehog.*
 import hedgehog.runner.*
 import io.circe.Json
 import openai4s.compat.TypesCompat
-import openai4s.types
 
 /** @author Kevin Lee
   * @since 2023-04-02
@@ -15,7 +14,6 @@ object ChatSpec extends Properties with TypesCompat {
   override def tests: List[Test] = List(
     property("round-trip test Chat", roundTripTestChat),
     property("test encoding Chat", testEncodingChat),
-    property("test Message(types.Message.Role, types.Message.Content)", testMessageApply),
   )
 
   def roundTripTestChat: Property =
@@ -30,10 +28,10 @@ object ChatSpec extends Properties with TypesCompat {
       import io.circe.literal.*
       import io.circe.syntax.*
 
-      def toJson(message: Chat.Message): Json =
+      def toJson(message: Message): Json =
         json"""{
-          "role": ${message.value.role.render},
-          "content": ${message.value.content.render}
+          "role": ${message.role.render},
+          "content": ${message.content.render}
         }"""
 
       val expected = json"""{
@@ -47,12 +45,4 @@ object ChatSpec extends Properties with TypesCompat {
       actual ==== expected
     }
 
-  def testMessageApply: Property =
-    for {
-      message <- types.Gens.genMessage.log("message")
-    } yield {
-      val expected = Chat.Message(message)
-      val actual   = Chat.Message(message.role, message.content)
-      actual ==== expected
-    }
 }

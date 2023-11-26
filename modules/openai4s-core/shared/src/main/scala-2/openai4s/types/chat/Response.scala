@@ -3,14 +3,13 @@ package openai4s.types.chat
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.types.string.NonEmptyString
-import eu.timepit.refined.types.numeric.*
 import extras.render.Render
 import extras.render.refined.*
 import io.circe.generic.extras.Configuration
 import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
-import openai4s.types
+import openai4s.types.common.*
 
 import java.time.Instant
 
@@ -115,51 +114,13 @@ object Response {
 
   }
 
-  final case class Choice(message: Choice.Message, finishReason: Choice.FinishReason, index: Choice.Index)
+  final case class Choice(message: Message, finishReason: FinishReason, index: Index)
   object Choice {
     implicit val choiceEq: Eq[Choice] = Eq.fromUniversalEquals
 
     implicit val choiceShow: Show[Choice] = cats.derived.semiauto.show
 
     implicit val choiceCodec: Codec[Choice] = io.circe.generic.extras.semiauto.deriveConfiguredCodec
-
-    @newtype case class Message(value: types.Message)
-    object Message {
-
-      @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
-      def apply(role: types.Message.Role, content: types.Message.Content): Message =
-        Message(types.Message(role, content))
-
-      implicit val messageEq: Eq[Message] = deriving
-
-      implicit val messageShow: Show[Message] = deriving
-
-      implicit val messageCodec: Codec[Message] = deriving
-    }
-
-    @newtype case class FinishReason(value: String)
-    object FinishReason {
-      implicit val finishReasonEq: Eq[FinishReason] = deriving
-
-      implicit val finishReasonShow: Show[FinishReason]     = deriving
-      implicit val finishReasonRender: Render[FinishReason] = deriving
-
-      implicit val finishReasonEncoder: Encoder[FinishReason] = deriving
-      implicit val finishReasonDecoder: Decoder[FinishReason] = deriving
-    }
-
-    @newtype case class Index(value: NonNegInt)
-    object Index {
-      def unsafeFrom(index: Int): Index = Index(NonNegInt.unsafeFrom(index))
-
-      implicit val indexEq: Eq[Index] = deriving
-
-      implicit val indexShow: Show[Index]     = deriving
-      implicit val indexRender: Render[Index] = deriving
-
-      implicit val indexEncoder: Encoder[Index] = deriving
-      implicit val indexDecoder: Decoder[Index] = deriving
-    }
 
   }
 
