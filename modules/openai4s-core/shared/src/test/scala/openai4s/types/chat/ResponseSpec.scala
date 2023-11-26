@@ -32,8 +32,8 @@ object ResponseSpec extends Properties {
       json"""
       {
         "message": {
-          "role": ${choice.message.value.role.render},
-          "content": ${choice.message.value.content.render}
+          "role": ${choice.message.role.render},
+          "content": ${choice.message.content.render}
         },
         "finish_reason": ${choice.finishReason.render},
         "index": ${choice.index.value.value}

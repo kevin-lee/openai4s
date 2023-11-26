@@ -7,12 +7,12 @@ import io.circe.*
 import io.circe.derivation.*
 import newtype4s.Newtype
 import openai4s.types
+import openai4s.types.common.*
 import refined4s.*
 import refined4s.numeric.*
 import refined4s.strings.NonEmptyString
 
 import scala.annotation.targetName
-import scala.compiletime.*
 
 /** https://platform.openai.com/docs/api-reference/completions#:~:text=prompt%20and%20parameters.-,Request%20body,-model
   * @author Kevin Lee
@@ -21,8 +21,8 @@ import scala.compiletime.*
 final case class Text(
   model: Model,
   prompt: Option[Text.Prompt],
-  maxTokens: Option[Text.MaxTokens],
-  temperature: Option[Text.Temperature],
+  maxTokens: Option[MaxTokens],
+  temperature: Option[Temperature],
   topP: Option[Text.TopP],
   n: Option[Text.N],
   stream: Option[Text.Stream],
@@ -51,46 +51,6 @@ object Text {
 
     given promptEncoder: Encoder[Prompt] = Encoder[String].contramap(_.value)
     given promptDecoder: Decoder[Prompt] = Decoder[String].map(Prompt(_))
-  }
-
-  type MaxTokens = MaxTokens.Type
-  object MaxTokens extends Newtype[PosInt] {
-
-    @targetName("fromInt")
-    inline def apply(inline a: Int): Type = toType(PosInt(a))
-
-    extension (maxTokens: MaxTokens) {
-      def toValue: Int = maxTokens.value.value
-    }
-
-    given maxTokensEq: Eq[MaxTokens] = Eq.fromUniversalEquals
-
-    given maxTokensShow: Show[MaxTokens] = Show[Int].contramap(_.toValue)
-
-    given maxTokensEncoder: Encoder[MaxTokens] = Encoder[Int].contramap(_.toValue)
-
-    given maxTokensDecoder: Decoder[MaxTokens] = Decoder[Int].emap(PosInt.from).map(MaxTokens(_))
-  }
-
-  type Temperature = Temperature.Type
-  object Temperature extends InlinedRefined[Float] {
-
-    override inline def inlinedInvalidReason(inline a: Float): String =
-      "The temperature must be a Float between 0f and 2f (inclusive) but got [" + codeOf(a) + "]"
-
-    override inline def inlinedPredicate(inline a: Float): Boolean = a >= 0f && a <= 2f
-
-    override def invalidReason(a: Float): String =
-      "The temperature must be a Float between 0f and 2f (inclusive) but got [" + a + "]"
-
-    inline override def predicate(a: Float): Boolean = a >= 0f && a <= 2f
-
-    given temperatureEq: Eq[Temperature] = Eq.fromUniversalEquals
-
-    given temperatureShow: Show[Temperature] = Show[Float].contramap(_.value)
-
-    given temperatureEncoder: Encoder[Temperature] = Encoder[Float].contramap(_.value)
-    given temperatureDecoder: Decoder[Temperature] = Decoder[Float].emap(from)
   }
 
   type TopP = TopP.Type

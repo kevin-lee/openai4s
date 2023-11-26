@@ -5,6 +5,7 @@ import hedgehog.*
 import hedgehog.extra.NumGens
 import openai4s.compat.TypesCompat
 import openai4s.types
+import openai4s.types.common.*
 
 import java.time.Instant
 
@@ -32,11 +33,11 @@ object Gens extends TypesCompat {
 
   object chat {
 
-    def genTemperature: Gen[Chat.Temperature] =
-      Gen.double(Range.linearFrac(0d, 2d)).map(d => Chat.Temperature.unsafeFrom(d.toFloat))
+    def genTemperature: Gen[Temperature] =
+      Gen.double(Range.linearFrac(0d, 2d)).map(d => Temperature.unsafeFrom(d.toFloat))
 
-    def genMaxTokens: Gen[Chat.MaxTokens] =
-      Gen.int(Range.linear(1, 10000)).map(n => Chat.MaxTokens(PosInt.unsafeFrom(n)))
+    def genMaxTokens: Gen[MaxTokens] =
+      Gen.int(Range.linear(1, 10000)).map(n => MaxTokens(PosInt.unsafeFrom(n)))
 
     def genChat: Gen[Chat] =
       for {
@@ -44,7 +45,6 @@ object Gens extends TypesCompat {
         messages    <- types
                          .Gens
                          .genMessage
-                         .map(Chat.Message(_))
                          .list(Range.linear(1, 10))
                          .map(NonEmptyList.fromListUnsafe)
         temperature <- genTemperature.option
@@ -101,12 +101,12 @@ object Gens extends TypesCompat {
         totalTokens = totalTokens,
       )
 
-    def genFinishReason: Gen[Response.Choice.FinishReason] =
-      Gen.string(Gen.alphaNum, Range.linear(3, 10)).map(Response.Choice.FinishReason(_))
+    def genFinishReason: Gen[FinishReason] =
+      Gen.string(Gen.alphaNum, Range.linear(3, 10)).map(FinishReason(_))
 
-    def genMessageAndFinishReason: Gen[(Response.Choice.Message, Response.Choice.FinishReason)] =
+    def genMessageAndFinishReason: Gen[(Message, FinishReason)] =
       for {
-        message      <- types.Gens.genMessage.map(Response.Choice.Message(_))
+        message      <- types.Gens.genMessage
         finishReason <- genFinishReason
       } yield (message, finishReason)
 
@@ -123,7 +123,7 @@ object Gens extends TypesCompat {
                        _.zipWithIndex
                          .map {
                            case ((message, finishReason), index) =>
-                             Response.Choice(message, finishReason, Response.Choice.Index.unsafeFrom(index))
+                             Response.Choice(message, finishReason, Index.unsafeFrom(index))
                          }
                      )
       } yield Response(id = id, `object` = obj, created = created, model = model, usage = usage, choices = choices)

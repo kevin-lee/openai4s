@@ -1,6 +1,6 @@
 package openai4s.compat
 
-import eu.timepit.refined.api.RefType
+import eu.timepit.refined.api.{RefType, Refined, Validate}
 import eu.timepit.refined.types.{numeric, string}
 import extras.render.Render
 import refined4s.strings
@@ -8,7 +8,7 @@ import refined4s.strings
 /** @author Kevin Lee
   * @since 2023-04-24
   */
-trait TypesCompat extends extras.refinement.syntax.all {
+trait TypesCompat extends extras.refinement.syntax.all with io.circe.refined.CirceCodecRefined {
   type PosInt = eu.timepit.refined.types.numeric.PosInt
   val PosInt: numeric.PosInt.type = eu.timepit.refined.types.numeric.PosInt
 
@@ -21,6 +21,14 @@ trait TypesCompat extends extras.refinement.syntax.all {
   type Uri = refined4s.strings.Uri
   val Uri: strings.Uri.type = refined4s.strings.Uri
 
+  import eu.timepit.refined.macros.RefineMacro
+
+  implicit def autoRefineV[T, P](t: T)(
+    implicit rt: RefType[Refined],
+    v: Validate[T, P],
+  ): Refined[T, P] = macro RefineMacro.impl[Refined, T, P]
+
   implicit def refTypeRender[F[_, _], T: Render, P](implicit rt: RefType[F]): Render[F[T, P]] =
     extras.render.refined.refTypeRender
+
 }

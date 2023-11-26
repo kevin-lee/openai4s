@@ -1,4 +1,4 @@
-package openai4s.types
+package openai4s.types.chat
 
 import cats.{Eq, Show}
 import extras.render.Render
