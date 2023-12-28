@@ -2,6 +2,7 @@ package openai4s.types.chat
 
 import cats.data.NonEmptyList
 import cats.{Eq, Show}
+import cats.derived.*
 import io.circe.derivation.*
 import io.circe.*
 import openai4s.types
@@ -16,15 +17,11 @@ final case class Chat(
   messages: NonEmptyList[Message],
   temperature: Option[Temperature],
   maxTokens: Option[MaxTokens],
-)
+) derives Eq,
+      Show
 
 object Chat {
   given chatConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
-
-  given chatEq: Eq[Chat] = Eq.fromUniversalEquals
-
-  @SuppressWarnings(Array("org.wartremover.warts.Equals", "org.wartremover.warts.FinalVal"))
-  given chatShow: Show[Chat] = cats.derived.semiauto.show
 
   given chatEncoder: Encoder[Chat] = ConfiguredEncoder.derived[Chat].mapJson(_.deepDropNullValues)
 

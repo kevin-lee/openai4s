@@ -2,7 +2,7 @@ package openai4s.types.completions
 
 import cats.syntax.all.*
 import cats.{Eq, Show}
-import refined4s.strings.NonEmptyString
+import refined4s.types.all.NonEmptyString
 import extras.render.Render
 import io.circe.{Codec, Decoder, Encoder}
 

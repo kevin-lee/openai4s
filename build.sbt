@@ -76,7 +76,7 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
       libs.cats,
       libs.kittens(scalaVersion.value),
     ) ++
-      (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+      (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
       libs.refined(scalaVersion.value) ++ libs.extras(scalaVersion.value) ++ libs.circeAll(
         scalaVersion.value
       ) ++ libs.hedgehogExtra
@@ -94,7 +94,7 @@ lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
         libs.typeLevelCaseInsensitive,
         libs.http4sCore,
       ) ++
-        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype, libs.pureconfig)) ++
+        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype, libs.pureconfig)) ++
         libs.refined(scalaVersion.value) ++
         libs.extras(scalaVersion.value) ++
         libs.pureConfigAll ++
@@ -113,7 +113,7 @@ lazy val http4s = module("http4s", crossProject(JVMPlatform, JSPlatform))
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
       ) ++
-        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
         libs.refined(scalaVersion.value) ++
         libs.circeAll(scalaVersion.value) ++
         libs.http4s ++
@@ -132,7 +132,7 @@ lazy val api = module("api", crossProject(JVMPlatform, JSPlatform))
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
       ) ++
-        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
+        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
         libs.refined(scalaVersion.value) ++ libs.circeAll(scalaVersion.value) ++ libs.hedgehogExtra
   )
   .dependsOn(core % props.IncludeTest, config, http4s % props.IncludeTest)
@@ -192,6 +192,8 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
+    val Refined4sVersion = "0.6.0"
+
     val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
     val RefinedVersion = "0.10.1"
@@ -231,6 +233,15 @@ lazy val libs = new {
   lazy val hedgehogExtra        = List(hedgehogExtraCore, hedgehogExtraRefined).map(_ % Test)
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
+
+  lazy val refined4s =
+    List(
+      "io.kevinlee" %% "refined4s-core"       % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-cats"       % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-circe"      % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-pureconfig" % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-doobie-ce3" % props.Refined4sVersion,
+    )
 
   def refined(scalaVersion: String): List[ModuleID] =
     (

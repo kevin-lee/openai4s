@@ -5,10 +5,10 @@ import cats.{Eq, Show}
 import extras.render.Render
 import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, ConfiguredEncoder}
 import io.circe.{Codec, Decoder, Encoder}
-import newtype4s.Newtype
+import refined4s.*
 import openai4s.types
 import openai4s.types.common.*
-import refined4s.strings.NonEmptyString
+import refined4s.types.all.NonEmptyString
 
 import java.time.Instant
 

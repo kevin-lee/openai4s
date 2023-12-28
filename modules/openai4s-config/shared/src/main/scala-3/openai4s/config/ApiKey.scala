@@ -2,7 +2,7 @@ package openai4s.config
 
 import cats.syntax.all.*
 import cats.{Eq, Show}
-import refined4s.strings.NonEmptyString
+import refined4s.types.all.NonEmptyString
 import extras.render.Render
 
 /** @author Kevin Lee
