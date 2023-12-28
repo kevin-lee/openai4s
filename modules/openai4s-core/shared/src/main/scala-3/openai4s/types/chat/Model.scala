@@ -2,7 +2,7 @@ package openai4s.types.chat
 
 import cats.syntax.all.*
 import cats.{Eq, Show}
-import refined4s.strings.NonEmptyString
+import refined4s.types.all.NonEmptyString
 import extras.render.Render
 import io.circe.{Codec, Decoder, Encoder}
 
@@ -85,9 +85,9 @@ object Model {
   def fromString(model: String): Either[String, Model] =
     Model.supportedValues.find(_.value.value === model).toRight(s"Unknown model: $model")
 
-  given modelEq: Eq[Model] = Eq[String].contramap(_.value.value)
+  given modelEq: Eq[Model] = Eq[String].contramap(_.toValue)
 
-  given modelRender: Render[Model] = Render.render(_.value.value)
+  given modelRender: Render[Model] = Render.render(_.toValue)
 
   given modelShow: Show[Model] = Show.fromToString
 
@@ -95,10 +95,10 @@ object Model {
     Decoder[String].emap(value =>
       fromString(value).leftFlatMap(_ => unsupported(NonEmptyString.unsafeFrom(value)).asRight)
     ),
-    Encoder[String].contramap(_.value.value),
+    Encoder[String].contramap(_.toValue),
   )
 
-  def unapply(model: Model): String = model.value.value
+  def unapply(model: Model): String = model.toValue
 
   extension (model: Model) {
     inline def toValue: String = model.value.value

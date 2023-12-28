@@ -7,7 +7,7 @@ import extras.render.syntax.*
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
 import pureconfig.error.CannotConvert
-import refined4s.strings.*
+import refined4s.types.all.*
 
 /** @author Kevin Lee
   * @since 2023-04-07
@@ -51,7 +51,7 @@ object ApiUri {
 
     given baseUriConfigReader: ConfigReader[BaseUri] = ConfigReader
       .stringConfigReader
-      .emap(s => Uri.from(s).leftMap(err => CannotConvert(s, "refined4s.strings.Uri", err)))
+      .emap(s => Uri.from(s).leftMap(err => CannotConvert(s, "refined4s.types.all.Uri", err)))
 
   }
 

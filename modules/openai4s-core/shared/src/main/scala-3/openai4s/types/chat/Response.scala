@@ -1,13 +1,18 @@
 package openai4s.types.chat
 
-import cats.syntax.all.*
 import cats.{Eq, Show}
+import cats.derived.*
 import extras.render.Render
 import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, ConfiguredEncoder}
 import io.circe.*
-import newtype4s.Newtype
 import openai4s.types
-import refined4s.strings.*
+import refined4s.*
+import refined4s.types.all.*
+import refined4s.syntax.*
+import refined4s.modules.cats.derivation.*
+import refined4s.modules.cats.derivation.types.all.given
+import refined4s.modules.circe.derivation.*
+import refined4s.modules.circe.derivation.types.all.given
 
 import openai4s.types.common.*
 
@@ -23,110 +28,75 @@ final case class Response(
   model: Model,
   usage: Response.Usage,
   choices: List[Response.Choice],
-) derives Codec.AsObject
+) derives ConfiguredCodec,
+      Eq,
+      Show
 object Response {
 
   given responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  given responseEq: Eq[Response] = Eq.fromUniversalEquals
-
-  given responseShow: Show[Response] = cats.derived.semiauto.show
-
   type Id = Id.Type
-  object Id extends Newtype[NonEmptyString] {
-    extension (id: Id) {
-      def toValue: String = id.value.value
-    }
-
-    given idEq: Eq[Id] = Eq.fromUniversalEquals
+  object Id extends Newtype[NonEmptyString], CatsEqShow[NonEmptyString] {
 
     given idRender: Render[Id] = Render[String].contramap(_.toValue)
-    given idShow: Show[Id]     = Show[String].contramap(_.toValue)
 
     given idEncoder: Encoder[Id] = Encoder[String].contramap(_.toValue)
     given idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from).map(Id(_))
   }
 
   type Object = Object.Type
-  object Object extends Newtype[NonEmptyString] {
-    extension (obj: Object) {
-      def toValue: String = obj.value.value
-    }
-    given objectEq: Eq[Object] = Eq.fromUniversalEquals
+  object Object extends Newtype[NonEmptyString], CatsEqShow[NonEmptyString], CirceNewtypeCodec[NonEmptyString] {
 
     given objectRender: Render[Object] = Render[String].contramap(_.toValue)
-    given objectShow: Show[Object]     = Show[String].contramap(_.toValue)
 
-    given objectEncoder: Encoder[Object] = Encoder[String].contramap(_.toValue)
-    given objectDecoder: Decoder[Object] = Decoder[String].emap(NonEmptyString.from).map(Object(_))
   }
 
   type Created = Created.Type
   object Created extends Newtype[Instant] {
 
-    given createdEq: Eq[Created] = Eq.fromUniversalEquals
+    given createdEq: Eq[Created] = wrapTC(Eq.fromUniversalEquals[Instant])
 
-    given createdRender: Render[Created] = Render.fromToString
-    given createdShow: Show[Created]     = Show.fromToString
+    given createdShow: Show[Created]     = wrapTC(Show.fromToString)
+    given createdRender: Render[Created] = wrapTC(Render.fromToString)
 
-    given createdEncoder: Encoder[Created] = Encoder[Long].contramap(_.value.getEpochSecond)
-    given createdDecoder: Decoder[Created] = Decoder[Long].map(Instant.ofEpochSecond).map(Created(_))
+    inline given createdEncoder: Encoder[Created] = Encoder[Long].contramap(_.value.getEpochSecond)
+    inline given createdDecoder: Decoder[Created] = Decoder[Long].map(Instant.ofEpochSecond).map(Created(_))
   }
 
   final case class Usage(
     promptTokens: Usage.PromptTokens,
     completionTokens: Usage.CompletionTokens,
     totalTokens: Usage.TotalTokens,
-  )
+  ) derives ConfiguredCodec,
+        Eq,
+        Show
   object Usage {
-    given usageEq: Eq[Usage] = Eq.fromUniversalEquals
-
-    given usageShow: Show[Usage] = cats.derived.semiauto.show
-
-    given usageCodec: Codec[Usage] = ConfiguredCodec.derived
 
     type PromptTokens = PromptTokens.Type
-    object PromptTokens extends Newtype[Int] {
+    object PromptTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
 
-      given promptTokensEq: Eq[PromptTokens] = Eq.fromUniversalEquals
+      given promptTokensRender: Render[PromptTokens] = deriving
 
-      given promptTokensShow: Show[PromptTokens]     = Show.catsShowForInt.contramap(_.value)
-      given promptTokensRender: Render[PromptTokens] = Render.intRender.contramap(_.value)
-
-      given promptTokensEncoder: Encoder[PromptTokens] = Encoder.encodeInt.contramap(_.value)
-      given promptTokensDecoder: Decoder[PromptTokens] = Decoder.decodeInt.map(PromptTokens(_))
     }
 
     type CompletionTokens = CompletionTokens.Type
-    object CompletionTokens extends Newtype[Int] {
+    object CompletionTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
 
-      given completionTokensEq: Eq[CompletionTokens] = Eq.fromUniversalEquals
+      given completionTokensRender: Render[CompletionTokens] = deriving
 
-      given completionTokensShow: Show[CompletionTokens]     = Show.catsShowForInt.contramap(_.value)
-      given completionTokensRender: Render[CompletionTokens] = Render.intRender.contramap(_.value)
-
-      given completionTokensEncoder: Encoder[CompletionTokens] = Encoder.encodeInt.contramap(_.value)
-      given completionTokensDecoder: Decoder[CompletionTokens] = Decoder.decodeInt.map(CompletionTokens(_))
     }
 
     type TotalTokens = TotalTokens.Type
-    object TotalTokens extends Newtype[Int] {
-      given totalTokensEq: Eq[TotalTokens] = Eq.fromUniversalEquals
+    object TotalTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
 
-      given totalTokensShow: Show[TotalTokens]     = Show.catsShowForInt.contramap(_.value)
-      given totalTokensRender: Render[TotalTokens] = Render.intRender.contramap(_.value)
+      given totalTokensRender: Render[TotalTokens] = deriving
 
-      given totalTokensEncoder: Encoder[TotalTokens] = Encoder.encodeInt.contramap(_.value)
-      given totalTokensDecoder: Decoder[TotalTokens] = Decoder.decodeInt.map(TotalTokens(_))
     }
 
   }
 
-  final case class Choice(message: Message, finishReason: FinishReason, index: Index)
+  final case class Choice(message: Message, finishReason: FinishReason, index: Index) derives Eq, Show
   object Choice {
-    given choiceEq: Eq[Choice] = Eq.fromUniversalEquals
-
-    given choiceShow: Show[Choice] = cats.derived.semiauto.show
 
     given choiceCodec: Codec[Choice] = ConfiguredCodec.derived
 
