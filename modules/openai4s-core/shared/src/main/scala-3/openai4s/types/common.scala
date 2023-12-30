@@ -9,7 +9,6 @@ import refined4s.modules.cats.derivation.*
 import refined4s.modules.cats.derivation.types.all.given
 import refined4s.modules.circe.derivation.*
 import refined4s.modules.circe.derivation.types.all.given
-import refined4s.syntax.*
 import refined4s.types.all.*
 
 import scala.annotation.targetName
