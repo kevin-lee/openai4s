@@ -192,7 +192,7 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
-    val Refined4sVersion = "0.8.0"
+    val Refined4sVersion = "0.10.0"
 
     val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
@@ -236,11 +236,12 @@ lazy val libs = new {
 
   lazy val refined4s =
     List(
-      "io.kevinlee" %% "refined4s-core"       % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-cats"       % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-circe"      % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-pureconfig" % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-doobie-ce3" % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-core"          % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-cats"          % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-circe"         % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-pureconfig"    % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-doobie-ce3"    % props.Refined4sVersion,
+      "io.kevinlee" %% "refined4s-extras-render" % props.Refined4sVersion,
     )
 
   def refined(scalaVersion: String): List[ModuleID] =

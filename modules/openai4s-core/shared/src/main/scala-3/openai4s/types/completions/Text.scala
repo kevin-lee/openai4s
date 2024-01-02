@@ -10,6 +10,10 @@ import refined4s.*
 import refined4s.types.all.*
 import refined4s.modules.cats.derivation.*
 import refined4s.modules.cats.derivation.types.all.given
+import refined4s.modules.circe.derivation.*
+import refined4s.modules.circe.derivation.types.all.given
+import refined4s.modules.extras.derivation.*
+import refined4s.modules.extras.derivation.types.all.given
 
 import scala.annotation.targetName
 
@@ -42,29 +46,18 @@ object Text {
   given textDecoder: Decoder[Text] = ConfiguredDecoder.derived
 
   type Prompt = Prompt.Type
-  object Prompt extends Newtype[String] with CatsEqShow[String] {
-    given promptRender: Render[Prompt] = Render.render(_.value)
-
-    given promptEncoder: Encoder[Prompt] = Encoder[String].contramap(_.value)
-    given promptDecoder: Decoder[Prompt] = Decoder[String].map(Prompt(_))
-  }
+  object Prompt extends Newtype[String], CatsEqShow[String], ExtrasRender[String], CirceNewtypeCodec[String]
 
   type TopP = TopP.Type
-  object TopP extends Newtype[NonNegFloat] with CatsEqShow[NonNegFloat] {
+  object TopP extends Newtype[NonNegFloat], CatsEqShow[NonNegFloat], CirceNewtypeCodec[NonNegFloat] {
 
     @targetName("fromFloat")
     inline def apply(inline a: Float): Type = wrap(NonNegFloat(a))
 
-    given topPEncoder: Encoder[TopP] = Encoder[Float].contramap(_.value.value)
-    given topPDecoder: Decoder[TopP] = Decoder[Float].emap(NonNegFloat.from).map(TopP(_))
   }
 
   type N = N.Type
-  object N extends Newtype[Int] with CatsEqShow[Int] {
-
-    given nEncoder: Encoder[N] = Encoder[Int].contramap(_.value)
-    given nDecoder: Decoder[N] = Decoder[Int].map(N(_))
-  }
+  object N extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int]
 
   enum Stream {
     case IsStream
@@ -92,19 +85,17 @@ object Text {
   }
 
   type Logprobs = Logprobs.Type
-  object Logprobs extends Newtype[Int] with CatsEqShow[Int] {
-
-    given logprobsEncoder: Encoder[Logprobs] = Encoder[Int].contramap(_.value)
-    given logprobsDecoder: Decoder[Logprobs] = Decoder[Int].map(Logprobs(_))
-  }
+  object Logprobs extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int]
 
   type Stop = Stop.Type
-  object Stop extends Newtype[NonEmptyString] with CatsEqShow[NonEmptyString] {
+  object Stop
+      extends Newtype[NonEmptyString],
+        CatsEqShow[NonEmptyString],
+        ExtrasRender[NonEmptyString],
+        CirceNewtypeCodec[NonEmptyString] {
 
     @targetName("fromString")
     inline def apply(inline a: String): Type = wrap(NonEmptyString(a))
 
-    given stopEncoder: Encoder[Stop] = Encoder[String].contramap(_.value.value)
-    given stopDecoder: Decoder[Stop] = Decoder[String].emap(NonEmptyString.from).map(Stop(_))
   }
 }
