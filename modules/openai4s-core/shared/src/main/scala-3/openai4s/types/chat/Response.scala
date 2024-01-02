@@ -12,6 +12,8 @@ import refined4s.modules.cats.derivation.*
 import refined4s.modules.cats.derivation.types.all.given
 import refined4s.modules.circe.derivation.*
 import refined4s.modules.circe.derivation.types.all.given
+import refined4s.modules.extras.derivation.*
+import refined4s.modules.extras.derivation.types.all.given
 
 import openai4s.types.common.*
 
@@ -35,20 +37,18 @@ object Response {
   given responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   type Id = Id.Type
-  object Id extends Newtype[NonEmptyString], CatsEqShow[NonEmptyString] {
-
-    given idRender: Render[Id] = Render[String].contramap(_.toValue)
-
-    given idEncoder: Encoder[Id] = Encoder[String].contramap(_.toValue)
-    given idDecoder: Decoder[Id] = Decoder[String].emap(NonEmptyString.from).map(Id(_))
-  }
+  object Id
+      extends Newtype[NonEmptyString],
+        CatsEqShow[NonEmptyString],
+        CirceNewtypeCodec[NonEmptyString],
+        ExtrasRender[NonEmptyString]
 
   type Object = Object.Type
-  object Object extends Newtype[NonEmptyString], CatsEqShow[NonEmptyString], CirceNewtypeCodec[NonEmptyString] {
-
-    given objectRender: Render[Object] = Render[String].contramap(_.toValue)
-
-  }
+  object Object
+      extends Newtype[NonEmptyString],
+        CatsEqShow[NonEmptyString],
+        CirceNewtypeCodec[NonEmptyString],
+        ExtrasRender[NonEmptyString]
 
   type Created = Created.Type
   object Created extends Newtype[Instant] {
@@ -72,25 +72,13 @@ object Response {
   object Usage {
 
     type PromptTokens = PromptTokens.Type
-    object PromptTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
-
-      given promptTokensRender: Render[PromptTokens] = deriving
-
-    }
+    object PromptTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int], ExtrasRender[Int]
 
     type CompletionTokens = CompletionTokens.Type
-    object CompletionTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
-
-      given completionTokensRender: Render[CompletionTokens] = deriving
-
-    }
+    object CompletionTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int], ExtrasRender[Int]
 
     type TotalTokens = TotalTokens.Type
-    object TotalTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int] {
-
-      given totalTokensRender: Render[TotalTokens] = deriving
-
-    }
+    object TotalTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int], ExtrasRender[Int]
 
   }
 

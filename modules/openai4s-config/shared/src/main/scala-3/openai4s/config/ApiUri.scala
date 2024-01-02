@@ -1,13 +1,18 @@
 package openai4s.config
 
 import cats.{Eq, Show}
-import cats.syntax.all.*
 import extras.render.Render
 import extras.render.syntax.*
 import pureconfig.*
 import pureconfig.generic.derivation.default.*
-import pureconfig.error.CannotConvert
+import refined4s.*
 import refined4s.types.all.*
+import refined4s.modules.cats.derivation.*
+import refined4s.modules.cats.derivation.types.all.given
+import refined4s.modules.pureconfig.derivation.PureconfigNewtypeConfigReader
+import refined4s.modules.pureconfig.derivation.types.all.given
+import refined4s.modules.extras.derivation.*
+import refined4s.modules.extras.derivation.types.all.given
 
 /** @author Kevin Lee
   * @since 2023-04-07
@@ -33,26 +38,7 @@ object ApiUri {
       NonEmptyString.unsafeFrom(render"${apiUri.baseUri}/v1/completions")
   }
 
-  type BaseUri = BaseUri.BaseUri
-  object BaseUri {
-    opaque type BaseUri = Uri
-    def apply(baseUri: Uri): BaseUri = baseUri
-
-    given baseUriCanEqual: CanEqual[BaseUri, BaseUri] = CanEqual.derived
-
-    extension (baseUri: BaseUri) {
-      def value: Uri = baseUri
-    }
-
-    given baseUriEq: Eq[BaseUri] = Eq.fromUniversalEquals
-
-    given baseUriRender: Render[BaseUri] = Render.stringRender.contramap(_.value.value)
-    given baseUriShow: Show[BaseUri]     = Show.catsShowForString.contramap(_.value.value)
-
-    given baseUriConfigReader: ConfigReader[BaseUri] = ConfigReader
-      .stringConfigReader
-      .emap(s => Uri.from(s).leftMap(err => CannotConvert(s, "refined4s.types.all.Uri", err)))
-
-  }
+  type BaseUri = BaseUri.Type
+  object BaseUri extends Newtype[Uri], CatsEqShow[Uri], PureconfigNewtypeConfigReader[Uri], ExtrasRender[Uri]
 
 }

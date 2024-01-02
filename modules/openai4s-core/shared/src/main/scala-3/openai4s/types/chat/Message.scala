@@ -10,6 +10,7 @@ import io.circe.{Decoder, Encoder}
 import refined4s.*
 import refined4s.modules.cats.derivation.*
 import refined4s.modules.circe.derivation.*
+import refined4s.modules.extras.derivation.*
 
 /** @author Kevin Lee
   * @since 2023-03-24
@@ -19,17 +20,9 @@ object Message {
   given messageConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
   type Role = Role.Type
-  object Role extends Newtype[String] with CatsEqShow[String] with CirceNewtypeCodec[String] {
-
-    given roleRender: Render[Role] = Render.render(_.value)
-
-  }
+  object Role extends Newtype[String], CatsEqShow[String], CirceNewtypeCodec[String], ExtrasRender[String]
 
   type Content = Content.Type
-  object Content extends Newtype[String] with CatsEqShow[String] with CirceNewtypeCodec[String] {
-
-    given contentRender: Render[Content] = Render.render(_.value)
-
-  }
+  object Content extends Newtype[String], CatsEqShow[String], CirceNewtypeCodec[String], ExtrasRender[String]
 
 }

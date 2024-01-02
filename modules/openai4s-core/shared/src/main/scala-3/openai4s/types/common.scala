@@ -9,6 +9,8 @@ import refined4s.modules.cats.derivation.*
 import refined4s.modules.cats.derivation.types.all.given
 import refined4s.modules.circe.derivation.*
 import refined4s.modules.circe.derivation.types.all.given
+import refined4s.modules.extras.derivation.*
+import refined4s.modules.extras.derivation.types.all.given
 import refined4s.types.all.*
 
 import scala.annotation.targetName
@@ -37,26 +39,30 @@ object common {
     @targetName("fromInt")
     inline def apply(inline token: Int): Type = wrap(PosInt(token))
 
+    def from(token: Int): Either[String, MaxTokens] = PosInt.from(token).map(wrap(_))
+
+    def unsafeFrom(token: Int): MaxTokens = wrap(PosInt.unsafeFrom(token))
+
   }
 
   type Index = Index.Type
-  object Index extends Newtype[NonNegInt] with CatsEqShow[NonNegInt] with CirceNewtypeCodec[NonNegInt] {
+  object Index
+      extends Newtype[NonNegInt],
+        CatsEqShow[NonNegInt],
+        CirceNewtypeCodec[NonNegInt],
+        ExtrasRender[NonNegInt] {
 
     @targetName("fromInt")
     inline def apply(inline index: Int): Index = wrap(NonNegInt(index))
 
-    def unsafeFrom(index: Int): Index = wrap(NonNegInt.unsafeFrom(index))
+    def from(index: Int): Either[String, Index] = NonNegInt.from(index).map(wrap(_))
 
-    given indexRender: Render[Index] = Render.intRender.contramap(_.toValue)
+    def unsafeFrom(index: Int): Index = wrap(NonNegInt.unsafeFrom(index))
 
   }
 
   type FinishReason = FinishReason.Type
 
-  object FinishReason extends Newtype[String] with CatsEqShow[String] with CirceNewtypeCodec[String] {
-
-    given finishReasonRender: Render[FinishReason] = deriving
-
-  }
+  object FinishReason extends Newtype[String], CatsEqShow[String], CirceNewtypeCodec[String], ExtrasRender[String]
 
 }
