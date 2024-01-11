@@ -20,7 +20,7 @@ object common {
   type Temperature = Float Refined Interval.Closed[0f, 2f]
   object Temperature extends RefinedTypeOps.Numeric[Temperature, Float] {
 
-    implicit val temperatureEq: Eq[Temperature] = Eq.fromUniversalEquals
+    implicit val temperatureEq: Eq[Temperature] = Eq.catsKernelInstancesForFloat.contramap(_.value)
 
     implicit val temperatureShow: Show[Temperature] = Show.catsShowForFloat.contramap(_.value)
 

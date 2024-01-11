@@ -1,6 +1,7 @@
 package openai4s.types.completions
 
 import cats.{Eq, Show}
+import cats.derived.*
 import extras.render.Render
 import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, ConfiguredEncoder}
 import io.circe.{Codec, Decoder, Encoder}
@@ -27,17 +28,13 @@ final case class Response(
   model: Model,
   usage: Response.Usage,
   choices: List[Response.Choice],
-)
+) derives Eq,
+      Show
 object Response {
 
   given responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  given responseEq: Eq[Response] = Eq.fromUniversalEquals
-
-  given responseShow: Show[Response] = cats.derived.semiauto.show
-
   given encoder: Encoder[Response] = ConfiguredEncoder.derived[Response].mapJson(_.deepDropNullValues)
-
   given decoder: Decoder[Response] = ConfiguredDecoder.derived
 
   type Id = Id.Type
@@ -71,13 +68,10 @@ object Response {
     index: Index,
     logprobs: Option[Choice.Logprobs],
     finishReason: FinishReason,
-  )
+  ) derives Eq,
+        Show,
+        ConfiguredCodec
   object Choice {
-    given choiceEq: Eq[Choice] = Eq.fromUniversalEquals
-
-    given choiceShow: Show[Choice] = cats.derived.semiauto.show
-
-    given choiceCodec: Codec[Choice] = ConfiguredCodec.derived
 
     type Text = Text.Type
     object Text
@@ -95,13 +89,10 @@ object Response {
     promptTokens: Usage.PromptTokens,
     completionTokens: Usage.CompletionTokens,
     totalTokens: Usage.TotalTokens,
-  )
+  ) derives Eq,
+        Show,
+        ConfiguredCodec
   object Usage {
-    given usageEq: Eq[Usage] = Eq.fromUniversalEquals
-
-    given usageShow: Show[Usage] = cats.derived.semiauto.show
-
-    given usageCodec: Codec[Usage] = ConfiguredCodec.derived
 
     type PromptTokens = PromptTokens.Type
     object PromptTokens extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int], ExtrasRender[Int]

@@ -13,7 +13,7 @@ final case class Message(role: Message.Role, content: Message.Content)
 object Message {
   implicit val messageConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val messageEq: Eq[Message] = Eq.fromUniversalEquals
+  implicit val messageEq: Eq[Message] = cats.derived.semiauto.eq
 
   implicit val messageShow: Show[Message] = cats.derived.semiauto.show
 

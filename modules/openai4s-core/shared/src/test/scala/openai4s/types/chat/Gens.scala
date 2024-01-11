@@ -37,7 +37,9 @@ object Gens extends TypesCompat {
       Gen.double(Range.linearFrac(0d, 2d)).map(d => Temperature.unsafeFrom(d.toFloat))
 
     def genMaxTokens: Gen[MaxTokens] =
-      Gen.int(Range.linear(1, 10000)).map(n => MaxTokens(PosInt.unsafeFrom(n)))
+      RefinedNumGens
+        .genPosInt(PosInt(1), PosInt(10000))
+        .map(MaxTokens(_))
 
     def genChat: Gen[Chat] =
       for {
@@ -61,18 +63,16 @@ object Gens extends TypesCompat {
 
     @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
     def genId: Gen[Response.Id] = {
-      Gen
-        .string(Gen.alphaNum, Range.linear(1, 20))
-        .map(NonEmptyString.unsafeFrom)
+      StringGens
+        .genNonEmptyStringMinMax(Gen.alphaNum, PosInt(1), PosInt(20))
         .list(Range.singleton(2))
         .map(_.reduce(_ ++ NonEmptyString("-") ++ _))
         .map(Response.Id(_))
     }
 
     def genObject: Gen[Response.Object] =
-      Gen
-        .string(Gen.choice1(Gen.alphaNum, Gen.constant('.')), Range.linear(1, 10))
-        .map(NonEmptyString.unsafeFrom)
+      StringGens
+        .genNonEmptyStringMinMax(Gen.choice1(Gen.alphaNum, Gen.constant('.')), PosInt(1), PosInt(10))
         .map(Response.Object(_))
 
     def genCreated: Gen[Response.Created] =

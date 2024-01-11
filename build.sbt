@@ -76,10 +76,15 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
       libs.cats,
       libs.kittens(scalaVersion.value),
     ) ++
-      (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
+      (
+        if (isScala3(scalaVersion.value))
+          libs.refined4s ++ libs.tests.hedgehogExtraScala3
+        else
+          List(libs.newtype) ++ libs.tests.hedgehogExtraScala2
+      ) ++
       libs.refined(scalaVersion.value) ++ libs.extras(scalaVersion.value) ++ libs.circeAll(
         scalaVersion.value
-      ) ++ libs.hedgehogExtra
+      )
   )
 
 lazy val coreJvm = core.jvm
@@ -94,11 +99,15 @@ lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
         libs.typeLevelCaseInsensitive,
         libs.http4sCore,
       ) ++
-        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype, libs.pureconfig)) ++
+        (
+          if (isScala3(scalaVersion.value))
+            libs.refined4s ++ libs.tests.hedgehogExtraScala3
+          else
+            List(libs.newtype, libs.pureconfig) ++ libs.tests.hedgehogExtraScala2
+        ) ++
         libs.refined(scalaVersion.value) ++
         libs.extras(scalaVersion.value) ++
-        libs.pureConfigAll ++
-        libs.hedgehogExtra
+        libs.pureConfigAll
   )
   .dependsOn(core % props.IncludeTest)
 
@@ -132,8 +141,13 @@ lazy val api = module("api", crossProject(JVMPlatform, JSPlatform))
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
       ) ++
-        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
-        libs.refined(scalaVersion.value) ++ libs.circeAll(scalaVersion.value) ++ libs.hedgehogExtra
+        (
+          if (isScala3(scalaVersion.value))
+            libs.refined4s ++ libs.tests.hedgehogExtraScala3
+          else
+            List(libs.newtype) ++ libs.tests.hedgehogExtraScala2
+        ) ++
+        libs.refined(scalaVersion.value) ++ libs.circeAll(scalaVersion.value)
   )
   .dependsOn(core % props.IncludeTest, config, http4s % props.IncludeTest)
 
@@ -180,7 +194,7 @@ lazy val props =
 
     val HedgehogVersion = "0.10.1"
 
-    val HedgehogExtraVersion = "0.4.0"
+    val HedgehogExtraVersion = "0.6.0"
 
     val CatsVersion = "2.10.0"
 
@@ -192,7 +206,7 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
-    val Refined4sVersion = "0.10.0"
+    val Refined4sVersion = "0.11.0"
 
     val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
@@ -217,20 +231,6 @@ lazy val props =
   }
 
 lazy val libs = new {
-  lazy val hedgehogCore   = "qa.hedgehog" %% "hedgehog-core"   % props.HedgehogVersion
-  lazy val hedgehogRunner = "qa.hedgehog" %% "hedgehog-runner" % props.HedgehogVersion
-  lazy val hedgehogSbt    = "qa.hedgehog" %% "hedgehog-sbt"    % props.HedgehogVersion
-
-  lazy val hedgehog: List[ModuleID] =
-    List(
-      hedgehogCore,
-      hedgehogRunner,
-      hedgehogSbt,
-    ).map(_ % Test)
-
-  lazy val hedgehogExtraCore    = "io.kevinlee" %% "hedgehog-extra-core"    % props.HedgehogExtraVersion
-  lazy val hedgehogExtraRefined = "io.kevinlee" %% "hedgehog-extra-refined" % props.HedgehogExtraVersion
-  lazy val hedgehogExtra        = List(hedgehogExtraCore, hedgehogExtraRefined).map(_ % Test)
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
 
@@ -338,6 +338,34 @@ lazy val libs = new {
 
   lazy val logback = "ch.qos.logback" % "logback-classic" % props.LogbackVersion
 
+  lazy val tests = new {
+    lazy val hedgehogCore   = "qa.hedgehog" %% "hedgehog-core"   % props.HedgehogVersion % Test
+    lazy val hedgehogRunner = "qa.hedgehog" %% "hedgehog-runner" % props.HedgehogVersion % Test
+    lazy val hedgehogSbt    = "qa.hedgehog" %% "hedgehog-sbt"    % props.HedgehogVersion % Test
+
+    lazy val hedgehog: List[ModuleID] =
+      List(
+        hedgehogCore,
+        hedgehogRunner,
+        hedgehogSbt,
+      )
+
+    lazy val hedgehogExtraCore      = "io.kevinlee" %% "hedgehog-extra-core"      % props.HedgehogExtraVersion % Test
+    lazy val hedgehogExtraRefined   = "io.kevinlee" %% "hedgehog-extra-refined"   % props.HedgehogExtraVersion % Test
+    lazy val hedgehogExtraRefined4s = "io.kevinlee" %% "hedgehog-extra-refined4s" % props.HedgehogExtraVersion % Test
+
+    lazy val hedgehogExtraScala2 = List(
+      hedgehogExtraCore,
+      hedgehogExtraRefined,
+    )
+
+    lazy val hedgehogExtraScala3 = List(
+      hedgehogExtraCore,
+      hedgehogExtraRefined4s,
+    )
+
+  }
+
 }
 
 lazy val mavenCentralPublishSettings: SettingsDefinition = List(
@@ -382,7 +410,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
         case "UTF-8" => "utf8"
         case s => s
       }),
-      libraryDependencies ++= libs.hedgehog,
+      libraryDependencies ++= libs.tests.hedgehog,
       wartremoverErrors ++= Warts.allBut(Wart.Any, Wart.Nothing, Wart.ImplicitConversion, Wart.ImplicitParameter),
       Compile / console / scalacOptions :=
         (console / scalacOptions)
