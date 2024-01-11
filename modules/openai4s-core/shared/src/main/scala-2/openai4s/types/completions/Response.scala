@@ -29,7 +29,7 @@ object Response {
 
   implicit val responseConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val responseEq: Eq[Response] = Eq.fromUniversalEquals
+  implicit val responseEq: Eq[Response] = cats.derived.semiauto.eq
 
   implicit val responseShow: Show[Response] = cats.derived.semiauto.show
 
@@ -77,7 +77,7 @@ object Response {
     finishReason: FinishReason,
   )
   object Choice {
-    implicit val choiceEq: Eq[Choice] = Eq.fromUniversalEquals
+    implicit val choiceEq: Eq[Choice] = cats.derived.semiauto.eq
 
     implicit val choiceShow: Show[Choice] = cats.derived.semiauto.show
 
@@ -112,7 +112,7 @@ object Response {
     totalTokens: Usage.TotalTokens,
   )
   object Usage {
-    implicit val usageEq: Eq[Usage] = Eq.fromUniversalEquals
+    implicit val usageEq: Eq[Usage] = cats.derived.semiauto.eq
 
     implicit val usageShow: Show[Usage] = cats.derived.semiauto.show
 

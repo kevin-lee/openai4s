@@ -45,7 +45,7 @@ object ModelSpec extends Properties with TypesCompat {
         Gen
           .frequency1(
             95 -> Gens.genModel,
-            5  -> Gen.string(Gen.unicode, Range.linear(1, 10)).map(s => Model.unsupported(NonEmptyString.unsafeFrom(s))),
+            5  -> StringGens.genNonEmptyStringMinMax(Gen.unicode, PosInt(1), PosInt(10)).map(Model.unsupported),
           )
           .log("input")
     } yield {

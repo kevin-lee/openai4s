@@ -30,7 +30,7 @@ object Text {
 
   implicit val textConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val textEq: Eq[Text] = Eq.fromUniversalEquals
+  implicit val textEq: Eq[Text] = cats.derived.semiauto.eq
 
   @SuppressWarnings(Array("org.wartremover.warts.Equals"))
   implicit val textShow: Show[Text] = cats.derived.semiauto.show

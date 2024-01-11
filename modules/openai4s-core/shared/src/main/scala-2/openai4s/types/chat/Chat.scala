@@ -21,7 +21,7 @@ final case class Chat(
 object Chat {
   implicit val chatConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
 
-  implicit val chatEq: Eq[Chat] = Eq.fromUniversalEquals
+  implicit val chatEq: Eq[Chat] = cats.derived.semiauto.eq
 
   @SuppressWarnings(Array("org.wartremover.warts.Equals", "org.wartremover.warts.FinalVal"))
   implicit val chatShow: Show[Chat] = cats.derived.semiauto.show

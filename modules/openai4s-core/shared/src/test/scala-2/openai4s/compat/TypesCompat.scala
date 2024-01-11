@@ -31,4 +31,10 @@ trait TypesCompat extends extras.refinement.syntax.all with io.circe.refined.Cir
   implicit def refTypeRender[F[_, _], T: Render, P](implicit rt: RefType[F]): Render[F[T, P]] =
     extras.render.refined.refTypeRender
 
+  val CommonGens = hedgehog.extra.Gens
+
+  val RefinedNumGens = hedgehog.extra.refined.NumGens
+  val StringGens     = hedgehog.extra.refined.StringGens
+  val NetGens        = hedgehog.extra.refined.NetGens
+
 }

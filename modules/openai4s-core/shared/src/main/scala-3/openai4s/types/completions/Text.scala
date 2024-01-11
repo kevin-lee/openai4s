@@ -1,6 +1,7 @@
 package openai4s.types.completions
 
 import cats.*
+import cats.derived.*
 import extras.render.Render
 import io.circe.*
 import io.circe.derivation.*
@@ -31,15 +32,11 @@ final case class Text(
   stream: Option[Text.Stream],
   logprobs: Option[Text.Logprobs],
   stop: Option[Text.Stop],
-)
+) derives Eq,
+      Show
 object Text {
 
   given textConfiguration: Configuration = Configuration.default.withSnakeCaseMemberNames
-
-  given textEq: Eq[Text] = Eq.fromUniversalEquals
-
-  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-  given textShow: Show[Text] = cats.derived.semiauto.show
 
   given textEncoder: Encoder[Text] = ConfiguredEncoder.derived[Text].mapJson(_.deepDropNullValues)
 
@@ -59,7 +56,7 @@ object Text {
   type N = N.Type
   object N extends Newtype[Int], CatsEqShow[Int], CirceNewtypeCodec[Int]
 
-  enum Stream {
+  enum Stream derives CanEqual, Eq, Show {
     case IsStream
     case NotStream
 
@@ -71,11 +68,6 @@ object Text {
 
     def isStreamIfTrue(stream: Boolean): Stream =
       if (stream) isStream else notStream
-
-    given streamEq: Eq[Stream] = Eq.fromUniversalEquals
-
-    @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-    given streamShow: Show[Stream] = cats.derived.semiauto.show
 
     given streamEncoder: Encoder[Stream] = Encoder[Boolean].contramap {
       case IsStream => true

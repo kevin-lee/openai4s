@@ -19,4 +19,10 @@ trait TypesCompat extends refined4s.syntax {
   type Uri = refined4s.types.all.Uri
   val Uri = refined4s.types.all.Uri
 
+  val CommonGens = hedgehog.extra.Gens
+
+  val RefinedNumGens = hedgehog.extra.refined4s.gens.NumGens
+  val StringGens     = hedgehog.extra.refined4s.gens.StringGens
+  val NetGens        = hedgehog.extra.refined4s.gens.NetworkGens
+
 }
