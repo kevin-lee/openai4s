@@ -2,7 +2,6 @@ package openai4s.types.chat
 
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
-import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
 import extras.render.refined.*
 import io.circe.generic.extras.Configuration
@@ -10,6 +9,7 @@ import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
 import openai4s.types.common.*
+import refined4s.compat.RefinedCompatAllTypes.*
 
 import java.time.Instant
 

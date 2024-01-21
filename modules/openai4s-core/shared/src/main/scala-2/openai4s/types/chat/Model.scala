@@ -2,11 +2,11 @@ package openai4s.types.chat
 
 import cats.syntax.all.*
 import cats.{Eq, Show}
-import eu.timepit.refined.cats.*
-import eu.timepit.refined.types.string.NonEmptyString
 import eu.timepit.refined.auto.autoRefineV
+import eu.timepit.refined.cats.*
 import extras.render.Render
 import io.circe.{Codec, Decoder, Encoder}
+import refined4s.compat.RefinedCompatAllTypes.*
 
 /** Reference:
   * - https://platform.openai.com/docs/models/

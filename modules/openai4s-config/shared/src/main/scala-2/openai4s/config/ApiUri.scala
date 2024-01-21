@@ -3,13 +3,12 @@ package openai4s.config
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.pureconfig.*
-import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
 import extras.render.refined.*
 import extras.render.syntax.*
 import io.estatico.newtype.macros.newtype
 import pureconfig.ConfigReader
-import refined4s.strings.Uri
+import refined4s.compat.RefinedCompatAllTypes.*
 
 /** @author Kevin Lee
   * @since 2023-04-07

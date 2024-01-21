@@ -78,7 +78,7 @@ lazy val core = module("core", crossProject(JVMPlatform, JSPlatform))
     ) ++
       (
         if (isScala3(scalaVersion.value))
-          libs.refined4s ++ libs.tests.hedgehogExtraScala3
+          libs.tests.hedgehogExtraScala3
         else
           List(libs.newtype) ++ libs.tests.hedgehogExtraScala2
       ) ++
@@ -101,7 +101,7 @@ lazy val config = module("config", crossProject(JVMPlatform, JSPlatform))
       ) ++
         (
           if (isScala3(scalaVersion.value))
-            libs.refined4s ++ libs.tests.hedgehogExtraScala3
+            libs.tests.hedgehogExtraScala3
           else
             List(libs.newtype, libs.pureconfig) ++ libs.tests.hedgehogExtraScala2
         ) ++
@@ -122,7 +122,7 @@ lazy val http4s = module("http4s", crossProject(JVMPlatform, JSPlatform))
         libs.logback,
         libs.pureconfigCatsEffect3 % Test,
       ) ++
-        (if (isScala3(scalaVersion.value)) libs.refined4s else List(libs.newtype)) ++
+        (if (isScala3(scalaVersion.value)) List.empty else List(libs.newtype)) ++
         libs.refined(scalaVersion.value) ++
         libs.circeAll(scalaVersion.value) ++
         libs.http4s ++
@@ -143,7 +143,7 @@ lazy val api = module("api", crossProject(JVMPlatform, JSPlatform))
       ) ++
         (
           if (isScala3(scalaVersion.value))
-            libs.refined4s ++ libs.tests.hedgehogExtraScala3
+            libs.tests.hedgehogExtraScala3
           else
             List(libs.newtype) ++ libs.tests.hedgehogExtraScala2
         ) ++
@@ -170,8 +170,8 @@ lazy val props =
     val Scala3Version = "3.3.1"
 
 //    val ProjectScalaVersion = "2.13.10"
-    val ProjectScalaVersion = Scala2Version
-//    val ProjectScalaVersion = Scala3Version
+//    val ProjectScalaVersion = Scala2Version
+    val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List(License.MIT)
 
@@ -206,7 +206,7 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
-    val Refined4sVersion = "0.11.0"
+    val Refined4sVersion = "0.13.0"
 
     val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
@@ -234,33 +234,30 @@ lazy val libs = new {
 
   lazy val newtype = "io.estatico" %% "newtype" % props.NewtypeVersion
 
-  lazy val refined4s =
-    List(
-      "io.kevinlee" %% "refined4s-core"          % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-cats"          % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-circe"         % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-pureconfig"    % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-doobie-ce3"    % props.Refined4sVersion,
-      "io.kevinlee" %% "refined4s-extras-render" % props.Refined4sVersion,
-    )
+  def refined4s(scalaVersion: String) =
+    if (isScala3(scalaVersion))
+      List(
+        "io.kevinlee"    %% "refined4s-core"                  % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-cats"                  % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-circe"                 % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-pureconfig"            % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-doobie-ce3"            % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-extras-render"         % props.Refined4sVersion,
+        "io.kevinlee"    %% "refined4s-refined-compat-scala3" % props.Refined4sVersion,
+      )
+    else
+      List("io.kevinlee" %% "refined4s-refined-compat-scala2" % props.Refined4sVersion)
 
   def refined(scalaVersion: String): List[ModuleID] =
-    (
-      if (isScala3(scalaVersion))
-        List.empty
-//        List(
-//          "eu.timepit" %% "refined"            % props.RefinedLatestVersion,
-//          "eu.timepit" %% "refined-cats"       % props.RefinedLatestVersion,
-//          "eu.timepit" %% "refined-pureconfig" % props.RefinedLatestVersion,
-//        )
-      else
-        List(
-          "eu.timepit" %% "refined"            % props.RefinedVersion,
-          "eu.timepit" %% "refined-cats"       % props.RefinedVersion,
-          //    "eu.timepit" %% "refined-eval"            % props.RefinedVersion,
-          "eu.timepit" %% "refined-pureconfig" % props.RefinedVersion,
-        )
-    )
+    (if (isScala3(scalaVersion))
+       List.empty
+     else
+       List(
+         "eu.timepit" %% "refined"            % props.RefinedVersion,
+         "eu.timepit" %% "refined-cats"       % props.RefinedVersion,
+         //    "eu.timepit" %% "refined-eval"            % props.RefinedVersion,
+         "eu.timepit" %% "refined-pureconfig" % props.RefinedVersion,
+       )) ++ refined4s(scalaVersion)
 
   def kittens(scalaVersion: String) = {
     val version =

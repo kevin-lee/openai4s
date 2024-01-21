@@ -2,14 +2,13 @@ package openai4s.types.completions
 
 import cats.{Eq, Show}
 import eu.timepit.refined.cats.*
-import eu.timepit.refined.types.numeric.NonNegFloat
-import eu.timepit.refined.types.string.NonEmptyString
 import extras.render.Render
 import io.circe.generic.extras.Configuration
 import io.circe.refined.*
 import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
 import openai4s.types.common.*
+import refined4s.compat.RefinedCompatAllTypes.*
 
 /** https://platform.openai.com/docs/api-reference/completions#:~:text=prompt%20and%20parameters.-,Request%20body,-model
   * @author Kevin Lee

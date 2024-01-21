@@ -2,9 +2,9 @@ package openai4s.config
 
 import cats.{Eq, Show}
 import eu.timepit.refined.pureconfig.*
-import eu.timepit.refined.types.string.NonEmptyString
 import pureconfig.ConfigReader
 import pureconfig.generic.semiauto.*
+import refined4s.compat.RefinedCompatAllTypes.*
 
 /** @author Kevin Lee
   * @since 2023-04-04
