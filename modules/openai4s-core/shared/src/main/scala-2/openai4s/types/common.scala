@@ -5,12 +5,12 @@ import cats.{Eq, Show}
 import eu.timepit.refined.api.{Refined, RefinedTypeOps}
 import eu.timepit.refined.cats.*
 import eu.timepit.refined.numeric.Interval
-import eu.timepit.refined.types.numeric.{NonNegInt, PosInt}
 import extras.render.Render
 import extras.render.refined.*
 import io.circe.refined.*
 import io.circe.{Decoder, Encoder}
 import io.estatico.newtype.macros.newtype
+import refined4s.compat.RefinedCompatAllTypes.*
 
 /** @author Kevin Lee
   * @since 2023-03-24
