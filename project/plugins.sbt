@@ -9,12 +9,12 @@ addSbtPlugin("ch.epfl.scala" % "sbt-scalafix"  % "0.11.1")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt"  % "2.5.2")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "2.0.9")
 addSbtPlugin("org.scalameta" % "sbt-mdoc"      % "2.5.1")
-addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.13.0")
+addSbtPlugin("io.kevinlee"   % "sbt-docusaur"  % "0.15.0")
 
 addSbtPlugin("org.scala-js"       % "sbt-scalajs"              % "1.13.1")
 addSbtPlugin("org.portable-scala" % "sbt-scalajs-crossproject" % "1.2.0")
 
-val sbtDevOopsVersion = "2.24.0"
+val sbtDevOopsVersion = "3.0.0"
 addSbtPlugin("io.kevinlee" % "sbt-devoops-scala"     % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-sbt-extra" % sbtDevOopsVersion)
 addSbtPlugin("io.kevinlee" % "sbt-devoops-github"    % sbtDevOopsVersion)

@@ -428,15 +428,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
       }),
       /* } coverage */
 
-      scalacOptions ~= (_.filterNot(_.startsWith("-language"))),
-      scalacOptions ++= List(
-        "-language:dynamics",
-        "-language:existentials",
-        "-language:higherKinds",
-        "-language:reflectiveCalls",
-        "-language:experimental.macros",
-        "-language:implicitConversions",
-      ),
+      scalacOptions ++= (if (scalaVersion.value.startsWith("2.13")) List("-Ymacro-annotations") else List.empty),
     )
     .settings(mavenCentralPublishSettings)
 }
