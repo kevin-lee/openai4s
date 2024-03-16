@@ -15,21 +15,7 @@ import java.time.Instant
 object Gens extends TypesCompat {
 
   def genModel: Gen[Model] =
-    Gen.element1(
-      Model.gpt_4_1106_Preview,
-      Model.gpt_4_Vision_Preview,
-      Model.gpt_4,
-      Model.gpt_4_32k,
-      Model.gpt_4_0613,
-      Model.gpt_4_32k_0613,
-      Model.gpt_4_0314,
-      Model.gpt_4_32k_0314,
-      Model.gpt_3_5_Turbo,
-      Model.gpt_3_5_turbo_16k,
-      Model.gpt_3_5_turbo_0613,
-      Model.gpt_3_5_turbo_16k_0613,
-      Model.gpt_3_5_Turbo_0301,
-    )
+    Gen.elementUnsafe(Model.supportedValues)
 
   object chat {
 
