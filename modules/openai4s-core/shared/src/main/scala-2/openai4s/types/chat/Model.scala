@@ -97,29 +97,8 @@ object Model {
       Model.gpt_3_5_Turbo_0301,
     )
 
-  def fromString(model: String): Either[String, Model] = model match {
-    case Gpt_4_1106_Preview.value.value => gpt_4_1106_Preview.asRight
-    case Gpt_4_Vision_Preview.value.value => gpt_4_Vision_Preview.asRight
-
-    case Gpt_4.value.value => gpt_4.asRight
-    case Gpt_4_32k.value.value => gpt_4_32k.asRight
-
-    case Gpt_4_0613.value.value => gpt_4_0613.asRight
-    case Gpt_4_32k_0613.value.value => gpt_4_32k_0613.asRight
-
-    case Gpt_4_0314.value.value => gpt_4_0314.asRight
-    case Gpt_4_32k_0314.value.value => gpt_4_32k_0314.asRight
-
-    case Gpt_3_5_Turbo.value.value => gpt_3_5_Turbo.asRight
-    case Gpt_3_5_turbo_16k.value.value => gpt_3_5_turbo_16k.asRight
-
-    case Gpt_3_5_turbo_0613.value.value => gpt_3_5_turbo_0613.asRight
-    case Gpt_3_5_turbo_16k_0613.value.value => gpt_3_5_turbo_16k_0613.asRight
-
-    case Gpt_3_5_Turbo_0301.value.value => gpt_3_5_Turbo_0301.asRight
-
-    case _ => s"Unknown model: $model".asLeft
-  }
+  def fromString(model: String): Either[String, Model] =
+    Model.supportedValues.find(_.value.value === model).toRight(s"Unknown model: $model")
 
   implicit val modelEq: Eq[Model] = Eq[NonEmptyString].contramap(_.value)
 
