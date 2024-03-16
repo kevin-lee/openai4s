@@ -16,8 +16,13 @@ import refined4s.compat.RefinedCompatAllTypes.*
   */
 sealed abstract class Model(val value: NonEmptyString)
 object Model {
+
+  case object Gpt_4_Turbo_Preview extends Model(NonEmptyString("gpt-4-turbo-preview"))
+  case object Gpt_4_0125_Preview extends Model(NonEmptyString("gpt-4-0125-preview"))
   case object Gpt_4_1106_Preview extends Model("gpt-4-1106-preview")
+
   case object Gpt_4_Vision_Preview extends Model(NonEmptyString("gpt-4-vision-preview"))
+  case object Gpt_4_1106_Vision_Preview extends Model(NonEmptyString("gpt-4-1106-vision-preview"))
 
   case object Gpt_4 extends Model(NonEmptyString("gpt-4"))
   case object Gpt_4_32k extends Model(NonEmptyString("gpt-4-32k"))
@@ -38,8 +43,13 @@ object Model {
 
   final case class Unsupported(override val value: NonEmptyString) extends Model(value)
 
-  def gpt_4_1106_Preview: Model   = Gpt_4_1106_Preview
-  def gpt_4_Vision_Preview: Model = Gpt_4_Vision_Preview
+  def gpt_4_Turbo_Preview: Model = Gpt_4_Turbo_Preview
+
+  def gpt_4_0125_Preview: Model = Gpt_4_0125_Preview
+  def gpt_4_1106_Preview: Model = Gpt_4_1106_Preview
+
+  def gpt_4_Vision_Preview: Model      = Gpt_4_Vision_Preview
+  def gpt_4_1106_Vision_Preview: Model = Gpt_4_1106_Vision_Preview
 
   def gpt_4: Model     = Gpt_4
   def gpt_4_32k: Model = Gpt_4_32k
@@ -62,8 +72,12 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.gpt_4_Turbo_Preview,
+      Model.gpt_4_0125_Preview,
       Model.gpt_4_1106_Preview,
+      //
       Model.gpt_4_Vision_Preview,
+      Model.gpt_4_1106_Vision_Preview,
       //
       Model.gpt_4,
       Model.gpt_4_32k,
