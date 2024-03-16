@@ -26,16 +26,11 @@ enum Model(val value: NonEmptyString) derives CanEqual {
   case Gpt_4_0613 extends Model(NonEmptyString("gpt-4-0613"))
   case Gpt_4_32k_0613 extends Model(NonEmptyString("gpt-4-32k-0613"))
 
-  case Gpt_4_0314 extends Model(NonEmptyString("gpt-4-0314"))
-  case Gpt_4_32k_0314 extends Model(NonEmptyString("gpt-4-32k-0314"))
-
   case Gpt_3_5_Turbo extends Model(NonEmptyString("gpt-3.5-turbo"))
   case Gpt_3_5_turbo_16k extends Model(NonEmptyString("gpt-3.5-turbo-16k"))
 
   case Gpt_3_5_turbo_0613 extends Model(NonEmptyString("gpt-3.5-turbo-0613"))
   case Gpt_3_5_turbo_16k_0613 extends Model(NonEmptyString("gpt-3.5-turbo-16k-0613"))
-
-  case Gpt_3_5_Turbo_0301 extends Model(NonEmptyString("gpt-3.5-turbo-0301"))
 
   case Unsupported(override val value: NonEmptyString) extends Model(value)
 }
@@ -54,16 +49,11 @@ object Model {
   def gpt_4_0613: Model     = Gpt_4_0613
   def gpt_4_32k_0613: Model = Gpt_4_32k_0613
 
-  def gpt_4_0314: Model     = Gpt_4_0314
-  def gpt_4_32k_0314: Model = Gpt_4_32k_0314
-
   def gpt_3_5_Turbo: Model     = Gpt_3_5_Turbo
   def gpt_3_5_turbo_16k: Model = Gpt_3_5_turbo_16k
 
   def gpt_3_5_turbo_0613: Model     = Gpt_3_5_turbo_0613
   def gpt_3_5_turbo_16k_0613: Model = Gpt_3_5_turbo_16k_0613
-
-  def gpt_3_5_Turbo_0301: Model = Gpt_3_5_Turbo_0301
 
   def unsupported(value: NonEmptyString): Model = Unsupported(value)
 
@@ -82,20 +72,15 @@ object Model {
       Model.gpt_4_0613,
       Model.gpt_4_32k_0613,
       //
-      Model.gpt_4_0314,
-      Model.gpt_4_32k_0314,
-      //
       Model.gpt_3_5_Turbo,
       Model.gpt_3_5_turbo_16k,
       //
       Model.gpt_3_5_turbo_0613,
       Model.gpt_3_5_turbo_16k_0613,
-      //
-      Model.gpt_3_5_Turbo_0301,
     )
 
   def fromString(model: String): Either[String, Model] =
-    Model.supportedValues.find(_.value.value === model).toRight(s"Unknown model: $model")
+    Model.supportedValues.find(_.toValue === model).toRight(s"Unknown model: $model")
 
   given modelEq: Eq[Model] = Eq[String].contramap(_.toValue)
 
