@@ -12,6 +12,8 @@ import java.time.YearMonth
 /** Reference:
   * - https://platform.openai.com/docs/models/
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
+  * - https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+  * - https://platform.openai.com/docs/models/gpt-3-5-turbo
   * @author Kevin Lee
   * @since 2023-03-24
   */
@@ -85,6 +87,14 @@ enum Model(val value: NonEmptyString, val description: String, val maxTokens: In
         YearMonth.of(2021, 9).some,
       )
 
+  case Gpt_3_5_Turbo_0125
+      extends Model(
+        NonEmptyString("gpt-3.5-turbo-0125"),
+        "Updated GPT 3.5 Turbo\nThe latest GPT-3.5 Turbo model with higher accuracy at responding in requested formats and a fix for a bug which caused a text encoding issue for non-English language function calls. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-embedding-models-and-api-updates#:~:text=Other%20new%20models%20and%20lower%20pricing",
+        16_385,
+        YearMonth.of(2021, 9).some,
+      )
+
   case Gpt_3_5_Turbo
       extends Model(
         NonEmptyString("gpt-3.5-turbo"),
@@ -92,6 +102,22 @@ enum Model(val value: NonEmptyString, val description: String, val maxTokens: In
         16_385,
         YearMonth.of(2021, 9).some,
       )
+  case Gpt_3_5_Turbo_1106
+      extends Model(
+        NonEmptyString("gpt-3.5-turbo-1106"),
+        "GPT-3.5 Turbo model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
+        16_385,
+        YearMonth.of(2021, 9).some,
+      )
+
+  case Gpt_3_5_Turbo_Instruct
+      extends Model(
+        NonEmptyString("gpt-3.5-turbo-instruct"),
+        "Similar capabilities as GPT-3 era models. Compatible with legacy Completions endpoint and not Chat Completions.",
+        4_096,
+        YearMonth.of(2021, 9).some,
+      )
+
   case Gpt_3_5_turbo_16k
       extends Model(
         NonEmptyString("gpt-3.5-turbo-16k"),
@@ -132,7 +158,14 @@ object Model {
   def gpt_4_32k: Model      = Gpt_4_32k
   def gpt_4_32k_0613: Model = Gpt_4_32k_0613
 
-  def gpt_3_5_Turbo: Model     = Gpt_3_5_Turbo
+  def gpt_3_5_Turbo_0125: Model = Gpt_3_5_Turbo_0125
+
+  def gpt_3_5_Turbo: Model = Gpt_3_5_Turbo
+
+  def gpt_3_5_Turbo_1106: Model = Gpt_3_5_Turbo_1106
+
+  def gpt_3_5_Turbo_Instruct: Model = Gpt_3_5_Turbo_Instruct
+
   def gpt_3_5_turbo_16k: Model = Gpt_3_5_turbo_16k
 
   def gpt_3_5_turbo_0613: Model     = Gpt_3_5_turbo_0613
@@ -155,7 +188,10 @@ object Model {
       Model.gpt_4_0613,
       Model.gpt_4_32k_0613,
       //
+      Model.gpt_3_5_Turbo_0125,
       Model.gpt_3_5_Turbo,
+      Model.gpt_3_5_Turbo_1106,
+      Model.gpt_3_5_Turbo_Instruct,
       Model.gpt_3_5_turbo_16k,
       //
       Model.gpt_3_5_turbo_0613,
