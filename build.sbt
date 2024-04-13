@@ -206,7 +206,7 @@ lazy val props =
 
     val NewtypeVersion = "0.4.4"
 
-    val Refined4sVersion = "0.13.0"
+    val Refined4sVersion = "0.15.0"
 
     val TypeLevelCaseInsensitiveVersion = "1.4.0"
 
