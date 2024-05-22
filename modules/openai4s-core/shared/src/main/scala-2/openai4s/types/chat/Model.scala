@@ -12,6 +12,7 @@ import java.time.YearMonth
 
 /** Reference:
   * - https://platform.openai.com/docs/models/
+  * - https://platform.openai.com/docs/models/gpt-4o
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
   * - https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
   * - https://platform.openai.com/docs/models/gpt-3-5-turbo
@@ -26,6 +27,20 @@ sealed abstract class Model(
 )
 object Model {
 
+  case object Gpt_4o
+      extends Model(
+        NonEmptyString("gpt-4o"),
+        "GPT-4o\nOur most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo. Currently points to gpt-4o-2024-05-13.",
+        128_000,
+        YearMonth.of(2023, 10).some,
+      )
+  case object Gpt_4o_2024_05_13
+      extends Model(
+        NonEmptyString("gpt-4o-2024-05-13"),
+        "gpt-4o currently points to this version.",
+        128_000,
+        YearMonth.of(2023, 10).some,
+      )
   case object Gpt_4_Turbo_Preview
       extends Model(
         NonEmptyString("gpt-4-turbo-preview"),
@@ -150,6 +165,9 @@ object Model {
 
   final case class Unsupported(override val value: NonEmptyString) extends Model(value, "", 0, none)
 
+  def gpt_4o: Model            = Gpt_4o
+  def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
+
   def gpt_4_Turbo_Preview: Model = Gpt_4_Turbo_Preview
 
   def gpt_4_0125_Preview: Model = Gpt_4_0125_Preview
@@ -181,6 +199,9 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.gpt_4o,
+      Model.gpt_4o_2024_05_13,
+      //
       Model.gpt_4_Turbo_Preview,
       Model.gpt_4_0125_Preview,
       Model.gpt_4_1106_Preview,
