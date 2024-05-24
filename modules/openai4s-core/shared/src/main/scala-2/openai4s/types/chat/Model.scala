@@ -12,9 +12,9 @@ import java.time.YearMonth
 
 /** Reference:
   * - https://platform.openai.com/docs/models/
-  * - https://platform.openai.com/docs/models/gpt-4o
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
-  * - https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
+  * - https://platform.openai.com/docs/models/gpt-4o
+  * - https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
   * - https://platform.openai.com/docs/models/gpt-3-5-turbo
   * @author Kevin Lee
   * @since 2023-03-24
@@ -26,7 +26,7 @@ sealed abstract class Model(
   val trainingData: Option[YearMonth],
 )
 object Model {
-
+  // GPT-4o
   case object Gpt_4o
       extends Model(
         NonEmptyString("gpt-4o"),
@@ -40,6 +40,21 @@ object Model {
         "gpt-4o currently points to this version.",
         128_000,
         YearMonth.of(2023, 10).some,
+      )
+  // GPT-4 Turbo and 4
+  case object Gpt_4_Turbo
+      extends Model(
+        NonEmptyString("gpt-4-turbo"),
+        "GPT-4 Turbo with Vision\nThe latest GPT-4 Turbo model with vision capabilities. Vision requests can now use JSON mode and function calling. Currently points to gpt-4-turbo-2024-04-09.",
+        128_000,
+        YearMonth.of(2023, 12).some,
+      )
+  case object Gpt_4_Turbo_2024_04_09
+      extends Model(
+        NonEmptyString("gpt-4-turbo-2024-04-09"),
+        "GPT-4 Turbo with Vision model. Vision requests can now use JSON mode and function calling. gpt-4-turbo currently points to this version.",
+        128_000,
+        YearMonth.of(2023, 12).some,
       )
   case object Gpt_4_Turbo_Preview
       extends Model(
@@ -168,6 +183,9 @@ object Model {
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
 
+  def gpt_4_Turbo: Model            = Gpt_4_Turbo
+  def gpt_4_Turbo_2024_04_09: Model = Gpt_4_Turbo_2024_04_09
+
   def gpt_4_Turbo_Preview: Model = Gpt_4_Turbo_Preview
 
   def gpt_4_0125_Preview: Model = Gpt_4_0125_Preview
@@ -202,6 +220,8 @@ object Model {
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
       //
+      Model.gpt_4_Turbo,
+      Model.gpt_4_Turbo_2024_04_09,
       Model.gpt_4_Turbo_Preview,
       Model.gpt_4_0125_Preview,
       Model.gpt_4_1106_Preview,
