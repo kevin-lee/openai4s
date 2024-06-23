@@ -124,6 +124,7 @@ object Model {
         YearMonth.of(2021, 9).some,
       )
 
+  // GPT-3.5 Turbo and 3.5
   case object Gpt_3_5_Turbo_0125
       extends Model(
         NonEmptyString("gpt-3.5-turbo-0125"),

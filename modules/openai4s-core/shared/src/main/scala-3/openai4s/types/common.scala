@@ -62,7 +62,6 @@ object common {
   }
 
   type FinishReason = FinishReason.Type
-
   object FinishReason extends Newtype[String], CatsEqShow[String], CirceNewtypeCodec[String], ExtrasRender[String]
 
 }
