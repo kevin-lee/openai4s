@@ -241,7 +241,6 @@ lazy val libs = new {
         "io.kevinlee"    %% "refined4s-cats"                  % props.Refined4sVersion,
         "io.kevinlee"    %% "refined4s-circe"                 % props.Refined4sVersion,
         "io.kevinlee"    %% "refined4s-pureconfig"            % props.Refined4sVersion,
-        "io.kevinlee"    %% "refined4s-doobie-ce3"            % props.Refined4sVersion,
         "io.kevinlee"    %% "refined4s-extras-render"         % props.Refined4sVersion,
         "io.kevinlee"    %% "refined4s-refined-compat-scala3" % props.Refined4sVersion,
       )
