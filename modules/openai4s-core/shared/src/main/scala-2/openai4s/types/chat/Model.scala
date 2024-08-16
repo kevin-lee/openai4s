@@ -14,6 +14,7 @@ import java.time.YearMonth
   * - https://platform.openai.com/docs/models/
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
   * - https://platform.openai.com/docs/models/gpt-4o
+  * - https://platform.openai.com/docs/models/gpt-4o-mini
   * - https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
   * - https://platform.openai.com/docs/models/gpt-3-5-turbo
   * @author Kevin Lee
@@ -38,6 +39,28 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4o-2024-05-13"),
         "gpt-4o currently points to this version.",
+        128_000,
+        YearMonth.of(2023, 10).some,
+      )
+  case object Gpt_4o_2024_08_06
+      extends Model(
+        NonEmptyString("gpt-4o-2024-08-06"),
+        "Latest snapshot that supports Structured Outputs",
+        128_000,
+        YearMonth.of(2023, 10).some,
+      )
+  // GPT-4o-mini
+  case object Gpt_4o_mini
+      extends Model(
+        NonEmptyString("gpt-4o-mini"),
+        "GPT-4o mini\nOur affordable and intelligent small model for fast, lightweight tasks. GPT-4o mini is cheaper and more capable than GPT-3.5 Turbo. Currently points to gpt-4o-mini-2024-07-18",
+        128_000,
+        YearMonth.of(2023, 10).some,
+      )
+  case object Gpt_4o_mini_2024_07_18
+      extends Model(
+        NonEmptyString("gpt-4o-mini-2024-07-18"),
+        "gpt-4o-mini currently points to this version.",
         128_000,
         YearMonth.of(2023, 10).some,
       )
@@ -183,6 +206,10 @@ object Model {
 
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
+  def gpt_4o_2024_08_06: Model = Gpt_4o_2024_08_06
+
+  def gpt_4o_mini: Model            = Gpt_4o_mini
+  def gpt_4o_mini_2024_07_18: Model = Gpt_4o_mini_2024_07_18
 
   def gpt_4_Turbo: Model            = Gpt_4_Turbo
   def gpt_4_Turbo_2024_04_09: Model = Gpt_4_Turbo_2024_04_09
@@ -220,6 +247,10 @@ object Model {
     List(
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
+      Model.gpt_4o_2024_08_06,
+      //
+      Model.gpt_4o_mini,
+      Model.gpt_4o_mini_2024_07_18,
       //
       Model.gpt_4_Turbo,
       Model.gpt_4_Turbo_2024_04_09,
