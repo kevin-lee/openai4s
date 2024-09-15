@@ -5,7 +5,10 @@ import cats.{Eq, Show}
 import eu.timepit.refined.auto.autoRefineV
 import eu.timepit.refined.cats.*
 import extras.render.Render
+import extras.render.refined.*
+import io.circe.refined.*
 import io.circe.{Codec, Decoder, Encoder}
+import io.estatico.newtype.macros.newtype
 import refined4s.compat.RefinedCompatAllTypes.*
 
 import java.time.YearMonth
@@ -24,7 +27,7 @@ import java.time.YearMonth
 sealed abstract class Model(
   val value: NonEmptyString,
   val description: String,
-  val maxTokens: Int,
+  val maxTokens: Model.MaxTokens,
   val trainingData: Option[YearMonth],
 )
 object Model {
@@ -33,14 +36,14 @@ object Model {
       extends Model(
         NonEmptyString("o1-preview"),
         "Points to the most recent snapshot of the o1 model: o1-preview-2024-09-12",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   case object O1_Preview_2024_09_12
       extends Model(
         NonEmptyString("o1-preview-2024-09-12"),
         "Latest o1 model snapshot",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // o1-mini
@@ -48,14 +51,14 @@ object Model {
       extends Model(
         NonEmptyString("o1-mini"),
         "Points to the most recent o1-mini snapshot: o1-mini-2024-09-12",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   case object O1_Mini_2024_09_12
       extends Model(
         NonEmptyString("o1-mini-2024-09-12"),
         "Latest o1-mini model snapshot",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // GPT-4o
@@ -63,21 +66,21 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4o"),
         "GPT-4o\nOur most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo. Currently points to gpt-4o-2024-05-13.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 10).some,
       )
   case object Gpt_4o_2024_05_13
       extends Model(
         NonEmptyString("gpt-4o-2024-05-13"),
         "gpt-4o currently points to this version.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 10).some,
       )
   case object Gpt_4o_2024_08_06
       extends Model(
         NonEmptyString("gpt-4o-2024-08-06"),
         "Latest snapshot that supports Structured Outputs",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 10).some,
       )
   // GPT-4o-mini
@@ -85,14 +88,14 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4o-mini"),
         "GPT-4o mini\nOur affordable and intelligent small model for fast, lightweight tasks. GPT-4o mini is cheaper and more capable than GPT-3.5 Turbo. Currently points to gpt-4o-mini-2024-07-18",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 10).some,
       )
   case object Gpt_4o_mini_2024_07_18
       extends Model(
         NonEmptyString("gpt-4o-mini-2024-07-18"),
         "gpt-4o-mini currently points to this version.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 10).some,
       )
   // GPT-4 Turbo and 4
@@ -100,35 +103,35 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4-turbo"),
         "GPT-4 Turbo with Vision\nThe latest GPT-4 Turbo model with vision capabilities. Vision requests can now use JSON mode and function calling. Currently points to gpt-4-turbo-2024-04-09.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 12).some,
       )
   case object Gpt_4_Turbo_2024_04_09
       extends Model(
         NonEmptyString("gpt-4-turbo-2024-04-09"),
         "GPT-4 Turbo with Vision model. Vision requests can now use JSON mode and function calling. gpt-4-turbo currently points to this version.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 12).some,
       )
   case object Gpt_4_Turbo_Preview
       extends Model(
         NonEmptyString("gpt-4-turbo-preview"),
         "Currently points to gpt-4-0125-preview.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 12).some,
       )
   case object Gpt_4_0125_Preview
       extends Model(
         NonEmptyString("gpt-4-0125-preview"),
         "GPT-4 Turbo\nThe latest GPT-4 model intended to reduce cases of “laziness” where the model doesn’t complete a task. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-embedding-models-and-api-updates",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 12).some,
       )
   case object Gpt_4_1106_Preview
       extends Model(
         "gpt-4-1106-preview",
         "GPT-4 Turbo model featuring improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. This is a preview model. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 4).some,
       )
 
@@ -136,14 +139,14 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4-vision-preview"),
         "GPT-4 with the ability to understand images, in addition to all other GPT-4 Turbo capabilities. Currently points to gpt-4-1106-vision-preview.",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 4).some,
       )
   case object Gpt_4_1106_Vision_Preview
       extends Model(
         NonEmptyString("gpt-4-1106-vision-preview"),
         "GPT-4 with the ability to understand images, in addition to all other GPT-4 Turbo capabilities. Returns a maximum of 4,096 output tokens. This is a preview model version. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
-        128_000,
+        Model.MaxTokens(PosInt(128_000)),
         YearMonth.of(2023, 4).some,
       )
 
@@ -151,14 +154,14 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4"),
         "Currently points to gpt-4-0613. See continuous model upgrades: https://platform.openai.com/docs/models/continuous-model-upgrades",
-        8_192,
+        Model.MaxTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
   case object Gpt_4_0613
       extends Model(
         NonEmptyString("gpt-4-0613"),
         "Snapshot of gpt-4 from June 13th 2023 with improved function calling support.",
-        8_192,
+        Model.MaxTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -166,7 +169,7 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4-32k"),
         "Currently points to gpt-4-32k-0613. See continuous model upgrades: https://platform.openai.com/docs/models/continuous-model-upgrades This model was never rolled out widely in favor of GPT-4 Turbo.",
-        32_768,
+        Model.MaxTokens(PosInt(32_768)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -174,7 +177,7 @@ object Model {
       extends Model(
         NonEmptyString("gpt-4-32k-0613"),
         "Snapshot of gpt-4-32k from June 13th 2023 with improved function calling support. This model was never rolled out widely in favor of GPT-4 Turbo.",
-        32_768,
+        Model.MaxTokens(PosInt(32_768)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -183,14 +186,14 @@ object Model {
       extends Model(
         NonEmptyString("gpt-3.5-turbo-0125"),
         "Updated GPT 3.5 Turbo\nThe latest GPT-3.5 Turbo model with higher accuracy at responding in requested formats and a fix for a bug which caused a text encoding issue for non-English language function calls. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-embedding-models-and-api-updates#:~:text=Other%20new%20models%20and%20lower%20pricing",
-        16_385,
+        Model.MaxTokens(PosInt(16_385)),
         YearMonth.of(2021, 9).some,
       )
   case object Gpt_3_5_Turbo
       extends Model(
         NonEmptyString("gpt-3.5-turbo"),
         "Currently points to gpt-3.5-turbo-0125.",
-        16_385,
+        Model.MaxTokens(PosInt(16_385)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -198,7 +201,7 @@ object Model {
       extends Model(
         NonEmptyString("gpt-3.5-turbo-1106"),
         "GPT-3.5 Turbo model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
-        16_385,
+        Model.MaxTokens(PosInt(16_385)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -206,7 +209,7 @@ object Model {
       extends Model(
         NonEmptyString("gpt-3.5-turbo-instruct"),
         "Similar capabilities as GPT-3 era models. Compatible with legacy Completions endpoint and not Chat Completions.",
-        4_096,
+        Model.MaxTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -214,7 +217,7 @@ object Model {
       extends Model(
         NonEmptyString("gpt-3.5-turbo-16k"),
         "[Legacy] Currently points to gpt-3.5-turbo-16k-0613.",
-        16_385,
+        Model.MaxTokens(PosInt(16_385)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -222,18 +225,19 @@ object Model {
       extends Model(
         NonEmptyString("gpt-3.5-turbo-0613"),
         "[Legacy] Snapshot of gpt-3.5-turbo from June 13th 2023. Will be deprecated (https://platform.openai.com/docs/deprecations/2023-10-06-chat-model-updates) on June 13, 2024.",
-        4_096,
+        Model.MaxTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
   case object Gpt_3_5_turbo_16k_0613
       extends Model(
         NonEmptyString("gpt-3.5-turbo-16k-0613"),
         "[Legacy] Snapshot of gpt-3.5-16k-turbo from June 13th 2023. Will be deprecated (https://platform.openai.com/docs/deprecations/2023-10-06-chat-model-updates) on June 13, 2024.",
-        16_385,
+        Model.MaxTokens(PosInt(16_385)),
         YearMonth.of(2021, 9).some,
       )
 
-  final case class Unsupported(override val value: NonEmptyString) extends Model(value, "", 0, none)
+  final case class Unsupported(override val value: NonEmptyString)
+      extends Model(value, "", Model.MaxTokens(PosInt(1)), none)
 
   def o1_Preview: Model            = O1_Preview
   def o1_Preview_2024_09_12: Model = O1_Preview_2024_09_12
@@ -342,4 +346,16 @@ object Model {
     ),
     Encoder[String].contramap(_.value.value),
   )
+
+  @newtype case class MaxTokens(value: PosInt)
+  object MaxTokens {
+    implicit val maxTokensEq: Eq[MaxTokens]     = deriving
+    implicit val maxTokensShow: Show[MaxTokens] = deriving
+
+    implicit val maxTokensRender: Render[MaxTokens] = deriving
+
+    implicit val maxTokensEncoder: Encoder[MaxTokens] = deriving
+    implicit val maxTokensDecoder: Decoder[MaxTokens] = deriving
+  }
+
 }
