@@ -43,6 +43,21 @@ object Model {
         128_000,
         trainingData = YearMonth.of(2023, 10).some,
       )
+  // o1-mini
+  case object O1_Mini
+      extends Model(
+        NonEmptyString("o1-mini"),
+        "Points to the most recent o1-mini snapshot: o1-mini-2024-09-12",
+        128_000,
+        trainingData = YearMonth.of(2023, 10).some,
+      )
+  case object O1_Mini_2024_09_12
+      extends Model(
+        NonEmptyString("o1-mini-2024-09-12"),
+        "Latest o1-mini model snapshot",
+        128_000,
+        trainingData = YearMonth.of(2023, 10).some,
+      )
   // GPT-4o
   case object Gpt_4o
       extends Model(
@@ -223,6 +238,9 @@ object Model {
   def o1_Preview: Model            = O1_Preview
   def o1_Preview_2024_09_12: Model = O1_Preview_2024_09_12
 
+  def o1_Mini: Model            = O1_Mini
+  def o1_Mini_2024_09_12: Model = O1_Mini_2024_09_12
+
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
   def gpt_4o_2024_08_06: Model = Gpt_4o_2024_08_06
@@ -266,6 +284,9 @@ object Model {
     List(
       Model.o1_Preview,
       Model.o1_Preview_2024_09_12,
+      //
+      Model.o1_Mini,
+      Model.o1_Mini_2024_09_12,
       //
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
