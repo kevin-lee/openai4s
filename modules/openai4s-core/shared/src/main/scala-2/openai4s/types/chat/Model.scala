@@ -13,6 +13,7 @@ import java.time.YearMonth
 /** Reference:
   * - https://platform.openai.com/docs/models/
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
+  * - https://platform.openai.com/docs/models/o1
   * - https://platform.openai.com/docs/models/gpt-4o
   * - https://platform.openai.com/docs/models/gpt-4o-mini
   * - https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
@@ -27,6 +28,21 @@ sealed abstract class Model(
   val trainingData: Option[YearMonth],
 )
 object Model {
+  // o1
+  case object O1_Preview
+      extends Model(
+        NonEmptyString("o1-preview"),
+        "Points to the most recent snapshot of the o1 model: o1-preview-2024-09-12",
+        128_000,
+        trainingData = YearMonth.of(2023, 10).some,
+      )
+  case object O1_Preview_2024_09_12
+      extends Model(
+        NonEmptyString("o1-preview-2024-09-12"),
+        "Latest o1 model snapshot",
+        128_000,
+        trainingData = YearMonth.of(2023, 10).some,
+      )
   // GPT-4o
   case object Gpt_4o
       extends Model(
@@ -204,6 +220,9 @@ object Model {
 
   final case class Unsupported(override val value: NonEmptyString) extends Model(value, "", 0, none)
 
+  def o1_Preview: Model            = O1_Preview
+  def o1_Preview_2024_09_12: Model = O1_Preview_2024_09_12
+
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
   def gpt_4o_2024_08_06: Model = Gpt_4o_2024_08_06
@@ -245,6 +264,9 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.o1_Preview,
+      Model.o1_Preview_2024_09_12,
+      //
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
       Model.gpt_4o_2024_08_06,
