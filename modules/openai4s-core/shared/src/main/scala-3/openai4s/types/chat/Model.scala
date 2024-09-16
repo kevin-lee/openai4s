@@ -135,21 +135,6 @@ enum Model(
         YearMonth.of(2023, 4).some,
       )
 
-  case Gpt_4_Vision_Preview
-      extends Model(
-        NonEmptyString("gpt-4-vision-preview"),
-        "GPT-4 with the ability to understand images, in addition to all other GPT-4 Turbo capabilities. Currently points to gpt-4-1106-vision-preview.",
-        Model.MaxTokens(PosInt(128_000)),
-        YearMonth.of(2023, 4).some,
-      )
-  case Gpt_4_1106_Vision_Preview
-      extends Model(
-        NonEmptyString("gpt-4-1106-vision-preview"),
-        "GPT-4 with the ability to understand images, in addition to all other GPT-4 Turbo capabilities. Returns a maximum of 4,096 output tokens. This is a preview model version. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
-        Model.MaxTokens(PosInt(128_000)),
-        YearMonth.of(2023, 4).some,
-      )
-
   case Gpt_4
       extends Model(
         NonEmptyString("gpt-4"),
@@ -166,18 +151,11 @@ enum Model(
         YearMonth.of(2021, 9).some,
       )
 
-  case Gpt_4_32k
+  case Gpt_4_0314
       extends Model(
-        NonEmptyString("gpt-4-32k"),
-        "Currently points to gpt-4-32k-0613. See continuous model upgrades: https://platform.openai.com/docs/models/continuous-model-upgrades This model was never rolled out widely in favor of GPT-4 Turbo.",
-        Model.MaxTokens(PosInt(32_768)),
-        YearMonth.of(2021, 9).some,
-      )
-  case Gpt_4_32k_0613
-      extends Model(
-        NonEmptyString("gpt-4-32k-0613"),
-        "Snapshot of gpt-4-32k from June 13th 2023 with improved function calling support. This model was never rolled out widely in favor of GPT-4 Turbo.",
-        Model.MaxTokens(PosInt(32_768)),
+        NonEmptyString("gpt-4-0314"),
+        "[Legacy] Snapshot of gpt-4 from March 14th 2023.",
+        Model.MaxTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -213,29 +191,6 @@ enum Model(
         YearMonth.of(2021, 9).some,
       )
 
-  case Gpt_3_5_turbo_16k
-      extends Model(
-        NonEmptyString("gpt-3.5-turbo-16k"),
-        "[Legacy] Currently points to gpt-3.5-turbo-16k-0613.",
-        Model.MaxTokens(PosInt(16_385)),
-        YearMonth.of(2021, 9).some,
-      )
-
-  case Gpt_3_5_turbo_0613
-      extends Model(
-        NonEmptyString("gpt-3.5-turbo-0613"),
-        "[Legacy] Snapshot of gpt-3.5-turbo from June 13th 2023. Will be deprecated (https://platform.openai.com/docs/deprecations/2023-10-06-chat-model-updates) on June 13, 2024.",
-        Model.MaxTokens(PosInt(4_096)),
-        YearMonth.of(2021, 9).some,
-      )
-  case Gpt_3_5_turbo_16k_0613
-      extends Model(
-        NonEmptyString("gpt-3.5-turbo-16k-0613"),
-        "[Legacy] Snapshot of gpt-3.5-16k-turbo from June 13th 2023. Will be deprecated (https://platform.openai.com/docs/deprecations/2023-10-06-chat-model-updates) on June 13, 2024.",
-        Model.MaxTokens(PosInt(16_385)),
-        YearMonth.of(2021, 9).some,
-      )
-
   case Unsupported(override val value: NonEmptyString) extends Model(value, "", Model.MaxTokens(PosInt(1)), none)
 }
 object Model {
@@ -260,14 +215,10 @@ object Model {
   def gpt_4_0125_Preview: Model  = Gpt_4_0125_Preview
   def gpt_4_1106_Preview: Model  = Gpt_4_1106_Preview
 
-  def gpt_4_Vision_Preview: Model      = Gpt_4_Vision_Preview
-  def gpt_4_1106_Vision_Preview: Model = Gpt_4_1106_Vision_Preview
-
   def gpt_4: Model      = Gpt_4
   def gpt_4_0613: Model = Gpt_4_0613
 
-  def gpt_4_32k: Model      = Gpt_4_32k
-  def gpt_4_32k_0613: Model = Gpt_4_32k_0613
+  def gpt_4_0314: Model = Gpt_4_0314
 
   def gpt_3_5_Turbo_0125: Model = Gpt_3_5_Turbo_0125
 
@@ -276,11 +227,6 @@ object Model {
   def gpt_3_5_Turbo_1106: Model = Gpt_3_5_Turbo_1106
 
   def gpt_3_5_Turbo_Instruct: Model = Gpt_3_5_Turbo_Instruct
-
-  def gpt_3_5_turbo_16k: Model = Gpt_3_5_turbo_16k
-
-  def gpt_3_5_turbo_0613: Model     = Gpt_3_5_turbo_0613
-  def gpt_3_5_turbo_16k_0613: Model = Gpt_3_5_turbo_16k_0613
 
   def unsupported(value: NonEmptyString): Model = Unsupported(value)
 
@@ -301,23 +247,15 @@ object Model {
       Model.gpt_4_0125_Preview,
       Model.gpt_4_1106_Preview,
       //
-      Model.gpt_4_Vision_Preview,
-      Model.gpt_4_1106_Vision_Preview,
-      //
       Model.gpt_4,
-      Model.gpt_4_32k,
       //
       Model.gpt_4_0613,
-      Model.gpt_4_32k_0613,
+      Model.gpt_4_0314,
       //
       Model.gpt_3_5_Turbo_0125,
       Model.gpt_3_5_Turbo,
       Model.gpt_3_5_Turbo_1106,
       Model.gpt_3_5_Turbo_Instruct,
-      Model.gpt_3_5_turbo_16k,
-      //
-      Model.gpt_3_5_turbo_0613,
-      Model.gpt_3_5_turbo_16k_0613,
     )
 
   def fromString(model: String): Either[String, Model] =
