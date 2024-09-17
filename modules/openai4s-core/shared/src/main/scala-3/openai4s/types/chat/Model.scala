@@ -29,6 +29,7 @@ enum Model(
   val value: NonEmptyString,
   val description: String,
   val maxTokens: Model.MaxTokens,
+  val maxOutputTokens: Model.MaxOutputTokens,
   val trainingData: Option[YearMonth],
 ) derives CanEqual {
   // o1
@@ -36,14 +37,16 @@ enum Model(
       extends Model(
         NonEmptyString("o1-preview"),
         "Points to the most recent snapshot of the o1 model: o1-preview-2024-09-12",
-        Model.MaxTokens(PosInt(128_000)),
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   case O1_Preview_2024_09_12
       extends Model(
         NonEmptyString("o1-preview-2024-09-12"),
         "Latest o1 model snapshot",
-        Model.MaxTokens(PosInt(128_000)),
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // o1-mini
@@ -51,14 +54,16 @@ enum Model(
       extends Model(
         NonEmptyString("o1-mini"),
         "Points to the most recent o1-mini snapshot: o1-mini-2024-09-12",
-        Model.MaxTokens(PosInt(128_000)),
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(65_536)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   case O1_Mini_2024_09_12
       extends Model(
         NonEmptyString("o1-mini-2024-09-12"),
         "Latest o1-mini model snapshot",
-        Model.MaxTokens(PosInt(128_000)),
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(65_536)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // GPT-4o
@@ -67,6 +72,7 @@ enum Model(
         NonEmptyString("gpt-4o"),
         "GPT-4o\nOur most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo. Currently points to gpt-4o-2024-05-13.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 10).some,
       )
   case Gpt_4o_2024_05_13
@@ -74,6 +80,7 @@ enum Model(
         NonEmptyString("gpt-4o-2024-05-13"),
         "gpt-4o currently points to this version.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 10).some,
       )
   case Gpt_4o_2024_08_06
@@ -81,6 +88,7 @@ enum Model(
         NonEmptyString("gpt-4o-2024-08-06"),
         "Latest snapshot that supports Structured Outputs",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(16_384)),
         YearMonth.of(2023, 10).some,
       )
   // GPT-4o-mini
@@ -89,6 +97,7 @@ enum Model(
         NonEmptyString("gpt-4o-mini"),
         "GPT-4o mini\nOur affordable and intelligent small model for fast, lightweight tasks. GPT-4o mini is cheaper and more capable than GPT-3.5 Turbo. Currently points to gpt-4o-mini-2024-07-18",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(16_384)),
         YearMonth.of(2023, 10).some,
       )
   case Gpt_4o_mini_2024_07_18
@@ -96,6 +105,7 @@ enum Model(
         NonEmptyString("gpt-4o-mini-2024-07-18"),
         "gpt-4o-mini currently points to this version.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(16_384)),
         YearMonth.of(2023, 10).some,
       )
   // GPT-4 Turbo and 4
@@ -104,6 +114,7 @@ enum Model(
         NonEmptyString("gpt-4-turbo"),
         "GPT-4 Turbo with Vision\nThe latest GPT-4 Turbo model with vision capabilities. Vision requests can now use JSON mode and function calling. Currently points to gpt-4-turbo-2024-04-09.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 12).some,
       )
   case Gpt_4_Turbo_2024_04_09
@@ -111,6 +122,7 @@ enum Model(
         NonEmptyString("gpt-4-turbo-2024-04-09"),
         "GPT-4 Turbo with Vision model. Vision requests can now use JSON mode and function calling. gpt-4-turbo currently points to this version.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 12).some,
       )
   case Gpt_4_Turbo_Preview
@@ -118,6 +130,7 @@ enum Model(
         NonEmptyString("gpt-4-turbo-preview"),
         "Currently points to gpt-4-0125-preview.",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 12).some,
       )
   case Gpt_4_0125_Preview
@@ -125,6 +138,7 @@ enum Model(
         NonEmptyString("gpt-4-0125-preview"),
         "GPT-4 Turbo\nThe latest GPT-4 model intended to reduce cases of “laziness” where the model doesn’t complete a task. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-embedding-models-and-api-updates",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 12).some,
       )
   case Gpt_4_1106_Preview
@@ -132,6 +146,7 @@ enum Model(
         NonEmptyString("gpt-4-1106-preview"),
         "GPT-4 Turbo model featuring improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. This is a preview model. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
         Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2023, 4).some,
       )
 
@@ -140,6 +155,7 @@ enum Model(
         NonEmptyString("gpt-4"),
         "Currently points to gpt-4-0613. See continuous model upgrades: https://platform.openai.com/docs/models/continuous-model-upgrades",
         Model.MaxTokens(PosInt(8_192)),
+        Model.MaxOutputTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -148,6 +164,7 @@ enum Model(
         NonEmptyString("gpt-4-0613"),
         "Snapshot of gpt-4 from June 13th 2023 with improved function calling support.",
         Model.MaxTokens(PosInt(8_192)),
+        Model.MaxOutputTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -156,6 +173,7 @@ enum Model(
         NonEmptyString("gpt-4-0314"),
         "[Legacy] Snapshot of gpt-4 from March 14th 2023.",
         Model.MaxTokens(PosInt(8_192)),
+        Model.MaxOutputTokens(PosInt(8_192)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -165,6 +183,7 @@ enum Model(
         NonEmptyString("gpt-3.5-turbo-0125"),
         "Updated GPT 3.5 Turbo\nThe latest GPT-3.5 Turbo model with higher accuracy at responding in requested formats and a fix for a bug which caused a text encoding issue for non-English language function calls. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-embedding-models-and-api-updates#:~:text=Other%20new%20models%20and%20lower%20pricing",
         Model.MaxTokens(PosInt(16_385)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -173,6 +192,7 @@ enum Model(
         NonEmptyString("gpt-3.5-turbo"),
         "Currently points to gpt-3.5-turbo-0125.",
         Model.MaxTokens(PosInt(16_385)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
   case Gpt_3_5_Turbo_1106
@@ -180,6 +200,7 @@ enum Model(
         NonEmptyString("gpt-3.5-turbo-1106"),
         "GPT-3.5 Turbo model with improved instruction following, JSON mode, reproducible outputs, parallel function calling, and more. Returns a maximum of 4,096 output tokens. Learn more: https://openai.com/blog/new-models-and-developer-products-announced-at-devday",
         Model.MaxTokens(PosInt(16_385)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
 
@@ -188,10 +209,12 @@ enum Model(
         NonEmptyString("gpt-3.5-turbo-instruct"),
         "Similar capabilities as GPT-3 era models. Compatible with legacy Completions endpoint and not Chat Completions.",
         Model.MaxTokens(PosInt(4_096)),
+        Model.MaxOutputTokens(PosInt(4_096)),
         YearMonth.of(2021, 9).some,
       )
 
-  case Unsupported(override val value: NonEmptyString) extends Model(value, "", Model.MaxTokens(PosInt(1)), none)
+  case Unsupported(override val value: NonEmptyString)
+      extends Model(value, "", Model.MaxTokens(PosInt(1)), Model.MaxOutputTokens(PosInt(1)), none)
 }
 object Model {
 
@@ -212,8 +235,9 @@ object Model {
   def gpt_4_Turbo_2024_04_09: Model = Gpt_4_Turbo_2024_04_09
 
   def gpt_4_Turbo_Preview: Model = Gpt_4_Turbo_Preview
-  def gpt_4_0125_Preview: Model  = Gpt_4_0125_Preview
-  def gpt_4_1106_Preview: Model  = Gpt_4_1106_Preview
+
+  def gpt_4_0125_Preview: Model = Gpt_4_0125_Preview
+  def gpt_4_1106_Preview: Model = Gpt_4_1106_Preview
 
   def gpt_4: Model      = Gpt_4
   def gpt_4_0613: Model = Gpt_4_0613
@@ -240,6 +264,10 @@ object Model {
       //
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
+      Model.gpt_4o_2024_08_06,
+      //
+      Model.gpt_4o_mini,
+      Model.gpt_4o_mini_2024_07_18,
       //
       Model.gpt_4_Turbo,
       Model.gpt_4_Turbo_2024_04_09,
@@ -270,7 +298,13 @@ object Model {
       show"Unsupported(value=$value)"
 
     case m =>
-      show"${m.toString}(value=${m.value}, description=${m.description}, maxTokens=${m.maxTokens}, trainingData=${m.trainingData.toString})"
+      show"${m.toString}(" +
+        show"value=${m.value}, " +
+        show"description=${m.description}, " +
+        show"maxTokens=${m.maxTokens}, " +
+        show"maxOutputTokens=${m.maxOutputTokens}, " +
+        show"trainingData=${m.trainingData.toString}" +
+        ")"
   }
 
   given modelCodec: Codec[Model] = Codec.from(
@@ -282,6 +316,9 @@ object Model {
 
   type MaxTokens = MaxTokens.Type
   object MaxTokens extends Newtype[PosInt], CatsEqShow[PosInt], CirceNewtypeCodec[PosInt]
+
+  type MaxOutputTokens = MaxOutputTokens.Type
+  object MaxOutputTokens extends Newtype[PosInt], CatsEqShow[PosInt], CirceNewtypeCodec[PosInt]
 
   def unapply(model: Model): String = model.toValue
 
