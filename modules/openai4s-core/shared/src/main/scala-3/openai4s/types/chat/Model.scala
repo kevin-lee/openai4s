@@ -91,6 +91,14 @@ enum Model(
         Model.MaxOutputTokens(PosInt(16_384)),
         YearMonth.of(2023, 10).some,
       )
+  case Chatgpt_4o_Latest
+      extends Model(
+        NonEmptyString("chatgpt-4o-latest"),
+        "Dynamic model continuously updated to the current version of GPT-4o in ChatGPT. Intended for research and evaluation [2].",
+        Model.MaxTokens(PosInt(128_000)),
+        Model.MaxOutputTokens(PosInt(16_384)),
+        YearMonth.of(2023, 10).some,
+      )
   // GPT-4o-mini
   case Gpt_4o_mini
       extends Model(
@@ -227,6 +235,7 @@ object Model {
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
   def gpt_4o_2024_08_06: Model = Gpt_4o_2024_08_06
+  def chatgpt_4o_Latest: Model = Chatgpt_4o_Latest
 
   def gpt_4o_mini: Model            = Gpt_4o_mini
   def gpt_4o_mini_2024_07_18: Model = Gpt_4o_mini_2024_07_18
@@ -265,6 +274,7 @@ object Model {
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
       Model.gpt_4o_2024_08_06,
+      Model.chatgpt_4o_Latest,
       //
       Model.gpt_4o_mini,
       Model.gpt_4o_mini_2024_07_18,
