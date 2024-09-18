@@ -99,7 +99,7 @@ object Model {
         YearMonth.of(2023, 10).some,
       )
   // GPT-4o-mini
-  case object Gpt_4o_mini
+  case object Gpt_4o_Mini
       extends Model(
         NonEmptyString("gpt-4o-mini"),
         "GPT-4o mini\nOur affordable and intelligent small model for fast, lightweight tasks. GPT-4o mini is cheaper and more capable than GPT-3.5 Turbo. Currently points to gpt-4o-mini-2024-07-18",
@@ -107,7 +107,7 @@ object Model {
         Model.MaxOutputTokens(PosInt(16_384)),
         YearMonth.of(2023, 10).some,
       )
-  case object Gpt_4o_mini_2024_07_18
+  case object Gpt_4o_Mini_2024_07_18
       extends Model(
         NonEmptyString("gpt-4o-mini-2024-07-18"),
         "gpt-4o-mini currently points to this version.",
@@ -233,8 +233,8 @@ object Model {
   def gpt_4o_2024_08_06: Model = Gpt_4o_2024_08_06
   def chatgpt_4o_Latest: Model = Chatgpt_4o_Latest
 
-  def gpt_4o_mini: Model            = Gpt_4o_mini
-  def gpt_4o_mini_2024_07_18: Model = Gpt_4o_mini_2024_07_18
+  def gpt_4o_Mini: Model            = Gpt_4o_Mini
+  def gpt_4o_Mini_2024_07_18: Model = Gpt_4o_Mini_2024_07_18
 
   def gpt_4_Turbo: Model            = Gpt_4_Turbo
   def gpt_4_Turbo_2024_04_09: Model = Gpt_4_Turbo_2024_04_09
@@ -272,8 +272,8 @@ object Model {
       Model.gpt_4o_2024_08_06,
       Model.chatgpt_4o_Latest,
       //
-      Model.gpt_4o_mini,
-      Model.gpt_4o_mini_2024_07_18,
+      Model.gpt_4o_Mini,
+      Model.gpt_4o_Mini_2024_07_18,
       //
       Model.gpt_4_Turbo,
       Model.gpt_4_Turbo_2024_04_09,
