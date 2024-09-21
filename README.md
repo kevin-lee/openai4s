@@ -16,14 +16,14 @@ Visit [OpenAI's account page](https://platform.openai.com/account/api-keys) to d
 
 `openai4s-app.scala`
 ```scala 3
-//> using scala "2.13.12"
+//> using scala "2.13.14"
 //> using options -Xsource:3
-//> using dep "org.typelevel::cats-core:2.10.0"
-//> using dep "io.kevinlee::openai4s-core:0.1.0-alpha9"
-//> using dep "io.kevinlee::openai4s-config:0.1.0-alpha9"
-//> using dep "io.kevinlee::openai4s-api:0.1.0-alpha9"
-//> using dep "io.kevinlee::openai4s-http4s:0.1.0-alpha9"
-//> using dep "com.github.pureconfig::pureconfig-cats-effect:0.17.4"
+//> using dep "org.typelevel::cats-core:2.12.0"
+//> using dep "io.kevinlee::openai4s-core:0.1.0-alpha12"
+//> using dep "io.kevinlee::openai4s-config:0.1.0-alpha12"
+//> using dep "io.kevinlee::openai4s-api:0.1.0-alpha12"
+//> using dep "io.kevinlee::openai4s-http4s:0.1.0-alpha12"
+//> using dep "com.github.pureconfig::pureconfig-cats-effect:0.17.7"
 
 import cats.data.NonEmptyList
 import cats.effect.*
@@ -48,7 +48,7 @@ object MyAiApp extends IOApp.Simple {
   override def run: IO[Unit] =
     runChat[IO]
 
-  def runChat[F[*] : Async : Network]: F[Unit] = {
+  def runChat[F[*]: Async: Network]: F[Unit] = {
     for {
       openAiConfig <- pureconfig.module.catseffect.loadConfigF[F, OpenAiConfig]
 
@@ -73,7 +73,7 @@ object MyAiApp extends IOApp.Simple {
             chatApi = ChatApi(openAiApiUri, apiCore)
 
             chat = Chat(
-              model = Model.gpt_4_1106_Preview,
+              model = Model.gpt_4o,
               messages = NonEmptyList.of(
                 Message(
                   Message.Role("user"),
@@ -104,8 +104,9 @@ scala-cli run openai4s-app.scala
 ```
 Compiling project (Scala 2.13.12, JVM (17))
 Compiled project (Scala 2.13.12, JVM (17))
-Sending Chat(model = Gpt_4_1106_Preview, messages = NonEmptyList(Message(role = user, content = Jane is faster than Joe. Joe is faster than Sam. Is Sam faster than Jane? Explain your reasoning step by step.)), temperature = Some(0.1), maxTokens = None)
-Response: Response(id = chatcmpl-8P7iVpvBTbAC49gsw2lDXKMAG06KJ, object = chat.completion, created = 2023-11-26T11:35:55Z, model = Gpt_4_1106_Preview, usage = Usage(promptTokens = 32, completionTokens = 163, totalTokens = 195), choices = List(Choice(message = Message(role = assistant, content = To determine if Sam is faster than Jane, we can analyze the given information step by step:
+Sending Chat(model = Gpt_4o(value=gpt-4o, description=GPT-4o
+Our most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo. Currently points to gpt-4o-2024-05-13., maxTokens=128000, maxOutputTokens=4096, trainingData=Some(2023-10)), messages = NonEmptyList(Message(role = user, content = Jane is faster than Joe. Joe is faster than Sam. Is Sam faster than Jane? Explain your reasoning step by step.)), temperature = Some(0.1), maxTokens = None)
+Response: Response(id = chatcmpl-A9Yv3oSHqqpsd0X5HiMNwhOE4VWwP, object = chat.completion, created = 2024-09-20T14:29:05Z, model = Gpt_4o_2024_05_13(value=gpt-4o-2024-05-13, description=gpt-4o currently points to this version., maxTokens=128000, maxOutputTokens=4096, trainingData=Some(2023-10)), usage = Usage(promptTokens = 32, completionTokens = 307, totalTokens = 339), choices = List(Choice(message = Message(role = assistant, content = To determine whether Sam is faster than Jane, let's analyze the information given step by step:
 
 1. We are told that "Jane is faster than Joe." This establishes a relationship where Jane > Joe in terms of speed.
 
