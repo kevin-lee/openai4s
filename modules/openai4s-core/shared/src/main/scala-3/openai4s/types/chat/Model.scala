@@ -33,20 +33,20 @@ enum Model(
   val trainingData: Option[YearMonth],
 ) derives CanEqual {
   // o1
-  case O1_Preview
+  case O1
       extends Model(
-        NonEmptyString("o1-preview"),
-        "Points to the most recent snapshot of the o1 model: o1-preview-2024-09-12",
-        maxTokens = Model.MaxTokens(PosInt(128_000)),
-        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
+        NonEmptyString("o1"),
+        "Points to the most recent snapshot of the o1 model: o1-2024-12-17",
+        maxTokens = Model.MaxTokens(PosInt(200_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(100_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
-  case O1_Preview_2024_09_12
+  case O1_2024_12_17
       extends Model(
-        NonEmptyString("o1-preview-2024-09-12"),
+        NonEmptyString("o1-2024-12-17"),
         "Latest o1 model snapshot",
-        maxTokens = Model.MaxTokens(PosInt(128_000)),
-        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
+        maxTokens = Model.MaxTokens(PosInt(200_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(100_000)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // o1-mini
@@ -64,6 +64,23 @@ enum Model(
         "Latest o1-mini model snapshot",
         maxTokens = Model.MaxTokens(PosInt(128_000)),
         maxOutputTokens = Model.MaxOutputTokens(PosInt(65_536)),
+        trainingData = YearMonth.of(2023, 10).some,
+      )
+  // o1-preview
+  case O1_Preview
+      extends Model(
+        NonEmptyString("o1-preview"),
+        "Points to the most recent snapshot of the o1 model: o1-preview-2024-09-12",
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
+        trainingData = YearMonth.of(2023, 10).some,
+      )
+  case O1_Preview_2024_09_12
+      extends Model(
+        NonEmptyString("o1-preview-2024-09-12"),
+        "Latest o1 model snapshot",
+        maxTokens = Model.MaxTokens(PosInt(128_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(32_768)),
         trainingData = YearMonth.of(2023, 10).some,
       )
   // GPT-4o
@@ -226,11 +243,14 @@ enum Model(
 }
 object Model {
 
-  def o1_Preview: Model            = O1_Preview
-  def o1_Preview_2024_09_12: Model = O1_Preview_2024_09_12
+  def o1: Model            = O1
+  def o1_2024_12_17: Model = O1_2024_12_17
 
   def o1_Mini: Model            = O1_Mini
   def o1_Mini_2024_09_12: Model = O1_Mini_2024_09_12
+
+  def o1_Preview: Model            = O1_Preview
+  def o1_Preview_2024_09_12: Model = O1_Preview_2024_09_12
 
   def gpt_4o: Model            = Gpt_4o
   def gpt_4o_2024_05_13: Model = Gpt_4o_2024_05_13
@@ -265,11 +285,14 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
-      Model.o1_Preview,
-      Model.o1_Preview_2024_09_12,
+      Model.o1,
+      Model.o1_2024_12_17,
       //
       Model.o1_Mini,
       Model.o1_Mini_2024_09_12,
+      //
+      Model.o1_Preview,
+      Model.o1_Preview_2024_09_12,
       //
       Model.gpt_4o,
       Model.gpt_4o_2024_05_13,
