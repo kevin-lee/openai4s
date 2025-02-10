@@ -15,6 +15,7 @@ import java.time.YearMonth
 /** Reference:
   * - https://platform.openai.com/docs/models/
   * - https://platform.openai.com/docs/models/model-endpoint-compatibility
+  * - https://platform.openai.com/docs/models/how-we-use-your-data#o3-mini
   * - https://platform.openai.com/docs/models/o1
   * - https://platform.openai.com/docs/models/gpt-4o
   * - https://platform.openai.com/docs/models/gpt-4o-mini
@@ -31,6 +32,23 @@ sealed abstract class Model(
   val trainingData: Option[YearMonth],
 )
 object Model {
+  // o3-mini
+  case object O3_Mini
+      extends Model(
+        NonEmptyString("o3-mini"),
+        "Points to the most recent o3-mini snapshot: o3-mini-2025-01-31",
+        maxTokens = Model.MaxTokens(PosInt(200_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(100_000)),
+        trainingData = YearMonth.of(2023, 10).some,
+      )
+  case object O3_Mini_2025_01_31
+      extends Model(
+        NonEmptyString("o3-mini-2025-01-31"),
+        "Latest o3-mini model snapshot",
+        maxTokens = Model.MaxTokens(PosInt(200_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(100_000)),
+        trainingData = YearMonth.of(2023, 10).some,
+      )
   // o1
   case object O1
       extends Model(
@@ -239,6 +257,9 @@ object Model {
   final case class Unsupported(override val value: NonEmptyString)
       extends Model(value, "", Model.MaxTokens(PosInt(1)), Model.MaxOutputTokens(PosInt(1)), none)
 
+  def o3_Mini: Model            = O3_Mini
+  def o3_Mini_2025_01_31: Model = O3_Mini_2025_01_31
+
   def o1: Model            = O1
   def o1_2024_12_17: Model = O1_2024_12_17
 
@@ -281,6 +302,9 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.o3_Mini,
+      Model.o3_Mini_2025_01_31,
+      //
       Model.o1,
       Model.o1_2024_12_17,
       //
