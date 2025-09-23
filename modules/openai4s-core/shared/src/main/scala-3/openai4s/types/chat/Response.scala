@@ -1,21 +1,19 @@
 package openai4s.types.chat
 
-import cats.{Eq, Show}
 import cats.derived.*
+import cats.{Eq, Show}
 import extras.render.Render
-import io.circe.derivation.{Configuration, ConfiguredCodec, ConfiguredDecoder, ConfiguredEncoder}
 import io.circe.*
+import io.circe.derivation.{Configuration, ConfiguredCodec}
 import openai4s.types
+import openai4s.types.common.*
 import refined4s.*
-import refined4s.types.all.*
 import refined4s.modules.cats.derivation.*
-import refined4s.modules.cats.derivation.types.all.given
 import refined4s.modules.circe.derivation.*
 import refined4s.modules.circe.derivation.types.all.given
 import refined4s.modules.extras.derivation.*
 import refined4s.modules.extras.derivation.types.all.given
-
-import openai4s.types.common.*
+import refined4s.types.all.*
 
 import java.time.Instant
 

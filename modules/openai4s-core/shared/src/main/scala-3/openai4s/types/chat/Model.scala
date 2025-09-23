@@ -7,7 +7,6 @@ import io.circe.{Codec, Decoder, Encoder}
 import refined4s.Newtype
 import refined4s.compat.RefinedCompatAllTypes.*
 import refined4s.modules.cats.derivation.CatsEqShow
-import refined4s.modules.cats.derivation.types.all.given
 import refined4s.modules.circe.derivation.CirceNewtypeCodec
 import refined4s.modules.circe.derivation.types.all.given
 import refined4s.types.all.NonEmptyString
@@ -349,6 +348,7 @@ object Model {
 
   given modelRender: Render[Model] = Render.render(_.toValue)
 
+  @SuppressWarnings(Array("org.wartremover.warts.ToString")) // FIXME!!!
   given showModel: Show[Model] = {
     case Unsupported(value) =>
       show"Unsupported(value=$value)"

@@ -6,7 +6,7 @@ import io.circe.*
 import openai4s.types
 import refined4s.*
 import refined4s.modules.cats.derivation.*
-import refined4s.modules.cats.derivation.types.all.given
+
 import refined4s.modules.circe.derivation.*
 import refined4s.modules.circe.derivation.types.all.given
 import refined4s.modules.extras.derivation.*

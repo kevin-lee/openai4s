@@ -2,7 +2,6 @@ package openai4s.config
 
 import cats.{Eq, Show}
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 import refined4s.types.all.NonEmptyString
 
 /** @author Kevin Lee

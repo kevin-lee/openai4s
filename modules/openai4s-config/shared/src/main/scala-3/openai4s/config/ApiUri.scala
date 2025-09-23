@@ -4,11 +4,10 @@ import cats.{Eq, Show}
 import extras.render.Render
 import extras.render.syntax.*
 import pureconfig.*
-import pureconfig.generic.derivation.default.*
 import refined4s.*
 import refined4s.types.all.*
 import refined4s.modules.cats.derivation.*
-import refined4s.modules.cats.derivation.types.all.given
+
 import refined4s.modules.pureconfig.derivation.PureconfigNewtypeConfigReader
 import refined4s.modules.pureconfig.derivation.types.all.given
 import refined4s.modules.extras.derivation.*
