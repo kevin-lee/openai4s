@@ -33,20 +33,6 @@ ThisBuild / scalafixConfig := (
     ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
 )
 
-ThisBuild / scalafixScalaBinaryVersion := {
-  val log        = sLog.value
-  val newVersion = if (scalaVersion.value.startsWith("3")) {
-    (ThisBuild / scalafixScalaBinaryVersion).value
-  } else {
-    CrossVersion.binaryScalaVersion(scalaVersion.value)
-  }
-
-  log.info(
-    s">> Change ThisBuild / scalafixScalaBinaryVersion from ${(ThisBuild / scalafixScalaBinaryVersion).value} to $newVersion"
-  )
-  newVersion
-}
-
 lazy val openai4s = (project in file("."))
   .enablePlugins(DevOopsGitHubReleasePlugin)
   .settings(
@@ -160,7 +146,7 @@ lazy val props =
     val RepoName       = "openai4s"
 
     val Scala2Versions = List(
-      "2.13.12"
+      "2.13.16"
     )
     val Scala2Version  = Scala2Versions.head
 
@@ -184,41 +170,41 @@ lazy val props =
 
     val IncludeTest = "compile->compile;test->test"
 
-    val HedgehogVersion = "0.10.1"
+    val HedgehogVersion = "0.13.0"
 
-    val HedgehogExtraVersion = "0.7.0"
+    val HedgehogExtraVersion = "0.15.0"
 
-    val CatsVersion = "2.10.0"
+    val CatsVersion = "2.13.0"
 
     val CatsEffect2Version       = "2.4.1"
     val CatsEffect2LatestVersion = "2.5.5"
     val CatsEffect3Version       = "3.5.3"
 
-    val ExtrasVersion = "0.42.0"
+    val ExtrasVersion = "0.49.0"
 
     val NewtypeVersion = "0.4.4"
 
-    val Refined4sVersion = "0.15.0"
+    val Refined4sVersion = "1.10.0"
 
-    val TypeLevelCaseInsensitiveVersion = "1.4.0"
+    val TypeLevelCaseInsensitiveVersion = "1.5.0"
 
     val RefinedVersion = "0.10.1"
 
     val RefinedLatestVersion = "0.11.0"
 
-    val KittensVersion             = "3.0.0"
+    val KittensVersion             = "3.5.0"
     val KittensForScala3_1_Version = "3.0.0-M4"
 
     val Http4sVersion       = "0.22.15"
-    val Http4sLatestVersion = "0.23.23"
+    val Http4sLatestVersion = "0.23.30"
 
-    val PureConfigVersion = "0.17.4"
+    val PureConfigVersion = "0.17.9"
 
     val CirceVersion = "0.14.3"
 
-    val CirceLatestVersion = "0.14.5"
+    val CirceLatestVersion = "0.14.14"
 
-    val LogbackVersion = "1.4.11"
+    val LogbackVersion = "1.5.18"
 
   }
 
@@ -379,14 +365,14 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
       name := prefixedName,
       fork := true,
       semanticdbEnabled := true,
-      semanticdbVersion := scalafixSemanticdb.revision,
       scalafixConfig := (
         if (scalaVersion.value.startsWith("3"))
           ((ThisBuild / baseDirectory).value / ".scalafix-scala3.conf").some
         else
           ((ThisBuild / baseDirectory).value / ".scalafix-scala2.conf").some
       ),
-      scalacOptions ++= (if (isScala3(scalaVersion.value)) List.empty else List("-Xsource:3")),
+      scalacOptions ++= (if (isScala3(scalaVersion.value)) List.empty
+                         else List("-Xsource:3", "-Xsource-features:case-apply-copy-access")),
       scalacOptions ~= (_.map {
         case "UTF-8" => "utf8"
         case s => s
@@ -418,6 +404,7 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
 
 lazy val jsSettingsForFuture: SettingsDefinition = List(
   Test / fork := false,
+  coverageEnabled := false,
   Test / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty
                             else List("-P:scalajs:nowarnGlobalExecutionContext")),
   Test / compile / scalacOptions ++= (if (scalaVersion.value.startsWith("3")) List.empty

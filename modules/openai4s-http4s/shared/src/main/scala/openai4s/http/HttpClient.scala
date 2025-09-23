@@ -8,8 +8,6 @@ import org.http4s.*
 import org.http4s.Status.Successful as H4sSuccessful
 import org.http4s.client.Client
 
-import scala.annotation.nowarn
-
 /** @author Kevin Lee
   * @since 2023-04-01
   */
@@ -84,13 +82,11 @@ object HttpClient {
   sealed abstract class HttpResponse[F[*]](val response: Response[F])
   object HttpResponse {
 
-    @nowarn("msg=constructor modifiers are assumed by synthetic `(apply|copy)` method")
     final case class Successful[F[*]] private (override val response: Response[F]) extends HttpResponse[F](response)
     object Successful {
       private[HttpResponse] def create[F[*]](response: Response[F]): HttpResponse[F] = new Successful[F](response)
     }
 
-    @nowarn("msg=constructor modifiers are assumed by synthetic `(apply|copy)` method")
     final case class Failed[F[*]] private (override val response: Response[F]) extends HttpResponse[F](response)
     object Failed {
       private[HttpResponse] def create[F[*]](response: Response[F]): HttpResponse[F] = new Failed[F](response)
