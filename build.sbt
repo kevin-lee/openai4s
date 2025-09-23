@@ -24,8 +24,6 @@ ThisBuild / scmInfo :=
   )
 ThisBuild / licenses := props.licenses
 
-ThisBuild / resolvers += props.SonatypeSnapshots
-
 ThisBuild / scalafixDependencies += "com.github.xuwei-k" %% "scalafix-rules" % "0.2.17"
 
 ThisBuild / scalafixConfig := (
@@ -58,7 +56,6 @@ lazy val openai4s = (project in file("."))
       libraryDependenciesPostProcess(isScala3(scalaVersion.value), libraryDependencies.value),
   )
   .settings(noPublish)
-  .settings(mavenCentralPublishSettings)
   .aggregate(
     coreJvm,
     coreJs,
@@ -174,11 +171,6 @@ lazy val props =
     val ProjectScalaVersion = Scala3Version
 
     lazy val licenses = List(License.MIT)
-
-    val SonatypeCredentialHost = "s01.oss.sonatype.org"
-    val SonatypeRepository     = s"https://$SonatypeCredentialHost/service/local"
-
-    val SonatypeSnapshots = "sonatype-snapshots" at s"https://$SonatypeCredentialHost/content/repositories/snapshots"
 
     val removeDottyIncompatible: ModuleID => Boolean =
       m =>
@@ -364,13 +356,6 @@ lazy val libs = new {
 
 }
 
-lazy val mavenCentralPublishSettings: SettingsDefinition = List(
-  /* Publish to Maven Central { */
-  sonatypeCredentialHost := props.SonatypeCredentialHost,
-  sonatypeRepository := props.SonatypeRepository,
-  /* } Publish to Maven Central */
-)
-
 // scalafmt: off
 def prefixedProjectName(name: String) = s"${props.RepoName}${if (name.isEmpty) "" else s"-$name"}"
 // scalafmt: on
@@ -429,7 +414,6 @@ def module(projectName: String, crossProject: CrossProject.Builder): CrossProjec
 
       scalacOptions ++= (if (scalaVersion.value.startsWith("2.13")) List("-Ymacro-annotations") else List.empty),
     )
-    .settings(mavenCentralPublishSettings)
 }
 
 lazy val jsSettingsForFuture: SettingsDefinition = List(
