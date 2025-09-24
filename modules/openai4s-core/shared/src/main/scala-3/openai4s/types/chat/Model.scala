@@ -15,13 +15,14 @@ import java.time.YearMonth
 
 /** Reference:
   * - https://platform.openai.com/docs/models/
-  * - https://platform.openai.com/docs/models/model-endpoint-compatibility
-  * - https://platform.openai.com/docs/models/how-we-use-your-data#o3-mini
+  * - https://platform.openai.com/docs/models/gpt-5
+  * - https://platform.openai.com/docs/models/how-we-use-your-data
   * - https://platform.openai.com/docs/models/o1
   * - https://platform.openai.com/docs/models/gpt-4o
   * - https://platform.openai.com/docs/models/gpt-4o-mini
   * - https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
   * - https://platform.openai.com/docs/models/gpt-3-5-turbo
+  *
   * @author Kevin Lee
   * @since 2023-03-24
   */
@@ -32,6 +33,36 @@ enum Model(
   val maxOutputTokens: Model.MaxOutputTokens,
   val trainingData: Option[YearMonth],
 ) derives CanEqual {
+  // GPT-5
+  case Gpt_5
+      extends Model(
+        NonEmptyString("gpt-5"),
+        "GPT-5 is our flagship model for coding, reasoning, and agentic tasks across domains. " +
+          "Learn more in our [GPT-5 usage guide](https://platform.openai.com/docs/guides/gpt-5).",
+        maxTokens = Model.MaxTokens(PosInt(400_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(128_000)),
+        trainingData = YearMonth.of(2024, 9).some,
+      )
+  // GPT-5 mini
+  case Gpt_5_Mini
+      extends Model(
+        NonEmptyString("gpt-5-mini"),
+        "GPT-5 mini is a faster, more cost-efficient version of GPT-5. It's great for well-defined tasks and precise prompts. " +
+          "Learn more in our [GPT-5 usage guide](https://platform.openai.com/docs/guides/gpt-5).",
+        maxTokens = Model.MaxTokens(PosInt(400_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(128_000)),
+        trainingData = YearMonth.of(2024, 5).some,
+      )
+  // GPT-5 nano
+  case Gpt_5_Nano
+      extends Model(
+        NonEmptyString("gpt-5-nano"),
+        "GPT-5 Nano is our fastest, cheapest version of GPT-5. It's great for summarization and classification tasks. " +
+          "Learn more in our [GPT-5 usage guide](https://platform.openai.com/docs/guides/gpt-5).",
+        maxTokens = Model.MaxTokens(PosInt(400_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(128_000)),
+        trainingData = YearMonth.of(2024, 5).some,
+      )
   // o3-mini
   case O3_Mini
       extends Model(
@@ -259,6 +290,10 @@ enum Model(
       extends Model(value, "", Model.MaxTokens(PosInt(1)), Model.MaxOutputTokens(PosInt(1)), none)
 }
 object Model {
+  def gpt_5: Model      = Gpt_5
+  def gpt_5_Mini: Model = Gpt_5_Mini
+  def gpt_5_Nano: Model = Gpt_5_Nano
+
   def o3_Mini: Model            = O3_Mini
   def o3_Mini_2025_01_31: Model = O3_Mini_2025_01_31
 
@@ -304,6 +339,10 @@ object Model {
 
   def supportedValues: List[Model] =
     List(
+      Model.gpt_5,
+      Model.gpt_5_Mini,
+      Model.gpt_5_Nano,
+      //
       Model.o3_Mini,
       Model.o3_Mini_2025_01_31,
       //
