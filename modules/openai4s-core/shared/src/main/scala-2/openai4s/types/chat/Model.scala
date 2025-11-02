@@ -15,6 +15,7 @@ import java.time.YearMonth
 /** Reference:
   * - https://platform.openai.com/docs/models/
   * - https://platform.openai.com/docs/models/gpt-5
+  * - https://platform.openai.com/docs/models/gpt-5-pro
   * - https://platform.openai.com/docs/guides/your-data
   * - https://platform.openai.com/docs/models/o1
   * - https://platform.openai.com/docs/models/gpt-4o
@@ -62,6 +63,23 @@ object Model {
         maxTokens = Model.MaxTokens(PosInt(400_000)),
         maxOutputTokens = Model.MaxOutputTokens(PosInt(128_000)),
         trainingData = YearMonth.of(2024, 5).some,
+      )
+
+  // GPT-5 pro
+  case object Gpt_5_Pro
+      extends Model(
+        NonEmptyString("gpt-5-pro"),
+        "GPT-5 pro uses more compute to think harder and provide consistently better answers.\n" +
+          "GPT-5 pro is available in the [Responses API only](https://platform.openai.com/docs/api-reference/responses) " +
+          "to enable support for multi-turn model interactions before responding to API requests, " +
+          "and other advanced API features in the future. Since GPT-5 pro is designed to tackle tough problems, " +
+          "some requests may take several minutes to finish. To avoid timeouts, " +
+          "try using [background mode](https://platform.openai.com/docs/guides/background). " +
+          "As our most advanced reasoning model, GPT-5 pro defaults to (and only supports) `reasoning.effort: high`. " +
+          "GPT-5 pro does not support code interpreter.",
+        maxTokens = Model.MaxTokens(PosInt(400_000)),
+        maxOutputTokens = Model.MaxOutputTokens(PosInt(272_000)),
+        trainingData = YearMonth.of(2024, 9).some,
       )
   // o3-mini
   case object O3_Mini
@@ -291,6 +309,7 @@ object Model {
   def gpt_5: Model      = Gpt_5
   def gpt_5_Mini: Model = Gpt_5_Mini
   def gpt_5_Nano: Model = Gpt_5_Nano
+  def gpt_5_Pro: Model  = Gpt_5_Pro
 
   def o3_Mini: Model            = O3_Mini
   def o3_Mini_2025_01_31: Model = O3_Mini_2025_01_31
@@ -340,6 +359,7 @@ object Model {
       Model.gpt_5,
       Model.gpt_5_Mini,
       Model.gpt_5_Nano,
+      Model.gpt_5_Pro,
       //
       Model.o3_Mini,
       Model.o3_Mini_2025_01_31,
