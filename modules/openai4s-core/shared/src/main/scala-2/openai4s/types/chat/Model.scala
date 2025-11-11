@@ -303,8 +303,15 @@ object Model {
         YearMonth.of(2021, 9).some,
       )
 
-  final case class Unsupported(override val value: NonEmptyString)
-      extends Model(value, "", Model.MaxTokens(PosInt(1)), Model.MaxOutputTokens(PosInt(1)), none)
+  final case class UserInput(
+    override val value: NonEmptyString
+  ) extends Model(
+        value,
+        "",
+        Model.MaxTokens(PosInt(1)),
+        Model.MaxOutputTokens(PosInt(1)),
+        none,
+      )
 
   def gpt_5: Model      = Gpt_5
   def gpt_5_Mini: Model = Gpt_5_Mini
@@ -352,7 +359,7 @@ object Model {
 
   def gpt_3_5_Turbo_Instruct: Model = Gpt_3_5_Turbo_Instruct
 
-  def unsupported(value: NonEmptyString): Model = Unsupported(value)
+  def userInput(value: NonEmptyString): Model = UserInput(value)
 
   def supportedValues: List[Model] =
     List(
@@ -399,16 +406,23 @@ object Model {
     )
 
   def fromString(model: String): Either[String, Model] =
-    Model.supportedValues.find(_.value.value === model).toRight(s"Unknown model: $model")
+    Model
+      .supportedValues
+      .find(_.value.value === model)
+      .toRight(
+        s"Unknown model: $model. If not it's supported yet by openai4s, " +
+          "but it is actually supported by openai, please use Model.userInput() create your own model."
+      )
 
-  implicit val modelEq: Eq[Model] = Eq[NonEmptyString].contramap(_.value)
+  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
+  implicit val eqModel: Eq[Model] = cats.derived.semiauto.eq
 
   implicit val modelRender: Render[Model] = Render.render(_.value.value)
 
   @SuppressWarnings(Array("org.wartremover.warts.ToString"))
   implicit val showModel: Show[Model] = {
-    case Unsupported(value) =>
-      show"Unsupported(value=$value)"
+    case UserInput(value) =>
+      show"UserInput(value=$value)"
 
     case m =>
       show"${m.toString}(" +
@@ -422,7 +436,7 @@ object Model {
 
   implicit val modelCodec: Codec[Model] = Codec.from(
     Decoder[String].emap(value =>
-      fromString(value).leftFlatMap(_ => unsupported(NonEmptyString.unsafeFrom(value)).asRight)
+      fromString(value).leftFlatMap(_ => Model.userInput(NonEmptyString.unsafeFrom(value)).asRight)
     ),
     Encoder[String].contramap(_.value.value),
   )
@@ -448,5 +462,7 @@ object Model {
     implicit val maxOutputTokensEncoder: Encoder[MaxOutputTokens] = deriving
     implicit val maxOutputTokensDecoder: Decoder[MaxOutputTokens] = deriving
   }
+
+  implicit val eqYearMonth: Eq[YearMonth] = Eq.fromUniversalEquals
 
 }

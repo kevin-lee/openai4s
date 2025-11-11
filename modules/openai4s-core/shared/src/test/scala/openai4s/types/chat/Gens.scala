@@ -1,5 +1,6 @@
 package openai4s.types.chat
 
+import cats.syntax.all.*
 import cats.data.NonEmptyList
 import hedgehog.*
 import hedgehog.extra.NumGens
@@ -16,6 +17,19 @@ object Gens extends TypesCompat {
 
   def genModel: Gen[Model] =
     Gen.elementUnsafe(Model.supportedValues)
+
+  @SuppressWarnings(Array("org.wartremover.warts.SeqApply"))
+  def genDifferentModelPair: Gen[(Model, Model)] = {
+    val supportedValues = Model.supportedValues.toVector
+
+    val max = supportedValues.length - 1
+    for {
+      index  <- Gen.int(Range.linear(0, max))
+      index2 <- Gen.constant(if (index === max) 0 else index + 1)
+      model1 <- Gen.constant(supportedValues(index))
+      model2 <- Gen.constant(supportedValues(index2))
+    } yield (model1, model2)
+  }
 
   object chat {
 

@@ -1,6 +1,6 @@
 package openai4s.types
 
-import cats.{Eq, Show}
+import cats.*
 import extras.render.*
 import io.circe.*
 import openai4s.types
@@ -36,6 +36,7 @@ object common {
   type MaxTokens = MaxTokens.Type
   object MaxTokens extends Newtype[PosInt], CatsEqShow[PosInt], CirceNewtypeCodec[PosInt] {
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     @targetName("fromInt")
     inline def apply(inline token: Int): Type = wrap(PosInt(token))
 
@@ -52,6 +53,7 @@ object common {
         CirceNewtypeCodec[NonNegInt],
         ExtrasRender[NonNegInt] {
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     @targetName("fromInt")
     inline def apply(inline index: Int): Index = wrap(NonNegInt(index))
 

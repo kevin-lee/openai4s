@@ -1,12 +1,10 @@
 package openai4s.types.chat
 
-import cats.{Eq, Show}
 import cats.derived.*
+import cats.{Eq, Show}
 import extras.render.Render
-import io.circe.derivation.Configuration
 import io.circe.derivation.*
 import io.circe.*
-import io.circe.{Decoder, Encoder}
 import refined4s.*
 import refined4s.modules.cats.derivation.*
 import refined4s.modules.circe.derivation.*
