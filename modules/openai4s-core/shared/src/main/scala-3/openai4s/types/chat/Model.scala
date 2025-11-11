@@ -1,5 +1,6 @@
 package openai4s.types.chat
 
+import cats.instances.all.given
 import cats.syntax.all.*
 import cats.{Eq, Show}
 import extras.render.Render
@@ -9,7 +10,7 @@ import refined4s.compat.RefinedCompatAllTypes.*
 import refined4s.modules.cats.derivation.CatsEqShow
 import refined4s.modules.circe.derivation.CirceNewtypeCodec
 import refined4s.modules.circe.derivation.types.all.given
-import refined4s.types.all.NonEmptyString
+//import refined4s.types.all.*
 
 import java.time.YearMonth
 
@@ -302,8 +303,15 @@ enum Model(
         YearMonth.of(2021, 9).some,
       )
 
-  case Unsupported(override val value: NonEmptyString)
-      extends Model(value, "", Model.MaxTokens(PosInt(1)), Model.MaxOutputTokens(PosInt(1)), none)
+  case UserInput(
+    override val value: NonEmptyString
+  ) extends Model(
+        value,
+        "",
+        Model.MaxTokens(PosInt(1)),
+        Model.MaxOutputTokens(PosInt(1)),
+        none,
+      )
 }
 object Model {
   def gpt_5: Model      = Gpt_5
@@ -352,7 +360,7 @@ object Model {
 
   def gpt_3_5_Turbo_Instruct: Model = Gpt_3_5_Turbo_Instruct
 
-  def unsupported(value: NonEmptyString): Model = Unsupported(value)
+  def userInput(value: NonEmptyString): Model = UserInput(value)
 
   def supportedValues: List[Model] =
     List(
@@ -399,16 +407,24 @@ object Model {
     )
 
   def fromString(model: String): Either[String, Model] =
-    Model.supportedValues.find(_.toValue === model).toRight(s"Unknown model: $model")
+    Model
+      .supportedValues
+      .find(_.toValue === model)
+      .toRight(
+        s"Unknown model: $model. If not it's supported yet by openai4s, " +
+          s"but it is actually supported by openai, please use Model.userInput() create your own model."
+      )
 
-  given modelEq: Eq[Model] = Eq[String].contramap(_.toValue)
+  given eqYearMonth: Eq[YearMonth] = Eq.fromUniversalEquals
+
+  given eqModel: Eq[Model] = Eq.fromUniversalEquals
 
   given modelRender: Render[Model] = Render.render(_.toValue)
 
   @SuppressWarnings(Array("org.wartremover.warts.ToString")) // FIXME!!!
   given showModel: Show[Model] = {
-    case Unsupported(value) =>
-      show"Unsupported(value=$value)"
+    case UserInput(value) =>
+      show"UserInput(value=$value)"
 
     case m =>
       show"${m.toString}(" +
@@ -422,7 +438,7 @@ object Model {
 
   given modelCodec: Codec[Model] = Codec.from(
     Decoder[String].emap(value =>
-      fromString(value).leftFlatMap(_ => unsupported(NonEmptyString.unsafeFrom(value)).asRight)
+      fromString(value).leftFlatMap(_ => Model.userInput(NonEmptyString.unsafeFrom(value)).asRight)
     ),
     Encoder[String].contramap(_.toValue),
   )

@@ -48,6 +48,7 @@ object Text {
   type TopP = TopP.Type
   object TopP extends Newtype[NonNegFloat], CatsEqShow[NonNegFloat], CirceNewtypeCodec[NonNegFloat] {
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     @targetName("fromFloat")
     inline def apply(inline a: Float): Type = wrap(NonNegFloat(a))
 
@@ -86,6 +87,7 @@ object Text {
         ExtrasRender[NonEmptyString],
         CirceNewtypeCodec[NonEmptyString] {
 
+    @SuppressWarnings(Array("org.wartremover.warts.Overloading"))
     @targetName("fromString")
     inline def apply(inline a: String): Type = wrap(NonEmptyString(a))
 
