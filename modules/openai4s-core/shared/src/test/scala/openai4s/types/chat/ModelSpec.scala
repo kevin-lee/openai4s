@@ -14,6 +14,7 @@ object ModelSpec extends Properties with TypesCompat {
     property("test Model.supportedValues", testSupportedValues),
     property("test Eq[Model] === case", testEqModelSame),
     property("test Eq[Model] =!= case", testEqModelDifferent),
+    property("test Show[Model]", testShowModel),
   )
 
   def testFromString: Property =
@@ -82,6 +83,25 @@ object ModelSpec extends Properties with TypesCompat {
     Result
       .diffNamed(s"${model1.value.value} =!= ${model2.value.value}", model1, model2)(_ =!= _)
       .log(s"${model1.value.value} =!= ${model2.value.value} returned false")
+  }
+
+  def testShowModel: Property = for {
+    model <- Gens.genModel.log("model")
+  } yield {
+
+    @SuppressWarnings(Array("org.wartremover.warts.ToString"))
+    val expected = model match {
+      case Model.UserInput(value) =>
+        s"UserInput(value=${value.value})"
+
+      case m =>
+        s"${m.toString}(value=${m.value.value}, description=${m.description}, maxTokens=${m.maxTokens.toString}, " +
+          s"maxOutputTokens=${m.maxOutputTokens.toString}, trainingData=${m.trainingData.toString})"
+    }
+
+    val actual = model.show
+
+    actual ==== expected
   }
 
 }
