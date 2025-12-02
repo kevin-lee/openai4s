@@ -1,6 +1,6 @@
 logLevel := sbt.Level.Warn
 
-addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.11.1")
+addSbtPlugin("com.github.sbt" % "sbt-ci-release" % "1.11.2")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "3.3.0")
 
 addSbtPlugin("org.typelevel" % "sbt-tpolecat" % "0.5.0")
