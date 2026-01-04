@@ -5,7 +5,7 @@ openai4s - OpenAI Client for Scala
 
 ## Example
 
-Here is an example Scala script with `scala-cli` in Scala 2.
+Here is an example Scala script with `scala-cli` in Scala 3.
 
 First of all you need to set the following environment variables
 ```bash
