@@ -16,14 +16,16 @@ Visit [OpenAI's account page](https://platform.openai.com/account/api-keys) to d
 
 `openai4s-app.scala`
 ```scala 3
-//> using scala "2.13.14"
-//> using options -Xsource:3
-//> using dep "org.typelevel::cats-core:2.12.0"
-//> using dep "io.kevinlee::openai4s-core:0.1.0-alpha12"
-//> using dep "io.kevinlee::openai4s-config:0.1.0-alpha12"
-//> using dep "io.kevinlee::openai4s-api:0.1.0-alpha12"
-//> using dep "io.kevinlee::openai4s-http4s:0.1.0-alpha12"
-//> using dep "com.github.pureconfig::pureconfig-cats-effect:0.17.7"
+//> using scala "3.3.4"
+//> using dep "org.typelevel::cats-core::latest.release"
+//> using dep "io.kevinlee::openai4s-core::0.1.0"
+//> using dep "io.kevinlee::openai4s-config::0.1.0"
+//> using dep "io.kevinlee::openai4s-api::0.1.0"
+//> using dep "io.kevinlee::openai4s-http4s::0.1.0"
+//> using dep "io.kevinlee::refined4s-core::latest.release"
+//> using dep "io.kevinlee::refined4s-cats::latest.release"
+//> using dep "io.kevinlee::refined4s-pureconfig::latest.release"
+//> using dep "com.github.pureconfig::pureconfig-cats-effect::latest.release"
 
 import cats.data.NonEmptyList
 import cats.effect.*
@@ -34,28 +36,27 @@ import org.http4s.ember.client.EmberClientBuilder
 
 import scala.concurrent.duration.*
 
-import eu.timepit.refined.types.*
+import refined4s.*
 import openai4s.api.ApiCore
 import openai4s.api.chat.ChatApi
 import openai4s.config.OpenAiConfig
-import openai4s.http.HttpClient
+import openai4s.http.*
 import openai4s.types.common.*
 import openai4s.types.chat.*
-import eu.timepit.refined.auto.*
 
 object MyAiApp extends IOApp.Simple {
 
   override def run: IO[Unit] =
     runChat[IO]
 
-  def runChat[F[*]: Async: Network]: F[Unit] = {
-    for {
+  def runChat[F[*]: Async: Network]: F[Unit] =
+    (for {
       openAiConfig <- pureconfig.module.catseffect.loadConfigF[F, OpenAiConfig]
 
       _ <- EmberClientBuilder
         .default[F]
         .withTimeout(120.seconds)
-        .withIdleConnectionTime(120.seconds)
+        .withIdleConnectionTime((4 * 60).seconds)
         .build
         .use { client =>
 
@@ -63,17 +64,17 @@ object MyAiApp extends IOApp.Simple {
 
           for {
             openAiApiUri <- Sync[F]
-                              .catchNonFatal(
-                                H4sUri.fromString(
-                                  openAiConfig.apiUri.chatCompletions.value
-                                )
-                              )
-                              .rethrow
+              .catchNonFatal(
+                H4sUri.fromString(
+                  openAiConfig.apiUri.chatCompletions.value
+                )
+              )
+              .rethrow
             apiCore = ApiCore(openAiConfig.apiKey, httpClient)
             chatApi = ChatApi(openAiApiUri, apiCore)
 
             chat = Chat(
-              model = Model.gpt_4o,
+              model = Model.gpt_5_Mini,
               messages = NonEmptyList.of(
                 Message(
                   Message.Role("user"),
@@ -90,8 +91,30 @@ object MyAiApp extends IOApp.Simple {
             _ <- Sync[F].delay(println(show"Response: $response"))
           } yield ()
         }
-    } yield ()
-  }
+    } yield ()).handleErrorWith {
+      case err: HttpError[?] =>
+        Sync[F].delay(
+          println(
+            show"""
+                  |>> -----
+                  |>> HttpError:
+                  |$err
+                  |>> -----
+                  |""".stripMargin
+          )
+        )
+      case err =>
+        Sync[F].delay(
+          println(
+            show"""
+                  >> -----
+                  |>> ERROR:
+                  |${err.toString}
+                  |>> -----
+                  |""".stripMargin
+          )
+        )
+    }
 
 }
 ```
